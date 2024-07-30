@@ -1,4 +1,9 @@
 package View;
 
-public class GameView {
+import javax.swing.*;
+
+public class GameView extends JFrame {
+    public GameView(){
+        //TODO
+    }
 }
