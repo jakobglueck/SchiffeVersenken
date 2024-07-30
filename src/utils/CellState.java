@@ -1,7 +1,7 @@
 package utils;
 
 public enum CellState {
-    Free,
+    FREE,
     SET,
     HIT,
     REVEAL
