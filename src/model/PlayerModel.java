@@ -8,8 +8,8 @@ import java.util.List;
 
 public class PlayerModel {
     private String playerName;
-    private BoardModel board;
-    private ArrayList<ShipModel>  ships;
+    private BoardModel playBoard;
+    private BoardModel overlayBoard;
 
     public PlayerModel(){
     }
@@ -18,23 +18,24 @@ public class PlayerModel {
         return playerName;
     }
 
-    public BoardModel getBoard() {
-        return board;
+    public BoardModel getPlayBoard() {
+        return playBoard;
+    }
+
+    public BoardModel getOverlayBoard() {
+        return overlayBoard;
     }
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
 
-    public void setBoard(BoardModel board) {
-        this.board = board;
+    public void setPlayBoard(BoardModel playBoard) {
+        this.playBoard = playBoard;
     }
 
-    public ArrayList<ShipModel> getShips() {
-        return ships;
+    public void setOverlayBoard(BoardModel overlayBoard) {
+        this.overlayBoard = overlayBoard;
     }
 
-    void setShip(ShipModel ship){
-        this.ships.add(ship);
-    }
 }
