@@ -1,10 +1,14 @@
 package model;
 
-
 import utils.CellState;
+import model.ShipModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BoardModel {
     private CellModel[][] board;
+    private ArrayList<ShipModel> ships;
 
     public BoardModel() {
         this.board = new CellModel[10][10];
@@ -25,5 +29,39 @@ public class BoardModel {
 
     public CellModel getCell(int x, int y) {
         return this.board[x][y];
+    }
+
+    public int getRows() {
+        return board.length;
+    }
+
+    public int getCols() {
+        return board[0].length;
+    }
+
+    public void setShip(ShipModel ship) {
+        this.ships.add(ship);
+    }
+
+    public boolean placeShip(ShipModel ship, int startX, int startY, int shipLength, boolean horizontal) {
+        List<CellModel> newShipCells = new ArrayList<>();
+
+        for (int i = 0; i < shipLength; i++) {
+            int x = startX + (horizontal ? i : 0);
+            int y = startY + (horizontal ? 0 : i);
+
+            if (x < 0 || x >= this.getRows() || y < 0 || y >= this.getCols() || this.getCell(x, y).getCellValue() != CellState.FREE) {
+                return false;
+            }
+
+            newShipCells.add(getCell(x, y));
+        }
+
+        for (CellModel cell : newShipCells) {
+            cell.setCellValue(CellState.SET);
+            ship.addShipCells(cell);
+        }
+
+        return true;
     }
 }
