@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardModel {
+    public static final int[] BOAT_SIZES = {5,4,4,3,3,3,2,2,2,2};
+
     private CellModel[][] board;
     private ArrayList<ShipModel> playerShips;
-
 
     private static final int HEIGHT = 10;
     private static final int WIDTH = 10;
@@ -34,17 +35,17 @@ public class BoardModel {
         return this.board[x][y];
     }
 
-    public void addShip(ShipModel ship , int startX, int startY, boolean horizontal){
-        if(this.placeShip(ship , startX, startY, horizontal)){
+    public void addShip(int startX, int startY, boolean horizontal){
+        if(this.placeShip(startX, startY, horizontal)){
             playerShips.add(ship);
         }
     }
 
-    public boolean placeShip(ShipModel ship, int startX, int startY, boolean horizontal) {
+    public boolean placeShip(int startX, int startY, boolean horizontal) {
         if (startX < 0 || startY < 0 || startX >= WIDTH || startY >= HEIGHT) {
             return false;
         }
-
+        ShipModel ship = new ShipModel();
         CellModel startCell = this.getCell(startX, startY);
         ship.setShipParameters(startCell, ship.getLength(), horizontal);
 
