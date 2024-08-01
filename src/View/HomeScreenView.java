@@ -8,15 +8,16 @@ import java.awt.event.ActionListener;
 public class HomeScreenView extends JPanel {
 
     public HomeScreenView() {
-        // Hauptpanel mit BorderLayout
-        setLayout(new BorderLayout());
+        // Hauptpanel mit GridLayout (2 Reihen, 1 Spalte)
+        setLayout(new GridLayout(2, 1));
 
-        // Inneres Panel mit GridBagLayout für zentrierte Buttons
-        JPanel centerPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = GridBagConstraints.RELATIVE;
-        gbc.insets = new Insets(10, 0, 10, 0); // Abstand zwischen den Buttons
+        // Titel Label erstellen und hinzufügen
+        JLabel titleLabel = new JLabel("Schiffe versenken", JLabel.CENTER);
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 24)); // Schriftart und Größe einstellen
+        add(titleLabel);
+
+        // Panel für die Buttons erstellen
+        JPanel buttonPanel = new JPanel(); // Standard-Layout ist FlowLayout, zentriert die Buttons automatisch
 
         // Buttons erstellen
         JButton localGameButton = new JButton("Lokales Spiel starten");
@@ -48,12 +49,12 @@ public class HomeScreenView extends JPanel {
             }
         });
 
-        // Buttons zum Center Panel hinzufügen
-        centerPanel.add(localGameButton, gbc);
-        centerPanel.add(debugModeButton, gbc);
-        centerPanel.add(exitButton, gbc);
+        // Buttons zum Button Panel hinzufügen
+        buttonPanel.add(localGameButton);
+        buttonPanel.add(debugModeButton);
+        buttonPanel.add(exitButton);
 
-        // Center Panel zum Hauptpanel hinzufügen
-        add(centerPanel, BorderLayout.CENTER);
+        // Button Panel zum Hauptpanel hinzufügen
+        add(buttonPanel);
     }
 }
