@@ -1,6 +1,8 @@
 package View;
 
 import model.BoardModel;
+import model.CellModel;
+import utils.CellState;
 import javax.swing.*;
 import java.awt.*;
 
@@ -36,6 +38,7 @@ public class BoardView extends JPanel {
         this.add(infoPanelView, BorderLayout.SOUTH);  // Informationen unten
 
         this.setVisible(true);
+        updateBoard(); // Initialisiere das Spielfeld
     }
 
     private void generateBlankBoard(JPanel gridPanel) {
@@ -49,9 +52,10 @@ public class BoardView extends JPanel {
 
     private JButton createStyledButton() {
         JButton button = new JButton();
-        button.setBackground(new Color(0x8300DE));
-        button.setForeground(Color.WHITE);
-        button.setBorder(BorderFactory.createLineBorder(Color.GREEN, 1));
+        button.setBackground(Color.WHITE);
+        button.setForeground(Color.BLACK); // Ändern Sie die Vordergrundfarbe, damit der Text sichtbar ist
+        button.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));
+        button.setOpaque(true); // Wichtig, damit die Hintergrundfarbe sichtbar ist
         return button;
     }
 
@@ -72,4 +76,17 @@ public class BoardView extends JPanel {
         return labelsPanel;
     }
 
+    public void updateBoard() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (playerBoard.getCell(i, j).getCellValue() == CellState.SET) {
+                    buttons[i][j].setBackground(Color.GRAY);
+                } else {
+                    buttons[i][j].setBackground(Color.WHITE);
+                }
+                buttons[i][j].setOpaque(true); // Wichtig, um sicherzustellen, dass die Hintergrundfarbe sichtbar ist
+                buttons[i][j].repaint(); // Erzwingt das Neuzeichnen des Buttons
+            }
+        }
+    }
 }

@@ -17,6 +17,9 @@ public class GameView extends JFrame {
         this.playerBoardOne = new BoardView(bm);
         this.playerBoardTwo = new BoardView(bm);
 
+        //bm.randomlyPlaceShips(); // Zufällige Platzierung der Schiffe auf dem ersten Spielbrett
+        playerBoardOne.updateBoard(); // Aktualisiere das Spielbrett
+
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -47,5 +50,4 @@ public class GameView extends JFrame {
         gbc.fill = fill;
         add(component, gbc);
     }
-
 }
