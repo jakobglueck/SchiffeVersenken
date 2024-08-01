@@ -5,16 +5,20 @@ import model.CellModel;
 import utils.CellState;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class BoardView extends JPanel {
 
     private BoardModel playerBoard;
-    private JButton[][] buttons;
+    private JLabel[][] labels;
     private InfoPanelView infoPanelView;
+
+    private static final int CELL_SIZE = 50;
 
     public BoardView(BoardModel playerBoard) {
         this.playerBoard = playerBoard;
-        this.buttons = new JButton[10][10];  // Initialisiere das Button-Array
+        this.labels = new JLabel[10][10];  // Initialisiere das JLabel-Array
 
         this.setLayout(new BorderLayout());  // Setze Layout des Panels
 
@@ -25,13 +29,10 @@ public class BoardView extends JPanel {
 
         infoPanelView = new InfoPanelView();  // InfoPanel initialisieren
 
-        JPanel gridPanel = new JPanel(new GridLayout(10, 10));  // Erzeuge ein Panel für das Grid
-        this.generateBlankBoard(gridPanel);
-
         JPanel mainPanel = new JPanel(new BorderLayout());  // Erzeuge ein Hauptpanel mit BorderLayout
         mainPanel.add(createLabelsPanel(true), BorderLayout.NORTH);  // Zahlen-Labels oben
         mainPanel.add(createLabelsPanel(false), BorderLayout.WEST);  // Buchstaben-Labels links
-        mainPanel.add(gridPanel, BorderLayout.CENTER);  // Grid in der Mitte
+        mainPanel.add(createGridPanel(), BorderLayout.CENTER);  // Grid in der Mitte
 
         this.add(playerNamePanel, BorderLayout.NORTH);  // Spielername oben
         this.add(mainPanel, BorderLayout.CENTER);  // Hauptpanel in der Mitte
@@ -39,24 +40,6 @@ public class BoardView extends JPanel {
 
         this.setVisible(true);
         updateBoard(); // Initialisiere das Spielfeld
-    }
-
-    private void generateBlankBoard(JPanel gridPanel) {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                this.buttons[i][j] = createStyledButton();  // Erzeuge einen neuen Button mit Stil
-                gridPanel.add(buttons[i][j]);  // Füge den Button zum Grid-Panel hinzu
-            }
-        }
-    }
-
-    private JButton createStyledButton() {
-        JButton button = new JButton();
-        button.setBackground(Color.WHITE);
-        button.setForeground(Color.BLACK); // Ändern Sie die Vordergrundfarbe, damit der Text sichtbar ist
-        button.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));
-        button.setOpaque(true); // Wichtig, damit die Hintergrundfarbe sichtbar ist
-        return button;
     }
 
     private JPanel createLabelsPanel(boolean isNumeric) {
@@ -76,16 +59,56 @@ public class BoardView extends JPanel {
         return labelsPanel;
     }
 
+    private JPanel createGridPanel() {
+        JPanel gridPanel = new JPanel(new GridLayout(10, 10));
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                JLabel label = createStyledLabel(i, j);
+                labels[i][j] = label;
+                gridPanel.add(label);
+            }
+        }
+        return gridPanel;
+    }
+
+    private JLabel createStyledLabel(int row, int col) {
+        JLabel label = new JLabel();
+        label.setOpaque(true);
+        label.setBackground(Color.WHITE);
+        label.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));
+        label.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setVerticalAlignment(SwingConstants.CENTER);
+        label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                handleCellClick(row, col, label);
+            }
+        });
+        return label;
+    }
+
+    private void handleCellClick(int row, int col, JLabel label) {
+        CellModel cell = playerBoard.getCell(row, col);
+        if (cell.getCellValue() == CellState.FREE) {
+            cell.setCellValue(CellState.SET);
+            label.setBackground(Color.GRAY);
+        } else if (cell.getCellValue() == CellState.SET) {
+            cell.setCellValue(CellState.FREE);
+            label.setBackground(Color.WHITE);
+        }
+    }
+
     public void updateBoard() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                if (playerBoard.getCell(i, j).getCellValue() == CellState.SET) {
-                    buttons[i][j].setBackground(Color.GRAY);
+                CellModel cell = playerBoard.getCell(i, j);
+                if (cell.getCellValue() == CellState.SET) {
+                    labels[i][j].setBackground(Color.GRAY);
                 } else {
-                    buttons[i][j].setBackground(Color.WHITE);
+                    labels[i][j].setBackground(Color.WHITE);
                 }
-                buttons[i][j].setOpaque(true); // Wichtig, um sicherzustellen, dass die Hintergrundfarbe sichtbar ist
-                buttons[i][j].repaint(); // Erzwingt das Neuzeichnen des Buttons
+                labels[i][j].repaint();
             }
         }
     }
