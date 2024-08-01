@@ -3,17 +3,30 @@ package model;
 import utils.*;
 
 public class CellModel {
-    private CellState cellValue;
+    private CellState cellState;
+    private int x;
+    private int y;
 
-    public CellModel() {
-        this.cellValue = CellState.FREE;
+
+    public CellModel(int x, int y, CellState cellState) {
+        this.cellState = CellState.FREE;
+        this.x = x;
+        this.y = y;
     }
 
-    public CellState getCellValue() {
-        return this.cellValue;
+    public CellState getCellState() {
+        return this.cellState;
     }
 
-    public void setCellValue(CellState cellValue) {
-        this.cellValue = cellValue;
+    public void updateCellState(CellState cellState) {
+        this.cellState = cellState;
+    }
+    
+    public int getCellCordX(){
+        return this.x;
+    }
+
+    public int getCellCordY(){
+        return this.y;
     }
 }
