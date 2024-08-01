@@ -13,9 +13,9 @@ public class BoardModel {
 
     public BoardModel() {
         this.board = new CellModel[HEIGHT][WIDTH];
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                this.board[x][y] = new CellModel(x,y,CellState.FREE);
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                this.board[x][y] = new CellModel(x, y, CellState.FREE);
             }
         }
     }
@@ -40,22 +40,42 @@ public class BoardModel {
         return board[0].length;
     }
 
-    public boolean placeShip(ShipModel ship, int startX, int startY) {
-        List<CellModel> newShipCells = new ArrayList<>();
-
-        for (int i = 0; i < shipLength; i++) {
-            int x = startX + (horizontal ? i : 0);
-            int y = startY + (horizontal ? 0 : i);
-
-            if (x < 0 || x >= HEIGHT || y < 0 || y >= WIDTH || this.getCell(x, y).getCellState() != CellState.FREE) {
-                return false;
-            }
-            newShipCells.add(getCell(x, y));
+    public boolean placeShip(ShipModel ship, int startX, int startY, boolean horizontal) {
+        if (startX < 0 || startY < 0 || startX >= WIDTH || startY >= HEIGHT) {
+            return false;
         }
 
-        for (CellModel cell : newShipCells) {
-            cell.setCellValue(CellState.SET);
-            ship.addShipCells(cell);
+        CellModel startCell = this.getCell(startX, startY);
+        ship.setShipParameters(startCell, ship.getLength(), horizontal);
+
+        if (!ship.isValidLength()) {
+            return false;
+        }
+
+        if (!isValidPlacement(ship)) {
+            return false;
+        }
+
+        CellModel endCell = ship.getEndCell();
+        for (int x = startCell.getCellCoordX(); x <= endCell.getCellCoordX(); x++) {
+            for (int y = startCell.getCellCoordY(); y <= endCell.getCellCoordY(); y++) {
+                this.changeCellOnBoard(x, y, CellState.SET);
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isValidPlacement(ShipModel ship) {
+        CellModel startCell = ship.getStartCell();
+        CellModel endCell = ship.getEndCell();
+
+        for (int x = startCell.getCellCoordX(); x <= endCell.getCellCoordX(); x++) {
+            for (int y = startCell.getCellCoordY(); y <= endCell.getCellCoordY(); y++) {
+                if (x >= WIDTH || y >= HEIGHT || this.getCell(x, y).getCellState() != CellState.FREE) {
+                    return false;
+                }
+            }
         }
 
         return true;
