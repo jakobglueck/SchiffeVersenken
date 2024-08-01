@@ -8,10 +8,7 @@ public class BoardView extends JPanel {
 
     private BoardModel playerBoard;
     private JButton[][] buttons;
-    private JLabel totalClicksLabel;
-    private JLabel hitsLabel;
-    private JLabel missesLabel;
-    private JLabel sunkShipsLabel;
+    private InfoPanelView infoPanelView;
 
     public BoardView(BoardModel playerBoard) {
         this.playerBoard = playerBoard;
@@ -24,15 +21,7 @@ public class BoardView extends JPanel {
         JLabel playerNameLabel = new JLabel("Spielername", SwingConstants.CENTER);
         playerNamePanel.add(playerNameLabel);
 
-        JPanel infoPanel = new JPanel(new GridLayout(4, 1));
-        totalClicksLabel = new JLabel("Anzahl gesamter Klicks: 0");
-        hitsLabel = new JLabel("Davon Getroffen (Hits): 0");
-        missesLabel = new JLabel("Verfehlt: 0");
-        sunkShipsLabel = new JLabel("Gegnerische Schiffe versunken: 0");
-        infoPanel.add(totalClicksLabel);
-        infoPanel.add(hitsLabel);
-        infoPanel.add(missesLabel);
-        infoPanel.add(sunkShipsLabel);
+        infoPanelView = new InfoPanelView();  // InfoPanel initialisieren
 
         JPanel gridPanel = new JPanel(new GridLayout(10, 10));  // Erzeuge ein Panel für das Grid
         this.generateBlankBoard(gridPanel);
@@ -42,14 +31,9 @@ public class BoardView extends JPanel {
         mainPanel.add(createLabelsPanel(false), BorderLayout.WEST);  // Buchstaben-Labels links
         mainPanel.add(gridPanel, BorderLayout.CENTER);  // Grid in der Mitte
 
-        // Leere Panels als Abstandshalter
-        JPanel topSpacer = new JPanel();
-        topSpacer.setPreferredSize(new Dimension(0, 20));  // Höhe des oberen Abstandshalters
-
         this.add(playerNamePanel, BorderLayout.NORTH);  // Spielername oben
         this.add(mainPanel, BorderLayout.CENTER);  // Hauptpanel in der Mitte
-        this.add(infoPanel, BorderLayout.SOUTH);  // Informationen unten
-        this.add(topSpacer, BorderLayout.NORTH);
+        this.add(infoPanelView, BorderLayout.SOUTH);  // Informationen unten
 
         this.setVisible(true);
     }
@@ -65,9 +49,9 @@ public class BoardView extends JPanel {
 
     private JButton createStyledButton() {
         JButton button = new JButton();
-        button.setBackground(new Color(0xADD8E6));
+        button.setBackground(new Color(0x8300DE));
         button.setForeground(Color.WHITE);
-        button.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        button.setBorder(BorderFactory.createLineBorder(Color.GREEN, 1));
         return button;
     }
 
@@ -88,20 +72,4 @@ public class BoardView extends JPanel {
         return labelsPanel;
     }
 
-    // Getter-Methoden für die Labels
-    public JLabel getTotalClicksLabel() {
-        return totalClicksLabel;
-    }
-
-    public JLabel getHitsLabel() {
-        return hitsLabel;
-    }
-
-    public JLabel getMissesLabel() {
-        return missesLabel;
-    }
-
-    public JLabel getSunkShipsLabel() {
-        return sunkShipsLabel;
-    }
 }
