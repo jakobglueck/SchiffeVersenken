@@ -9,9 +9,9 @@ import java.util.List;
 public class BoardModel {
     private CellModel[][] board;
 
-    private static final int HEIGHT = 10;
-    private int WIDTH = 10;
-    
+    private static int HEIGHT = 10;
+    private static int WIDTH = 10;
+
     public BoardModel() {
         this.board = new CellModel[HEIGHT][WIDTH];
         for (int i = 0; i < 10; i++) {
