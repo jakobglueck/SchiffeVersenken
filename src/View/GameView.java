@@ -3,13 +3,18 @@ package View;
 import model.BoardModel;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GameView extends JFrame {
 
     private BoardView playerBoardOne;
     private BoardView playerBoardTwo;
+    private BoardModel boardModel;
 
     public GameView(BoardModel bm) {
+        this.boardModel = bm;
+
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -17,7 +22,7 @@ public class GameView extends JFrame {
         this.playerBoardOne = new BoardView(bm);
         this.playerBoardTwo = new BoardView(bm);
 
-        //bm.randomlyPlaceShips(); // Zufällige Platzierung der Schiffe auf dem ersten Spielbrett
+        // bm.randomlyPlaceShips(); // Zufällige Platzierung der Schiffe auf dem ersten Spielbrett
         playerBoardOne.updateBoard(); // Aktualisiere das Spielbrett
 
         setLayout(new GridBagLayout());
@@ -34,9 +39,45 @@ public class GameView extends JFrame {
 
         // Unterer Bereich für Bedienelemente
         JPanel controlPanel = new JPanel(new FlowLayout());
+        addControlButtons(controlPanel);
         addComponent(controlPanel, gbc, 0, 2, 3, 1, 10, 1.0, 0.0, GridBagConstraints.HORIZONTAL);
 
         setVisible(true);
+    }
+
+    private void addControlButtons(JPanel controlPanel) {
+        JButton mainMenuButton = new JButton("Zurück zum Hauptmenü");
+        JButton pauseGameButton = new JButton("Spiel pausieren");
+        JButton endGameButton = new JButton("Spiel verlassen");
+
+        endGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        pauseGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Implementieren Sie hier die Aktion zum Pausieren des Spiels
+                JOptionPane.showMessageDialog(null, "Spiel ist pausiert!");
+            }
+        });
+
+        /*
+        mainMenuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startNewGame();
+            }
+        });
+        */
+
+        controlPanel.add(mainMenuButton);
+        controlPanel.add(pauseGameButton);
+        controlPanel.add(endGameButton);
+
     }
 
     private void addComponent(Component component, GridBagConstraints gbc, int gridx, int gridy, int gridwidth, int gridheight, int insets, double weightx, double weighty, int fill) {
