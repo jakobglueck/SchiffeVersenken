@@ -1,7 +1,6 @@
 package model;
 
 import utils.CellState;
-import model.ShipModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,18 +13,18 @@ public class BoardModel {
 
     public BoardModel() {
         this.board = new CellModel[HEIGHT][WIDTH];
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                this.board[i][j] = new CellModel();
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                this.board[x][y] = new CellModel(x,y,CellState.FREE);
             }
         }
     }
-
-    public void setBoard(int x, int y, CellState cellState) {
-        this.board[x][y].setCellValue(cellState);
+    
+    public void changeCellOnBoard(int x, int y, CellState cellState) {
+        this.board[x][y].updateCellState(cellState);
     }
     
-    public CellModel[][] getCompletBoard() {
+    public CellModel[][] getCompleteBoard() {
         return this.board;
     }
 
@@ -41,21 +40,16 @@ public class BoardModel {
         return board[0].length;
     }
 
-    public void setShip(ShipModel ship) {
-        this.ships.add(ship);
-    }
-
-    public boolean placeShip(ShipModel ship, int startX, int startY, int shipLength, boolean horizontal) {
+    public boolean placeShip(ShipModel ship, int startX, int startY) {
         List<CellModel> newShipCells = new ArrayList<>();
 
         for (int i = 0; i < shipLength; i++) {
             int x = startX + (horizontal ? i : 0);
             int y = startY + (horizontal ? 0 : i);
 
-            if (x < 0 || x >= this.getRows() || y < 0 || y >= this.getCols() || this.getCell(x, y).getCellValue() != CellState.FREE) {
+            if (x < 0 || x >= HEIGHT || y < 0 || y >= WIDTH || this.getCell(x, y).getCellState() != CellState.FREE) {
                 return false;
             }
-
             newShipCells.add(getCell(x, y));
         }
 
