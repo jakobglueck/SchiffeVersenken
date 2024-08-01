@@ -1,62 +1,85 @@
 package View;
 
-import model.GameModel;
+import model.BoardModel;
 import javax.swing.*;
 import java.awt.*;
 
 public class GameView extends JFrame {
 
-    //private GameModel game;
-    public GameView(){
+    private BoardView playerBoardOne;
+    private BoardView playerBoardTwo;
+
+    public GameView(BoardModel bm) {
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
 
-        HomeScreenView hs = new HomeScreenView();
-        add(hs, BorderLayout.CENTER);
-        setVisible(true);
+        this.playerBoardOne = new BoardView(bm);
+        this.playerBoardTwo = new BoardView(bm);
 
-        /*
-        this.playerBoardOne = new BoardView();
-        this.playerBoardTwo = new BoardView();
-
-        setLayout(new GridBagLayout());  // Verwende GridBagLayout
+        setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // Füge das erste BoardView an Position (0,0) hinzu
+        // Label für Spieler 1
+        JLabel playerOneLabel = new JLabel("Player 1", JLabel.CENTER);
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        add(playerOneLabel, gbc);
+
+        // Label für Spieler 2
+        JLabel playerTwoLabel = new JLabel("Player 2", JLabel.CENTER);
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        add(playerTwoLabel, gbc);
+
+        // BoardView für Spieler 1
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.insets = new Insets(10, 10, 20, 10); // Abstand hinzufügen
+        gbc.weightx = 0.5;
+        gbc.weighty = 0.5;
+        gbc.insets = new Insets(10, 10, 10, 10);
         add(playerBoardOne, gbc);
 
-        // Füge ein leeres Panel an Position (0,1) hinzu
+        // Leeres Panel als Platzhalter
         gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        add(new JPanel(), gbc);
-
-        // Füge das zweite BoardView an Position (1,0) hinzu
-        gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.insets = new Insets(20, 10, 10, 10); // Abstand hinzufügen
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        add(new JPanel(), gbc);
+
+        // BoardView für Spieler 2
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0.5;
         add(playerBoardTwo, gbc);
 
-        // Füge ein leeres Panel an Position (1,1) hinzu
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
+        // Unterer Bereich mit Bedienelementen
+        JPanel controlPanel = new JPanel();
+        controlPanel.setLayout(new FlowLayout());
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3;
         gbc.gridheight = 1;
-        add(new JPanel(), gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.0;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        add(controlPanel, gbc);
 
         setVisible(true);
-       */
     }
 }
