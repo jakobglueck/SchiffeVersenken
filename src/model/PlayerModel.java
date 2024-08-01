@@ -29,14 +29,12 @@ public class PlayerModel {
     public void setBoard(BoardModel board) {
         this.board = board;
     }
+
     void setShip(ShipModel ship){
         this.ships.add(ship);
     }
 
-
     public void placeShip(){
-
-
+        this.board.placeAllShips();
     }
 }
-
