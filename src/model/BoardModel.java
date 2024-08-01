@@ -101,7 +101,7 @@ public class BoardModel {
                 int startY = (int) (Math.random() * HEIGHT);
                 boolean horizontal = Math.random() < 0.5;
 
-                if (placeShip(startX, startY, horizontal, length)) {
+                if (this.placeShip(startX, startY, horizontal, length)) {
                     placed = true;
                 }
             }
