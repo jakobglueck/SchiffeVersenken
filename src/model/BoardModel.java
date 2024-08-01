@@ -8,10 +8,12 @@ import java.util.List;
 
 public class BoardModel {
     private CellModel[][] board;
-    private ArrayList<ShipModel> ships;
 
+    private static final int HEIGHT = 10;
+    private int WIDTH = 10;
+    
     public BoardModel() {
-        this.board = new CellModel[10][10];
+        this.board = new CellModel[HEIGHT][WIDTH];
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 this.board[i][j] = new CellModel();
