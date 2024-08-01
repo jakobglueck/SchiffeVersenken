@@ -7,9 +7,11 @@ import java.util.List;
 
 public class BoardModel {
     private CellModel[][] board;
+    private ArrayList<ShipModel> playerShips;
 
-    private static int HEIGHT = 10;
-    private static int WIDTH = 10;
+
+    private static final int HEIGHT = 10;
+    private static final int WIDTH = 10;
 
     public BoardModel() {
         this.board = new CellModel[HEIGHT][WIDTH];
@@ -32,12 +34,10 @@ public class BoardModel {
         return this.board[x][y];
     }
 
-    public int getRows() {
-        return board.length;
-    }
-
-    public int getCols() {
-        return board[0].length;
+    public void addShip(ShipModel ship , int startX, int startY, boolean horizontal){
+        if(this.placeShip(ship , startX, startY, horizontal)){
+            playerShips.add(ship);
+        }
     }
 
     public boolean placeShip(ShipModel ship, int startX, int startY, boolean horizontal) {
