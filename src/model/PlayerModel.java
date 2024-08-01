@@ -2,6 +2,7 @@ package model;
 
 import model.BoardModel;
 import model.ShipModel;
+import utils.CellState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 public class PlayerModel {
     private String playerName;
     private BoardModel board;
-    private ArrayList<ShipModel>  ships;
+
 
     public PlayerModel(){
     }
@@ -30,11 +31,11 @@ public class PlayerModel {
         this.board = board;
     }
 
-    public ArrayList<ShipModel> getShips() {
-        return ships;
+    public void placeShip(){
+        this.board.placeAllShips();
     }
 
-    void setShip(ShipModel ship){
-        this.ships.add(ship);
+    public void playerMove(int x, int y, CellState cellState){
+        this.board.changeCellOnBoard(x,y,cellState);
     }
 }
