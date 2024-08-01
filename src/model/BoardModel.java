@@ -3,10 +3,9 @@ package model;
 import utils.CellState;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class BoardModel {
-    public static final int[] BOAT_SIZES = {5,4,4,3,3,3,2,2,2,2};
+    public static final int[] BOAT_SIZES = {5, 4, 4, 3, 3, 3, 2, 2, 2, 2};
 
     private CellModel[][] board;
     private ArrayList<ShipModel> playerShips;
@@ -16,17 +15,18 @@ public class BoardModel {
 
     public BoardModel() {
         this.board = new CellModel[HEIGHT][WIDTH];
+        this.playerShips = new ArrayList<>();
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
                 this.board[x][y] = new CellModel(x, y, CellState.FREE);
             }
         }
     }
-    
+
     public void changeCellOnBoard(int x, int y, CellState cellState) {
         this.board[x][y].updateCellState(cellState);
     }
-    
+
     public CellModel[][] getCompleteBoard() {
         return this.board;
     }
@@ -35,19 +35,23 @@ public class BoardModel {
         return this.board[x][y];
     }
 
-    public void addShip(int startX, int startY, boolean horizontal){
-        if(this.placeShip(startX, startY, horizontal)){
+    public void addShip(int startX, int startY, boolean horizontal, int length) {
+        if (this.placeShip(startX, startY, horizontal, length)) {
+            ShipModel ship = new ShipModel();
+            CellModel startCell = this.getCell(startX, startY);
+            ship.setShipParameters(startCell, length, horizontal);
             playerShips.add(ship);
         }
     }
 
-    public boolean placeShip(int startX, int startY, boolean horizontal) {
+    public boolean placeShip(int startX, int startY, boolean horizontal, int length) {
         if (startX < 0 || startY < 0 || startX >= WIDTH || startY >= HEIGHT) {
             return false;
         }
+
         ShipModel ship = new ShipModel();
         CellModel startCell = this.getCell(startX, startY);
-        ship.setShipParameters(startCell, ship.getLength(), horizontal);
+        ship.setShipParameters(startCell, length, horizontal);
 
         if (!ship.isValidLength()) {
             return false;
@@ -63,7 +67,6 @@ public class BoardModel {
                 this.changeCellOnBoard(x, y, CellState.SET);
             }
         }
-
         return true;
     }
 
@@ -79,6 +82,29 @@ public class BoardModel {
             }
         }
 
+        for (int x = Math.max(0, startCell.getCellCoordX() - 1); x <= Math.min(WIDTH - 1, endCell.getCellCoordX() + 1); x++) {
+            for (int y = Math.max(0, startCell.getCellCoordY() - 1); y <= Math.min(HEIGHT - 1, endCell.getCellCoordY() + 1); y++) {
+                if (this.getCell(x, y).getCellState() == CellState.SET) {
+                    return false;
+                }
+            }
+        }
+
         return true;
+    }
+
+    public void placeAllShips() {
+        for (int length : BOAT_SIZES) {
+            boolean placed = false;
+            while (!placed) {
+                int startX = (int) (Math.random() * WIDTH);
+                int startY = (int) (Math.random() * HEIGHT);
+                boolean horizontal = Math.random() < 0.5;
+
+                if (placeShip(startX, startY, horizontal, length)) {
+                    placed = true;
+                }
+            }
+        }
     }
 }
