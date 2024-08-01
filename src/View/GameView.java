@@ -6,12 +6,17 @@ import java.awt.*;
 
 public class GameView extends JFrame {
 
-    private GameModel game;
-    public GameView(GameModel game){
+    //private GameModel game;
+    public GameView(){
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
 
+        HomeScreenView hs = new HomeScreenView();
+        add(hs, BorderLayout.CENTER);
+        setVisible(true);
+
+        /*
         this.playerBoardOne = new BoardView();
         this.playerBoardTwo = new BoardView();
 
@@ -52,6 +57,6 @@ public class GameView extends JFrame {
         add(new JPanel(), gbc);
 
         setVisible(true);
-
+       */
     }
 }
