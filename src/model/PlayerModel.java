@@ -11,6 +11,8 @@ public class PlayerModel {
     private BoardModel board;
     private ArrayList<ShipModel>  ships;
 
+    public static final int[] BOAT_SIZES = {5,4,3,3,2};
+
     public PlayerModel(){
     }
 
