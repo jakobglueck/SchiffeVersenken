@@ -7,34 +7,26 @@ import java.util.List;
 
 public class ShipModel {
 
-    private ArrayList<CellModel> shipCells;
+    CellModel StartCell;
 
-    public ShipModel(){
-    }
+    CellModel EndCell;
 
-    public List<CellModel> getShip(){
-        return shipCells;
-    }
-    public void setShip(ArrayList<CellModel> ship){
-        this.shipCells = ship;
-    }
+    private int length;
+    boolean horizontal;
 
-    public void  addShipCells(CellModel cell){
-        this.shipCells.add(cell);
-    }
+    public ShipModel(){}
 
-    public void removeShipCells(CellModel cell){
-        this.shipCells.remove(cell);
+    public void setShipParameter(CellModel StartCell, CellModel endCell, int length, boolean horizontal){
+            this.StartCell = StartCell;
+            this.length = length;
+            this.horizontal = true;
+            this.EndCell = endCell;
     }
-
-    public void removeAllShipCells(){
-        this.shipCells.clear();
+    
+    public void changeDirection(boolean directions){
+        this.horizontal = directions;
     }
-
     public boolean checkShipLength(){
-        if(this.shipCells.size()>4 && this.shipCells.size() < 2){
-            return false;
-        }
-        return true;
+        return this.length > 5 || this.length < 2;
     }
 }
