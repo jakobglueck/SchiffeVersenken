@@ -9,9 +9,7 @@ import java.util.List;
 public class PlayerModel {
     private String playerName;
     private BoardModel board;
-    private ArrayList<ShipModel>  ships;
 
-    public static final int[] BOAT_SIZES = {5,4,3,3,2};
 
     public PlayerModel(){
     }
@@ -31,12 +29,14 @@ public class PlayerModel {
     public void setBoard(BoardModel board) {
         this.board = board;
     }
-
-    public ArrayList<ShipModel> getShips() {
-        return ships;
-    }
-
     void setShip(ShipModel ship){
         this.ships.add(ship);
     }
+
+
+    public void placeShip(){
+
+
+    }
 }
+
