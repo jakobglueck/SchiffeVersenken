@@ -9,24 +9,33 @@ public class CellModel {
 
 
     public CellModel(int x, int y, CellState cellState) {
-        this.cellState = CellState.FREE;
+        this.cellState = cellState;
         this.x = x;
         this.y = y;
+    }
+
+    public void updateCellState(CellState cellState) {
+        this.cellState = cellState;
+    }
+
+    public void updateCellCordX(int x){
+        this.x = x;
+    }
+
+    public void updateCellCordY(int y){
+        this.y = y;
+    }
+
+    public int getCellCoordX(){
+        return this.x;
+    }
+
+    public int getCellCoordY(){
+        return this.y;
     }
 
     public CellState getCellState() {
         return this.cellState;
     }
 
-    public void updateCellState(CellState cellState) {
-        this.cellState = cellState;
-    }
-    
-    public int getCellCordX(){
-        return this.x;
-    }
-
-    public int getCellCordY(){
-        return this.y;
-    }
 }
