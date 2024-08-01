@@ -20,66 +20,32 @@ public class GameView extends JFrame {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // Label für Spieler 1
-        JLabel playerOneLabel = new JLabel("Player 1", JLabel.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        gbc.insets = new Insets(10, 10, 10, 10);
-        add(playerOneLabel, gbc);
+        // Labels für Spieler 1 und Spieler 2
+        addComponent(new JLabel("Player 1", JLabel.CENTER), gbc, 0, 0, 1, 1, 10, 0.0, 0.0, GridBagConstraints.NONE);
+        addComponent(new JLabel("Player 2", JLabel.CENTER), gbc, 2, 0, 1, 1, 10, 0.0, 0.0, GridBagConstraints.NONE);
 
-        // Label für Spieler 2
-        JLabel playerTwoLabel = new JLabel("Player 2", JLabel.CENTER);
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        add(playerTwoLabel, gbc);
+        // BoardView für Spieler 1 und Spieler 2
+        addComponent(playerBoardOne, gbc, 0, 1, 1, 1, 10, 0.5, 0.5, GridBagConstraints.BOTH);
+        addComponent(new JPanel(), gbc, 1, 1, 1, 1, 10, 0.0, 0.0, GridBagConstraints.BOTH);
+        addComponent(playerBoardTwo, gbc, 2, 1, 1, 1, 10, 0.5, 0.5, GridBagConstraints.BOTH);
 
-        // BoardView für Spieler 1
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 0.5;
-        gbc.weighty = 0.5;
-        gbc.insets = new Insets(10, 10, 10, 10);
-        add(playerBoardOne, gbc);
-
-        // Leeres Panel als Platzhalter
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 0.0;
-        gbc.weighty = 0.0;
-        add(new JPanel(), gbc);
-
-        // BoardView für Spieler 2
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 0.5;
-        gbc.weighty = 0.5;
-        add(playerBoardTwo, gbc);
-
-        // Unterer Bereich mit Bedienelementen
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new FlowLayout());
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 3;
-        gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        gbc.weighty = 0.0;
-        gbc.insets = new Insets(10, 10, 10, 10);
-        add(controlPanel, gbc);
+        // Unterer Bereich für Bedienelemente
+        JPanel controlPanel = new JPanel(new FlowLayout());
+        addComponent(controlPanel, gbc, 0, 2, 3, 1, 10, 1.0, 0.0, GridBagConstraints.HORIZONTAL);
 
         setVisible(true);
     }
+
+    private void addComponent(Component component, GridBagConstraints gbc, int gridx, int gridy, int gridwidth, int gridheight, int insets, double weightx, double weighty, int fill) {
+        gbc.gridx = gridx;
+        gbc.gridy = gridy;
+        gbc.gridwidth = gridwidth;
+        gbc.gridheight = gridheight;
+        gbc.insets = new Insets(insets, insets, insets, insets);
+        gbc.weightx = weightx;
+        gbc.weighty = weighty;
+        gbc.fill = fill;
+        add(component, gbc);
+    }
+
 }
