@@ -79,7 +79,7 @@ public class BoardView extends JPanel {
     public void updateBoard() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                if (playerBoard.getCell(i, j).getCellValue() == CellState.SET) {
+                if (playerBoard.getCell(i, j).getCellState() == CellState.SET) {
                     buttons[i][j].setBackground(Color.GRAY);
                 } else {
                     buttons[i][j].setBackground(Color.WHITE);
