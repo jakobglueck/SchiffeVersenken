@@ -1,6 +1,7 @@
 package model;
 
 import model.CellModel;
+import utils.CellState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class ShipModel {
         this.startCell = startCell;
         this.length = length;
         this.horizontal = horizontal;
+        this.endCell = new CellModel(startCell.getCellCoordX(), startCell.getCellCoordY(), CellState.FREE);
         this.updateEndCell();
     }
 
