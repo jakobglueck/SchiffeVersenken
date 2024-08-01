@@ -21,9 +21,12 @@ public class GameModel {
     }
 
     public String createPlayerName(){
-        String playerName;
+        System.out.print("Enter player name: ");
         Scanner sc = new Scanner(System.in);
-        playerName = sc.nextLine();
+        String playerName = "Default Player";
+        if (sc.hasNextLine()) {
+            playerName = sc.nextLine();
+        }
         return playerName;
     }
 
@@ -33,6 +36,8 @@ public class GameModel {
     }
 
     public void createBasementGame(){
+        this.playerOne = createPlayer();
+        this.playerTwo = createPlayer();
 
         this.playerOne.setPlayerName(this.createPlayerName());
         this.playerTwo.setPlayerName(this.createPlayerName());
@@ -49,5 +54,4 @@ public class GameModel {
             this.playerOne.placeShip();
         }
     }
-
 }
