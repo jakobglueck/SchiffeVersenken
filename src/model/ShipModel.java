@@ -1,56 +1,61 @@
 package model;
 
-import model.CellModel;
 import utils.CellState;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShipModel {
-
-    CellModel startCell;
-
-    CellModel endCell;
-
+    private List<CellModel> shipCells;
     private int length;
-    boolean horizontal;
-
+    private boolean horizontal;
     private boolean shipStatus;
 
-
-    public ShipModel(){}
+    public ShipModel() {
+        this.shipCells = new ArrayList<>();
+    }
 
     public void setShipParameters(CellModel startCell, int length, boolean horizontal) {
-        this.startCell = startCell;
         this.length = length;
         this.horizontal = horizontal;
-        this.endCell = new CellModel(startCell.getCellCoordX(), startCell.getCellCoordY(), CellState.SET);
-        this.updateEndCell();
         this.shipStatus = true;
+        this.shipCells.clear();
+
+        int startX = startCell.getCellCoordX();
+        int startY = startCell.getCellCoordY();
+
+        for (int i = 0; i < length; i++) {
+            int currentX = horizontal ? startX + i : startX;
+            int currentY = horizontal ? startY : startY + i;
+            this.shipCells.add(new CellModel(currentX, currentY, CellState.SET));
+        }
     }
 
     public void changeDirection() {
         this.horizontal = !this.horizontal;
-        this.updateEndCell();
+        updateShipCells();
     }
 
-    private void updateEndCell() {
-        int endX = this.horizontal ? this.startCell.getCellCoordX() + length - 1 : this.startCell.getCellCoordX();
-        int endY = this.horizontal ? this.startCell.getCellCoordY() : this.startCell.getCellCoordY() + length - 1;
-        this.endCell.updateCellCordX(endX);
-        this.endCell.updateCellCordY(endY);
-    }
+    private void updateShipCells() {
+        CellModel startCell = shipCells.get(0);
+        int startX = startCell.getCellCoordX();
+        int startY = startCell.getCellCoordY();
 
-    private void changeShipStatus() {
-        this.shipStatus = !this.shipStatus;
+        for (int i = 0; i < length; i++) {
+            CellModel cell = shipCells.get(i);
+            int newX = horizontal ? startX + i : startX;
+            int newY = horizontal ? startY : startY + i;
+            cell.updateCellCordX(newX);
+            cell.updateCellCordY(newY);
+        }
     }
 
     public CellModel getStartCell() {
-        return this.startCell;
+        return shipCells.get(0);
     }
 
     public CellModel getEndCell() {
-        return this.endCell;
+        return shipCells.get(shipCells.size() - 1);
     }
 
     public int getLength() {
@@ -70,33 +75,23 @@ public class ShipModel {
     }
 
     public boolean isHit(int x, int y) {
-        if (this.horizontal) {
-            return y == this.startCell.getCellCoordY() &&
-                    x >= this.startCell.getCellCoordX() &&
-                    x < this.startCell.getCellCoordX() + this.length;
-        } else {
-            return x == this.startCell.getCellCoordX() &&
-                    y >= this.startCell.getCellCoordY() &&
-                    y < this.startCell.getCellCoordY() + this.length;
+        for (CellModel cell : shipCells) {
+            if (cell.getCellCoordX() == x && cell.getCellCoordY() == y) {
+                return true;
+            }
         }
+        return false;
     }
 
     public void checkShipStatus(BoardModel board) {
         boolean allCellsHit = true;
-        int startX = this.startCell.getCellCoordX();
-        int startY = this.startCell.getCellCoordY();
-
-        for (int i = 0; i < this.length; i++) {
-            int currentX = this.horizontal ? startX + i : startX;
-            int currentY = this.horizontal ? startY : startY + i;
-
-            CellModel currentCell = board.getCell(currentX, currentY);
-            if (currentCell.getCellState() != CellState.HIT) {
+        for (CellModel cell : shipCells) {
+            CellModel boardCell = board.getCell(cell.getCellCoordX(), cell.getCellCoordY());
+            if (boardCell.getCellState() != CellState.HIT) {
                 allCellsHit = false;
                 break;
             }
         }
-
         this.shipStatus = !allCellsHit;
     }
 }
