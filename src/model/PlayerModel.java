@@ -40,12 +40,12 @@ public class PlayerModel {
         this.board.changeCellOnBoard(x,y,cellState);
     }
 
-    public void playerMove(){
+    public void playerMove(PlayerModel player){
         System.out.println("Bitte wähle die Koordinaten die du treffen willst");
         Scanner scanner = new Scanner(System.in);
         int x = scanner.nextInt();
         int y = scanner.nextInt();
-        if(this.board.registerHit(x,y)){
+        if(player.board.registerHit(x,y)){
             System.out.println("Treffer");
         }else{
             System.out.println("Wasser");
