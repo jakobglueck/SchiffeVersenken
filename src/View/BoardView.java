@@ -22,9 +22,10 @@ public class BoardView extends JPanel {
 
         this.setLayout(new BorderLayout());  // Setze Layout des Panels
 
-        // Erstelle Panels für den Namen des Spielers und Informationen
+        // TODO GAMEVIEW
         JPanel playerNamePanel = new JPanel();
         JLabel playerNameLabel = new JLabel("Spielername", SwingConstants.CENTER);
+        //playerNameLabel.setText(playerNameOne);
         playerNamePanel.add(playerNameLabel);
 
         infoPanelView = new InfoPanelView();  // InfoPanel initialisieren
@@ -90,11 +91,11 @@ public class BoardView extends JPanel {
 
     private void handleCellClick(int row, int col, JLabel label) {
         CellModel cell = playerBoard.getCell(row, col);
-        if (cell.getCellValue() == CellState.FREE) {
-            cell.setCellValue(CellState.SET);
+        if (cell.getCellState() == CellState.FREE) {
+            cell.updateCellState(CellState.SET);
             label.setBackground(Color.GRAY);
-        } else if (cell.getCellValue() == CellState.SET) {
-            cell.setCellValue(CellState.FREE);
+        } else if (cell.getCellState() == CellState.SET) {
+            cell.updateCellState(CellState.FREE);
             label.setBackground(Color.WHITE);
         }
     }
@@ -103,7 +104,7 @@ public class BoardView extends JPanel {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 CellModel cell = playerBoard.getCell(i, j);
-                if (cell.getCellValue() == CellState.SET) {
+                if (cell.getCellState() == CellState.SET) {
                     labels[i][j].setBackground(Color.GRAY);
                 } else {
                     labels[i][j].setBackground(Color.WHITE);
