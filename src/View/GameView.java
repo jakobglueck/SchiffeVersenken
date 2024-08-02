@@ -1,6 +1,6 @@
 package View;
 
-import model.BoardModel;
+import model.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,19 +8,26 @@ import java.awt.event.ActionListener;
 
 public class GameView extends JFrame {
 
+    private PlayerModel playerOne;
+    private PlayerModel playerTwo;
     private BoardView playerBoardOne;
     private BoardView playerBoardTwo;
     private BoardModel boardModel;
 
-    public GameView(BoardModel bm) {
-        this.boardModel = bm;
+    public GameView(GameModel gm) {
+        this.gameModel = gm;
 
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
 
-        this.playerBoardOne = new BoardView(bm);
-        this.playerBoardTwo = new BoardView(bm);
+
+        this.playerOne = gm.getPlayerOne();
+        this.playerTwo = gm.getPlayerTwo();
+
+
+        this.playerBoardOne = new BoardView(playerOne.getBoard());
+        this.playerBoardTwo = new BoardView(playerTwo.getBoard());
 
         // bm.randomlyPlaceShips(); // Zufällige Platzierung der Schiffe auf dem ersten Spielbrett
         playerBoardOne.updateBoard(); // Aktualisiere das Spielbrett
@@ -29,8 +36,8 @@ public class GameView extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
 
         // Labels für Spieler 1 und Spieler 2
-        addComponent(new JLabel("Player 1", JLabel.CENTER), gbc, 0, 0, 1, 1, 10, 0.0, 0.0, GridBagConstraints.NONE);
-        addComponent(new JLabel("Player 2", JLabel.CENTER), gbc, 2, 0, 1, 1, 10, 0.0, 0.0, GridBagConstraints.NONE);
+        addComponent(new JLabel(this.playerOne.getPlayerName(), JLabel.CENTER), gbc, 0, 0, 1, 1, 10, 0.0, 0.0, GridBagConstraints.NONE);
+        addComponent(new JLabel(this.playerTwo.getPlayerName(), JLabel.CENTER), gbc, 2, 0, 1, 1, 10, 0.0, 0.0, GridBagConstraints.NONE);
 
         // BoardView für Spieler 1 und Spieler 2
         addComponent(playerBoardOne, gbc, 0, 1, 1, 1, 10, 0.5, 0.5, GridBagConstraints.BOTH);
