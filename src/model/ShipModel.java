@@ -15,6 +15,9 @@ public class ShipModel {
     private int length;
     boolean horizontal;
 
+    private boolean shipStatus;
+
+
     public ShipModel(){}
 
     public void setShipParameters(CellModel startCell, int length, boolean horizontal) {
@@ -22,6 +25,12 @@ public class ShipModel {
         this.length = length;
         this.horizontal = horizontal;
         this.endCell = new CellModel(startCell.getCellCoordX(), startCell.getCellCoordY(), CellState.SET);
+        this.updateEndCell();
+        this.shipStatus = true;
+    }
+
+    public void changeDirection() {
+        this.horizontal = !this.horizontal;
         this.updateEndCell();
     }
 
@@ -32,9 +41,8 @@ public class ShipModel {
         this.endCell.updateCellCordY(endY);
     }
 
-    public void changeDirection() {
-        this.horizontal = !this.horizontal;
-        this.updateEndCell();
+    private void changeShipStatus() {
+        this.shipStatus = !this.shipStatus;
     }
 
     public CellModel getStartCell() {
@@ -53,7 +61,31 @@ public class ShipModel {
         return this.horizontal;
     }
 
+    public boolean getShipStatus() {
+        return this.shipStatus;
+    }
+
     public boolean isValidLength() {
         return this.length >= 2 && this.length <= 5;
     }
+
+    public void checkShipStatus(BoardModel board) {
+        boolean allCellsHit = true;
+        int startX = this.startCell.getCellCoordX();
+        int startY = this.startCell.getCellCoordY();
+
+        for (int i = 0; i < this.length; i++) {
+            int currentX = this.horizontal ? startX + i : startX;
+            int currentY = this.horizontal ? startY : startY + i;
+
+            CellModel currentCell = board.getCell(currentX, currentY);
+            if (currentCell.getCellState() != CellState.HIT) {
+                allCellsHit = false;
+                break;
+            }
+        }
+
+        this.shipStatus = !allCellsHit;
+    }
+
 }
