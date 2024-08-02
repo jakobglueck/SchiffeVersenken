@@ -41,14 +41,37 @@ public class PlayerModel {
     }
 
     public void playerMove(PlayerModel player){
-        System.out.println("Bitte wähle die Koordinaten die du treffen willst");
-        Scanner scanner = new Scanner(System.in);
-        int x = scanner.nextInt();
-        int y = scanner.nextInt();
-        if(player.board.registerHit(x,y)){
-            System.out.println("Treffer");
-        }else{
-            System.out.println("Wasser");
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.print("Enter x coordinate: ");
+            int x = sc.nextInt();
+            System.out.print("Enter y coordinate: ");
+            int y = sc.nextInt();
+
+            if (player.validMove(x, y, player)) {
+                CellState newState;
+
+                if (player.board.getCell(x,y).getCellState() == CellState.FREE) {
+                    newState = CellState.HIT;
+                } else {
+                    newState = CellState.REVEAL;
+                }
+                player.board.changeCellOnBoard(x, y, newState);
+                System.out.println("Move accepted.");
+                break;
+            } else {
+                System.out.println("Invalid move. Please try again.");
+            }
         }
+    }
+
+    public boolean validMove(int x, int y,PlayerModel player) {
+        if (x < 0 || x >= 9 || y < 0 || y >= 9) {
+            return false;
+        }
+
+        CellState currentCellState = player.board.getCell(x,y).getCellState();
+        return currentCellState == CellState.HIT || currentCellState == CellState.REVEAL;
     }
 }
