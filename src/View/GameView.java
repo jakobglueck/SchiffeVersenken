@@ -29,34 +29,31 @@ public class GameView extends JFrame {
 
         playerBoardOne.updateBoard(); // Aktualisiere das Spielbrett
 
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+        setLayout(new BorderLayout());
 
-        // PlayerNamePanels für Spieler 1 und Spieler 2
-        JPanel playerNamePanelOne = createPlayerNamePanel(this.playerOne.getPlayerName());
-        JPanel playerNamePanelTwo = createPlayerNamePanel(this.playerTwo.getPlayerName());
+        // PlayerViews für Spieler 1 und Spieler 2
+        JPanel playerNamePanel = new JPanel(new GridLayout(1, 2));
+        PlayerView playerViewOne = new PlayerView(this.playerOne.getPlayerName());
+        PlayerView playerViewTwo = new PlayerView(this.playerTwo.getPlayerName());
 
-        addComponent(playerNamePanelOne, gbc, 0, 0, 1, 1, 10, 0.0, 0.0, GridBagConstraints.NONE);
-        addComponent(playerNamePanelTwo, gbc, 2, 0, 1, 1, 10, 0.0, 0.0, GridBagConstraints.NONE);
+        playerNamePanel.add(playerViewOne);
+        playerNamePanel.add(playerViewTwo);
+
+        add(playerNamePanel, BorderLayout.NORTH);
 
         // BoardView für Spieler 1 und Spieler 2
-        addComponent(playerBoardOne, gbc, 0, 1, 1, 1, 10, 0.5, 0.5, GridBagConstraints.BOTH);
-        addComponent(new JPanel(), gbc, 1, 1, 1, 1, 10, 0.0, 0.0, GridBagConstraints.BOTH);
-        addComponent(playerBoardTwo, gbc, 2, 1, 1, 1, 10, 0.5, 0.5, GridBagConstraints.BOTH);
+        JPanel boardPanel = new JPanel(new GridLayout(1, 2));
+        boardPanel.add(playerBoardOne);
+        boardPanel.add(playerBoardTwo);
+
+        add(boardPanel, BorderLayout.CENTER);
 
         // Unterer Bereich für Bedienelemente
         JPanel controlPanel = new JPanel(new FlowLayout());
         addControlButtons(controlPanel);
-        addComponent(controlPanel, gbc, 0, 2, 3, 1, 10, 1.0, 0.0, GridBagConstraints.HORIZONTAL);
+        add(controlPanel, BorderLayout.SOUTH);
 
         setVisible(true);
-    }
-
-    private JPanel createPlayerNamePanel(String playerName) {
-        JPanel playerNamePanel = new JPanel();
-        JLabel playerNameLabel = new JLabel(playerName, SwingConstants.CENTER);
-        playerNamePanel.add(playerNameLabel);
-        return playerNamePanel;
     }
 
     private void addControlButtons(JPanel controlPanel) {
@@ -81,17 +78,5 @@ public class GameView extends JFrame {
         controlPanel.add(mainMenuButton);
         controlPanel.add(pauseGameButton);
         controlPanel.add(endGameButton);
-    }
-
-    private void addComponent(Component component, GridBagConstraints gbc, int gridx, int gridy, int gridwidth, int gridheight, int insets, double weightx, double weighty, int fill) {
-        gbc.gridx = gridx;
-        gbc.gridy = gridy;
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.insets = new Insets(insets, insets, insets, insets);
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
-        gbc.fill = fill;
-        add(component, gbc);
     }
 }
