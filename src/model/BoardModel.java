@@ -107,25 +107,17 @@ public class BoardModel {
         }
     }
 
-    public void registerHit(int x, int y) {
+    public boolean registerHit(int x, int y) {
         CellModel cell = this.getCell(x, y);
         if (cell.getCellState() == CellState.SET) {
             cell.updateCellState(CellState.HIT);
             for (ShipModel ship : this.playerShips) {
-                if (isPartOfShip(ship, x, y)) {
+                if (ship.isHit(x, y)) {
                     ship.checkShipStatus(this);
-                    break;
+                    return true;
                 }
             }
         }
-    }
-
-    private boolean isPartOfShip(ShipModel ship, int x, int y) {
-        int startX = ship.getStartCell().getCellCoordX();
-        int startY = ship.getStartCell().getCellCoordY();
-        int endX = ship.getEndCell().getCellCoordX();
-        int endY = ship.getEndCell().getCellCoordY();
-
-        return x >= startX && x <= endX && y >= startY && y <= endY;
+        return false;
     }
 }
