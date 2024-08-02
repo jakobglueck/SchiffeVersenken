@@ -21,7 +21,7 @@ public class ShipModel {
         this.startCell = startCell;
         this.length = length;
         this.horizontal = horizontal;
-        this.endCell = new CellModel(startCell.getCellCoordX(), startCell.getCellCoordY(), CellState.FREE);
+        this.endCell = new CellModel(startCell.getCellCoordX(), startCell.getCellCoordY(), CellState.SET);
         this.updateEndCell();
     }
 
