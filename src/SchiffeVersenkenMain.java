@@ -11,7 +11,7 @@ public class SchiffeVersenkenMain{
 
         GameModel gm = new GameModel();
 
-        GameView gameView = new GameView(bm);
+        GameView gameView = new GameView(gm);
 
         //Controller - TODO
 
