@@ -80,30 +80,36 @@ public class GameModel {
         this.playerTwo.playerMove(this.playerOne);
     }
 
+    private void switchPlayer() {
+        this.currentPlayer = ( this.currentPlayer ==  this.playerOne) ?  this.playerTwo :  this.playerOne;
+    }
+
     public void startGame() {
         System.out.println("Starting the game...");
-        System.out.println(currentPlayer.getPlayerName() + " goes first.");
+        System.out.println( this.currentPlayer.getPlayerName() + " goes first.");
 
         while (true) {
-            System.out.println("\n" + currentPlayer.getPlayerName() + "'s turn:");
-            PlayerModel opponent = (currentPlayer == playerOne) ? playerTwo : playerOne;
-            currentPlayer.playerMove(opponent);
+            System.out.println("\n" +  this.currentPlayer.getPlayerName() + "'s turn:");
+            PlayerModel opponent = ( this.currentPlayer ==  this.playerOne) ?  this.playerTwo :  this.playerOne;
+            this.currentPlayer.playerMove(opponent);
 
             if (opponent.getBoard().allShipsAreHit()) {
-                System.out.println(currentPlayer.getPlayerName() + " wins!");
+                System.out.println( this.currentPlayer.getPlayerName() + " wins!");
                 break;
             }
-            currentPlayer = opponent;
+
+            this.switchPlayer();
         }
     }
+
 
     public void playGame() {
         switch (this.gameState) {
             case DEBUG:
-                playerGameMove();
+                this.playerGameMove();
                 break;
             case NORMAL:
-                startGame();
+                this.startGame();
                 break;
             case COMPUTER:
                 System.out.println("Computer game mode not implemented yet.");
