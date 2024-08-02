@@ -38,4 +38,7 @@ public class CellModel {
         return this.cellState;
     }
 
+    public boolean checkHitStatus(){
+        return this.cellState == CellState.HIT;
+    }
 }

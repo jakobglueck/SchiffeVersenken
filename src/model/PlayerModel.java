@@ -6,6 +6,7 @@ import utils.CellState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class PlayerModel {
     private String playerName;
@@ -37,5 +38,17 @@ public class PlayerModel {
 
     public void playerMove(int x, int y, CellState cellState){
         this.board.changeCellOnBoard(x,y,cellState);
+    }
+
+    public void playerMove(){
+        System.out.println("Bitte wähle die Koordinaten die du treffen willst");
+        Scanner scanner = new Scanner(System.in);
+        int x = scanner.nextInt();
+        int y = scanner.nextInt();
+        if(this.board.registerHit(x,y)){
+            System.out.println("Treffer");
+        }else{
+            System.out.println("Wasser");
+        }
     }
 }

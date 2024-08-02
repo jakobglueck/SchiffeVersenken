@@ -106,4 +106,18 @@ public class BoardModel {
             }
         }
     }
+
+    public boolean registerHit(int x, int y) {
+        CellModel cell = this.getCell(x, y);
+        if (cell.getCellState() == CellState.SET) {
+            cell.updateCellState(CellState.HIT);
+            for (ShipModel ship : this.playerShips) {
+                if (ship.isHit(x, y)) {
+                    ship.checkShipStatus(this);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
