@@ -11,7 +11,7 @@ public class PlayerView extends JPanel {
         playerNameLabel = new JLabel(playerName, SwingConstants.CENTER);
         this.add(playerNameLabel, BorderLayout.CENTER);
 
-        this.setBorder(BorderFactory.createEmptyBorder(25, 10, 10, 10));
+        this.setBorder(BorderFactory.createEmptyBorder(25, 10, 0, 10));
 
     }
 

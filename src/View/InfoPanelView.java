@@ -22,6 +22,8 @@ public class InfoPanelView extends JPanel {
         add(hitsLabel);
         add(missesLabel);
         add(sunkShipsLabel);
+
+        this.setBorder(BorderFactory.createEmptyBorder(25, 15, 0, 15));
     }
 
     // Getter-Methoden für die Labels
