@@ -55,11 +55,10 @@ public class BoardModel {
             return false;
         }
 
-        CellModel endCell = ship.getEndCell();
-        for (int x = startCell.getCellCoordX(); x <= endCell.getCellCoordX(); x++) {
-            for (int y = startCell.getCellCoordY(); y <= endCell.getCellCoordY(); y++) {
-                this.changeCellOnBoard(x, y, CellState.SET);
-            }
+        for (int i = 0; i < length; i++) {
+            int x = horizontal ? startX + i : startX;
+            int y = horizontal ? startY : startY + i;
+            this.changeCellOnBoard(x, y, CellState.SET);
         }
         this.addShip(startX, startY, horizontal, length);
         return true;
@@ -71,14 +70,6 @@ public class BoardModel {
 
         if (endCell.getCellCoordX() >= WIDTH || endCell.getCellCoordY() >= HEIGHT) {
             return false;
-        }
-
-        for (int x = startCell.getCellCoordX(); x <= endCell.getCellCoordX(); x++) {
-            for (int y = startCell.getCellCoordY(); y <= endCell.getCellCoordY(); y++) {
-                if (this.getCell(x, y).getCellState() != CellState.FREE) {
-                    return false;
-                }
-            }
         }
 
         for (int x = Math.max(0, startCell.getCellCoordX() - 1); x <= Math.min(WIDTH - 1, endCell.getCellCoordX() + 1); x++) {
