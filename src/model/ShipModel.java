@@ -69,6 +69,18 @@ public class ShipModel {
         return this.length >= 2 && this.length <= 5;
     }
 
+    public boolean isHit(int x, int y) {
+        if (this.horizontal) {
+            return y == this.startCell.getCellCoordY() &&
+                    x >= this.startCell.getCellCoordX() &&
+                    x < this.startCell.getCellCoordX() + this.length;
+        } else {
+            return x == this.startCell.getCellCoordX() &&
+                    y >= this.startCell.getCellCoordY() &&
+                    y < this.startCell.getCellCoordY() + this.length;
+        }
+    }
+
     public void checkShipStatus(BoardModel board) {
         boolean allCellsHit = true;
         int startX = this.startCell.getCellCoordX();
@@ -87,5 +99,4 @@ public class ShipModel {
 
         this.shipStatus = !allCellsHit;
     }
-
 }
