@@ -10,6 +10,9 @@ public class PlayerView extends JPanel {
         this.setLayout(new BorderLayout());
         playerNameLabel = new JLabel(playerName, SwingConstants.CENTER);
         this.add(playerNameLabel, BorderLayout.CENTER);
+
+        this.setBorder(BorderFactory.createEmptyBorder(25, 10, 10, 10));
+
     }
 
     public void setPlayerName(String playerName) {
