@@ -54,4 +54,12 @@ public class GameModel {
             this.playerOne.placeShip();
         }
     }
+
+    public PlayerModel getPlayerOne(){
+        return this.playerOne;
+    }
+
+    public PlayerModel getPlayerTwo(){
+        return this.playerTwo;
+    }
 }
