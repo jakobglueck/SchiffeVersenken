@@ -102,7 +102,6 @@ public class GameModel {
         }
     }
 
-
     public void playGame() {
         switch (this.gameState) {
             case DEBUG:
