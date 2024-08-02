@@ -35,6 +35,10 @@ public class BoardModel {
         return this.board[x][y];
     }
 
+    public ArrayList<ShipModel> getPlayerShips() {
+        return this.playerShips;
+    }
+
     public void addShip(int startX, int startY, boolean horizontal, int length) {
         ShipModel ship = new ShipModel();
         CellModel startCell = this.getCell(startX, startY);
@@ -111,4 +115,14 @@ public class BoardModel {
         }
         return false;
     }
+
+    public boolean allShipsAreHit() {
+        for (ShipModel ship : this.playerShips) {
+            if (!ship.getShipStatus()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
