@@ -20,6 +20,7 @@ public class GameModel {
     }
 
     public GameModel() {
+        this.createBasementGame();
     }
 
     public PlayerModel createPlayer() {
@@ -99,19 +100,15 @@ public class GameModel {
     public void playGame() {
         switch (this.gameState) {
             case DEBUG:
-                this.createBasementGame();
                 playerGameMove();
                 break;
             case NORMAL:
-                this.createBasementGame();
                 startGame();
                 break;
             case COMPUTER:
-                this.createBasementGame();
                 System.out.println("Computer game mode not implemented yet.");
                 break;
             case OFFLINE:
-                this.createBasementGame();
             default:
                 System.out.println("Game is offline or in an unknown state.");
                 break;
