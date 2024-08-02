@@ -9,8 +9,16 @@ public class GameModel {
 
     private PlayerModel playerOne;
     private PlayerModel playerTwo;
+    private GameState gameState;
+
+    public enum GameState {
+        OFFLINE,
+        DEBUG,
+        COMPUTER
+    }
 
     public GameModel(){
+
         this.createBasementGame();
 
     };
@@ -33,6 +41,10 @@ public class GameModel {
     public BoardModel createPlayerBoard(){
         BoardModel board = new BoardModel();
         return board;
+    }
+
+    public void addGameState(GameState gameState){
+        this.gameState =  gameState;
     }
 
     public void createBasementGame(){
@@ -61,5 +73,10 @@ public class GameModel {
 
     public PlayerModel getPlayerTwo(){
         return this.playerTwo;
+    }
+
+    public void playerGameMove(){
+        this.playerOne.playerMove(this.playerTwo);
+        this.playerTwo.playerMove(this.playerOne);
     }
 }

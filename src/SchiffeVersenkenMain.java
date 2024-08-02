@@ -14,7 +14,8 @@ public class SchiffeVersenkenMain{
         GameView gameView = new GameView(gm);
 
         //Controller - TODO
-
+        gm.playerGameMove();
+        gm.playerGameMove();
     }
 }
 
