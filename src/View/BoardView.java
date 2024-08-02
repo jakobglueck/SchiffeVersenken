@@ -22,12 +22,6 @@ public class BoardView extends JPanel {
 
         this.setLayout(new BorderLayout());  // Setze Layout des Panels
 
-        // TODO GAMEVIEW
-        JPanel playerNamePanel = new JPanel();
-        JLabel playerNameLabel = new JLabel("Spielername", SwingConstants.CENTER);
-        //playerNameLabel.setText(playerNameOne);
-        playerNamePanel.add(playerNameLabel);
-
         infoPanelView = new InfoPanelView();  // InfoPanel initialisieren
 
         JPanel mainPanel = new JPanel(new BorderLayout());  // Erzeuge ein Hauptpanel mit BorderLayout
@@ -35,7 +29,6 @@ public class BoardView extends JPanel {
         mainPanel.add(createLabelsPanel(false), BorderLayout.WEST);  // Buchstaben-Labels links
         mainPanel.add(createGridPanel(), BorderLayout.CENTER);  // Grid in der Mitte
 
-        this.add(playerNamePanel, BorderLayout.NORTH);  // Spielername oben
         this.add(mainPanel, BorderLayout.CENTER);  // Hauptpanel in der Mitte
         this.add(infoPanelView, BorderLayout.SOUTH);  // Informationen unten
 
