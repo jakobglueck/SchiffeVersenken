@@ -32,6 +32,8 @@ public class BoardView extends JPanel {
         this.add(mainPanel, BorderLayout.CENTER);  // Hauptpanel in der Mitte
         this.add(infoPanelView, BorderLayout.SOUTH);  // Informationen unten
 
+        this.setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
+
         this.setVisible(true);
         updateBoard(); // Initialisiere das Spielfeld
     }
