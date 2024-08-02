@@ -66,12 +66,15 @@ public class PlayerModel {
         }
     }
 
-    public boolean validMove(int x, int y,PlayerModel player) {
+    public boolean validMove(int x, int y, PlayerModel player) {
         if (x < 0 || x >= 9 || y < 0 || y >= 9) {
             return false;
         }
 
         CellState currentCellState = player.board.getCell(x,y).getCellState();
-        return currentCellState == CellState.HIT || currentCellState == CellState.REVEAL;
+        if(currentCellState == CellState.HIT || currentCellState == CellState.REVEAL){
+            return false;
+        }
+        return true;
     }
 }
