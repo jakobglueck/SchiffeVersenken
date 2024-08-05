@@ -5,10 +5,12 @@ import utils.CellState;
 public class PlayerModel {
     private String playerName;
     private BoardModel board;
+    private int nextShipIndex;
 
     public PlayerModel(String playerName) {
         this.playerName = playerName;
         this.board = new BoardModel();
+        this.nextShipIndex = 0;
     }
 
     public String getPlayerName() {
@@ -19,16 +21,20 @@ public class PlayerModel {
         return board;
     }
 
-    public void placeShipsManually() {
-        // Assume this method will be called with proper inputs in the GUI or controller
-        for (int length : BoardModel.BOAT_SIZES) {
-            boolean placed = false;
-            while (!placed) {
-                // Wait for user to input startX, startY, and orientation (horizontal)
-                // Example: placeShip(startX, startY, horizontal, length);
-                // placed = true if ship placed successfully
-            }
+    public boolean placeNextShip(int startX, int startY, boolean horizontal) {
+        if (nextShipIndex > BoardModel.BOAT_SIZES.length) {
+            return false;
         }
+        int length = BoardModel.BOAT_SIZES[nextShipIndex];
+        boolean placed = board.placeShip(startX, startY, horizontal, length);
+        if (placed) {
+            nextShipIndex++;
+        }
+        return placed;
+    }
+
+    public boolean allShipsPlaced() {
+        return nextShipIndex == BoardModel.BOAT_SIZES.length;
     }
 
     public boolean makeMove(PlayerModel opponent, int x, int y) {
