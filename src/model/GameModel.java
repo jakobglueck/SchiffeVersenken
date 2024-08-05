@@ -13,9 +13,8 @@ public class GameModel {
     private PlayerModel currentPlayer;
 
     public enum GameState {
-        OFFLINE,
-        DEBUG,
         NORMAL,
+        DEBUG,
         COMPUTER
     }
 
@@ -55,6 +54,9 @@ public class GameModel {
         this.playerOne.setBoard(this.createPlayerBoard());
         this.playerTwo.setBoard(this.createPlayerBoard());
 
+    }
+
+    public void createRandomBoardWithShip(){
         int randomNumber = 1 + (int)(Math.random() * 10);
         if (randomNumber <= 5) {
             this.playerOne.placeShip();
@@ -65,6 +67,10 @@ public class GameModel {
             this.playerOne.placeShip();
             this.currentPlayer = playerTwo;
         }
+    }
+
+    public void createRandomBoardForComputer(){
+        this.playerTwo.placeShip();
     }
 
     public PlayerModel getPlayerOne() {
@@ -84,12 +90,9 @@ public class GameModel {
         this.currentPlayer = ( this.currentPlayer ==  this.playerOne) ?  this.playerTwo :  this.playerOne;
     }
 
-    public void startGame() {
-        System.out.println("Starting the game...");
-        System.out.println( this.currentPlayer.getPlayerName() + " goes first.");
+    public void startNormalGame() {
 
         while (true) {
-            System.out.println("\n" +  this.currentPlayer.getPlayerName() + "'s turn:");
             PlayerModel opponent = ( this.currentPlayer ==  this.playerOne) ?  this.playerTwo :  this.playerOne;
             this.currentPlayer.playerMove(opponent);
 
@@ -97,23 +100,38 @@ public class GameModel {
                 System.out.println( this.currentPlayer.getPlayerName() + " wins!");
                 break;
             }
-
             this.switchPlayer();
         }
     }
 
+    public void startComputerGame() {
+        while (true) {
+            PlayerModel opponent =   this.playerTwo;
+            this.currentPlayer.playerMove(opponent);
+
+            if (opponent.getBoard().allShipsAreHit()) {
+                System.out.println( this.currentPlayer.getPlayerName() + " wins!");
+                break;
+            }
+            this.switchPlayer();
+        }
+    }
+    
     public void playGame() {
         switch (this.gameState) {
             case DEBUG:
                 this.playerGameMove();
+                this.createRandomBoardWithShip();
+
                 break;
             case NORMAL:
                 this.startGame();
                 break;
             case COMPUTER:
-                System.out.println("Computer game mode not implemented yet.");
+                this.playerOne.placeShip();
+                this.createRandomBoardForComputer();
+                this.startComputerGame();
                 break;
-            case OFFLINE:
             default:
                 System.out.println("Game is offline or in an unknown state.");
                 break;
