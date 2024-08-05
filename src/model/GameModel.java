@@ -25,29 +25,54 @@ public class GameModel {
         return new PlayerModel(playerName);
     }
 
-    // TODO name holen von VIEW
     private String createPlayerName() {
-        System.out.print("Enter player name: ");
-        String playerName = DEFAULT_PLAYER_NAME;
-
-        return playerName;
+        return DEFAULT_PLAYER_NAME;
     }
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
-    // BASE game mit zwei Boards
-    private void createBasementGame() {
+
+    public void startGame() {
+        switch (this.gameState) {
+            case NORMAL:
+                createPlayersForNormalGame();
+                createRandomBoardWithShip();
+                break;
+            case DEBUG:
+                createPlayersForDebugGame();
+                createRandomBoardWithShip();
+                break;
+            case COMPUTER:
+                createPlayerAndComputer();
+                createRandomBoardWithShip();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + this.gameState);
+        }
+    }
+
+    private void createPlayersForNormalGame() {
         String playerOneName = createPlayerName();
         String playerTwoName = createPlayerName();
 
         this.playerOne = createPlayer(playerOneName);
         this.playerTwo = createPlayer(playerTwoName);
+    }
+
+    private void createPlayersForDebugGame() {
+        this.createPlayersForNormalGame();
+    }
+
+    private void createPlayerAndComputer() {
+        String playerName = createPlayerName();
+        this.playerOne = createPlayer(playerName);
+        this.playerTwo = new ComputerPlayerModel("Computer");
 
         this.playerOne.placeShips();
         this.playerTwo.placeShips();
     }
-    // create RandomBoards mit Schiffen
+
     private void createRandomBoardWithShip() {
         Random random = new Random();
         if (random.nextInt(10) < RANDOM_THRESHOLD) {
@@ -60,10 +85,6 @@ public class GameModel {
             this.currentPlayer = playerTwo;
         }
     }
-    // create RandomBoard für das Computer spiel mit Schiffen
-    private void createRandomBoardForComputer() {
-        this.playerTwo.getBoard().placeAllShips();
-    }
 
     public PlayerModel getPlayerOne() {
         return this.playerOne;
@@ -72,7 +93,7 @@ public class GameModel {
     public PlayerModel getPlayerTwo() {
         return this.playerTwo;
     }
-    // mouse Event müssen hier getriggert werden
+
     public void playerGameMove(int x, int y) {
         this.currentPlayer.takeTurn(this.currentPlayer == playerOne ? playerTwo : playerOne, x, y);
     }
@@ -81,52 +102,27 @@ public class GameModel {
         this.currentPlayer = (this.currentPlayer == this.playerOne) ? this.playerTwo : this.playerOne;
     }
 
-    private void playGameLoop() {
+    public boolean isGameOver() {
+        return playerOne.getBoard().allShipsAreHit() || playerTwo.getBoard().allShipsAreHit();
+    }
 
-        int x = 0;
-        int y = 0;
-
-        while (true) {
-            //
-            this.playerGameMove(x,y);
-
-            if (currentPlayer == playerOne ? playerTwo.getBoard().allShipsAreHit() : playerOne.getBoard().allShipsAreHit()) {
-                System.out.println(this.currentPlayer.getPlayerName() + " wins!");
-                break;
-            }
-            this.switchPlayer();
+    public void playTurn(int x, int y) {
+        playerGameMove(x, y);
+        if (!isGameOver()) {
+            switchPlayer();
+        } else {
+            System.out.println(currentPlayer.getPlayerName() + " wins!");
         }
     }
 
-    public void startNormalGame() {
-        createRandomBoardWithShip();
-        playGameLoop();
-    }
-
-    public void startComputerGame() {
-        this.currentPlayer = this.playerOne;
-        playGameLoop();
-    }
-
-    public void playGame() {
-        this.createBasementGame();
-        switch (this.gameState) {
-            case DEBUG:
-                this.playerGameMove(2, 3);
-                this.createRandomBoardWithShip();
-                this.startComputerGame();
-                break;
-            case NORMAL:
-                this.startNormalGame();
-                break;
-            case COMPUTER:
-                this.playerOne.getBoard().placeAllShips();
-                this.createRandomBoardForComputer();
-                this.startComputerGame();
-                break;
-            default:
-                System.out.println("Game is offline or in an unknown state.");
-                break;
+    public void playComputerTurn() {
+        if (currentPlayer instanceof ComputerPlayerModel) {
+            ((ComputerPlayerModel) currentPlayer).makeMove(this.currentPlayer == playerOne ? playerTwo : playerOne);
+            if (!isGameOver()) {
+                switchPlayer();
+            } else {
+                System.out.println(currentPlayer.getPlayerName() + " wins!");
+            }
         }
     }
 }
