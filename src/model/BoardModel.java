@@ -119,7 +119,7 @@ public class BoardModel {
                 }
             }
         } else if (cell.getCellState() == CellState.FREE) {
-            cell.updateCellState(CellState.MISS);
+            cell.updateCellState(CellState.FREE);
         }
         return false;
     }
