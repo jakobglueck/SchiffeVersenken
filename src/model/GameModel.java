@@ -1,7 +1,6 @@
 package model;
 
 import utils.CellState;
-
 import java.util.Random;
 import java.util.Scanner;
 
@@ -12,7 +11,7 @@ public class GameModel {
     private GameState gameState;
     private PlayerModel currentPlayer;
 
-    private static final int RANDOM_THRESHOLD = 5;
+    private static final int RANDOM = 5;
     private static final String DEFAULT_PLAYER_NAME = "Default Player";
 
     public enum GameState {
@@ -25,7 +24,7 @@ public class GameModel {
     }
 
     private PlayerModel createPlayer() {
-        return new PlayerModel();
+        return new PlayerModel(this.createPlayerName());
     }
 
     private String createPlayerName() {
@@ -54,28 +53,25 @@ public class GameModel {
         this.playerOne = createPlayer();
         this.playerTwo = createPlayer();
 
-        this.playerOne.setPlayerName(this.createPlayerName());
-        this.playerTwo.setPlayerName(this.createPlayerName());
-
-        this.playerOne.setBoard(this.createPlayerBoard());
-        this.playerTwo.setBoard(this.createPlayerBoard());
+        this.playerOne.getBoard().placeAllShips();
+        this.playerTwo.getBoard().placeAllShips();
     }
 
     private void createRandomBoardWithShip() {
         Random random = new Random();
-        if (random.nextInt(10) < RANDOM_THRESHOLD) {
-            this.playerOne.placeShip();
-            this.playerTwo.placeShip();
+        if (random.nextInt(10) < RANDOM) {
+            this.playerOne.getBoard().placeAllShips();
+            this.playerTwo.getBoard().placeAllShips();
             this.currentPlayer = playerOne;
         } else {
-            this.playerTwo.placeShip();
-            this.playerOne.placeShip();
+            this.playerTwo.getBoard().placeAllShips();
+            this.playerOne.getBoard().placeAllShips();
             this.currentPlayer = playerTwo;
         }
     }
 
     private void createRandomBoardForComputer() {
-        this.playerTwo.placeShip();
+        this.playerTwo.getBoard().placeAllShips();
     }
 
     public PlayerModel getPlayerOne() {
@@ -87,8 +83,8 @@ public class GameModel {
     }
 
     public void playerGameMove() {
-        this.playerOne.playerMove(this.playerTwo);
-        this.playerTwo.playerMove(this.playerOne);
+        this.playerOne.takeTurn(this.playerTwo);
+        this.playerTwo.takeTurn(this.playerOne);
     }
 
     private void switchPlayer() {
@@ -97,7 +93,7 @@ public class GameModel {
 
     private void playGameLoop(PlayerModel opponent) {
         while (true) {
-            this.currentPlayer.playerMove(opponent);
+            this.currentPlayer.takeTurn(opponent);
 
             if (opponent.getBoard().allShipsAreHit()) {
                 System.out.println(this.currentPlayer.getPlayerName() + " wins!");
@@ -108,13 +104,13 @@ public class GameModel {
     }
 
     public void startNormalGame() {
-        createRandomBoardWithShip();
-        playGameLoop(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
+        this.createRandomBoardWithShip();
+        this.playGameLoop(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
     }
 
     public void startComputerGame() {
         this.currentPlayer = this.playerOne;
-        playGameLoop(this.playerTwo);
+        this.playGameLoop(this.playerTwo);
     }
 
     public void playGame() {
@@ -129,7 +125,7 @@ public class GameModel {
                 this.startNormalGame();
                 break;
             case COMPUTER:
-                this.playerOne.placeShip();
+                this.playerOne.getBoard().placeAllShips();
                 this.createRandomBoardForComputer();
                 this.startComputerGame();
                 break;
