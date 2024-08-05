@@ -1,8 +1,6 @@
 package model;
 
-import utils.CellState;
 import java.util.Random;
-import java.util.Scanner;
 
 public class GameModel {
 
@@ -11,7 +9,7 @@ public class GameModel {
     private GameState gameState;
     private PlayerModel currentPlayer;
 
-    private static final int RANDOM = 5;
+    private static final int RANDOM_THRESHOLD = 5;
     private static final String DEFAULT_PLAYER_NAME = "Default Player";
 
     public enum GameState {
@@ -23,43 +21,36 @@ public class GameModel {
     public GameModel() {
     }
 
-    private PlayerModel createPlayer() {
-        return new PlayerModel(this.createPlayerName());
+    private PlayerModel createPlayer(String playerName) {
+        return new PlayerModel(playerName);
     }
 
+    // TODO name holen von VIEW
     private String createPlayerName() {
         System.out.print("Enter player name: ");
         String playerName = DEFAULT_PLAYER_NAME;
-        try (Scanner sc = new Scanner(System.in)) {
-            if (sc.hasNextLine()) {
-                String input = sc.nextLine().trim();
-                if (!input.isEmpty()) {
-                    playerName = input;
-                }
-            }
-        }
-        return playerName;
-    }
 
-    private BoardModel createPlayerBoard() {
-        return new BoardModel();
+        return playerName;
     }
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
-
+    // BASE game mit zwei Boards
     private void createBasementGame() {
-        this.playerOne = createPlayer();
-        this.playerTwo = createPlayer();
+        String playerOneName = createPlayerName();
+        String playerTwoName = createPlayerName();
 
-        this.playerOne.getBoard().placeAllShips();
-        this.playerTwo.getBoard().placeAllShips();
+        this.playerOne = createPlayer(playerOneName);
+        this.playerTwo = createPlayer(playerTwoName);
+
+        this.playerOne.placeShips();
+        this.playerTwo.placeShips();
     }
-
+    // create RandomBoards mit Schiffen
     private void createRandomBoardWithShip() {
         Random random = new Random();
-        if (random.nextInt(10) < RANDOM) {
+        if (random.nextInt(10) < RANDOM_THRESHOLD) {
             this.playerOne.getBoard().placeAllShips();
             this.playerTwo.getBoard().placeAllShips();
             this.currentPlayer = playerOne;
@@ -69,7 +60,7 @@ public class GameModel {
             this.currentPlayer = playerTwo;
         }
     }
-
+    // create RandomBoard für das Computer spiel mit Schiffen
     private void createRandomBoardForComputer() {
         this.playerTwo.getBoard().placeAllShips();
     }
@@ -81,21 +72,25 @@ public class GameModel {
     public PlayerModel getPlayerTwo() {
         return this.playerTwo;
     }
-
-    public void playerGameMove() {
-        this.playerOne.takeTurn(this.playerTwo);
-        this.playerTwo.takeTurn(this.playerOne);
+    // mouse Event müssen hier getriggert werden
+    public void playerGameMove(int x, int y) {
+        this.currentPlayer.takeTurn(this.currentPlayer == playerOne ? playerTwo : playerOne, x, y);
     }
 
     private void switchPlayer() {
         this.currentPlayer = (this.currentPlayer == this.playerOne) ? this.playerTwo : this.playerOne;
     }
 
-    private void playGameLoop(PlayerModel opponent) {
-        while (true) {
-            this.currentPlayer.takeTurn(opponent);
+    private void playGameLoop() {
 
-            if (opponent.getBoard().allShipsAreHit()) {
+        int x = 0;
+        int y = 0;
+
+        while (true) {
+            //
+            this.playerGameMove(x,y);
+
+            if (currentPlayer == playerOne ? playerTwo.getBoard().allShipsAreHit() : playerOne.getBoard().allShipsAreHit()) {
                 System.out.println(this.currentPlayer.getPlayerName() + " wins!");
                 break;
             }
@@ -104,20 +99,20 @@ public class GameModel {
     }
 
     public void startNormalGame() {
-        this.createRandomBoardWithShip();
-        this.playGameLoop(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
+        createRandomBoardWithShip();
+        playGameLoop();
     }
 
     public void startComputerGame() {
         this.currentPlayer = this.playerOne;
-        this.playGameLoop(this.playerTwo);
+        playGameLoop();
     }
 
     public void playGame() {
         this.createBasementGame();
         switch (this.gameState) {
             case DEBUG:
-                this.playerGameMove();
+                this.playerGameMove(2, 3);
                 this.createRandomBoardWithShip();
                 this.startComputerGame();
                 break;

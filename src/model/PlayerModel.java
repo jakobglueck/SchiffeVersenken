@@ -39,17 +39,11 @@ public class PlayerModel {
         return true;
     }
 
-    public void takeTurn(PlayerModel opponent) {
+    public void takeTurn(PlayerModel opponent, int x , int y) {
         Scanner scanner = new Scanner(System.in);
-
         while (true) {
             try {
-                System.out.print(playerName + ", enter x coordinate: ");
-                int x = scanner.nextInt();
-                System.out.print(playerName + ", enter y coordinate: ");
-                int y = scanner.nextInt();
-
-                if (makeMove(opponent, x, y)) {
+                if (this.makeMove(opponent, x, y)) {
                     break;
                 } else {
                     System.out.println("Invalid move. Please try again.");
