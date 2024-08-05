@@ -1,19 +1,16 @@
 package model;
 
-import model.BoardModel;
-import model.ShipModel;
 import utils.CellState;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class PlayerModel {
     private String playerName;
     private BoardModel board;
 
-
-    public PlayerModel(){
+    public PlayerModel(String playerName) {
+        this.playerName = playerName;
+        this.board = new BoardModel();
     }
 
     public String getPlayerName() {
@@ -24,57 +21,52 @@ public class PlayerModel {
         return board;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
-    public void setBoard(BoardModel board) {
-        this.board = board;
-    }
-
-    public void placeShip(){
+    public void placeShips() {
         this.board.placeAllShips();
     }
 
-    public void playerMove(int x, int y, CellState cellState){
-        this.board.changeCellOnBoard(x,y,cellState);
+    public boolean makeMove(PlayerModel opponent, int x, int y) {
+        if (!isValidMove(x, y)) {
+            return false;
+        }
+
+        boolean hit = opponent.getBoard().registerHit(x, y);
+        if (hit) {
+            System.out.println(playerName + " hit a target!");
+        } else {
+            System.out.println(playerName + " missed.");
+        }
+        return true;
     }
 
-    public void playerMove(PlayerModel player){
-        Scanner sc = new Scanner(System.in);
+    public void takeTurn(PlayerModel opponent) {
+        Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.print("Enter x coordinate: ");
-            int x = sc.nextInt();
-            System.out.print("Enter y coordinate: ");
-            int y = sc.nextInt();
+            try {
+                System.out.print(playerName + ", enter x coordinate: ");
+                int x = scanner.nextInt();
+                System.out.print(playerName + ", enter y coordinate: ");
+                int y = scanner.nextInt();
 
-            if (player.validMove(x, y, player)) {
-                CellState newState;
-
-                if (player.board.registerHit(x,y)){
-                    System.out.println("You hit a Target!");
-                    newState = CellState.HIT;
-                    player.board.changeCellOnBoard(x, y, newState);
+                if (makeMove(opponent, x, y)) {
+                    break;
+                } else {
+                    System.out.println("Invalid move. Please try again.");
                 }
-
-                System.out.println("Move accepted.");
-                break;
-            } else {
-                System.out.println("Invalid move. Please try again.");
+            } catch (java.util.InputMismatchException e) {
+                System.out.println("Invalid input. Please enter numbers only.");
+                scanner.nextLine(); // Clear the invalid input
             }
         }
     }
 
-    public boolean validMove(int x, int y, PlayerModel player) {
-        if (x < 0 || x >= 9 || y < 0 || y >= 9) {
+    private boolean isValidMove(int x, int y) {
+        if (x < 0 || x >= BoardModel.WIDTH || y < 0 || y >= BoardModel.HEIGHT) {
             return false;
         }
 
-        CellState currentCellState = player.board.getCell(x,y).getCellState();
-        if(currentCellState == CellState.HIT || currentCellState == CellState.REVEAL){
-            return false;
-        }
-        return true;
+        CellState currentCellState = board.getCell(x, y).getCellState();
+        return currentCellState != CellState.HIT && currentCellState != CellState.FREE;
     }
 }

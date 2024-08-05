@@ -1,12 +1,11 @@
 package model;
 
-import utils.*;
+import utils.CellState;
 
 public class CellModel {
     private CellState cellState;
-    private int x;
-    private int y;
-
+    private final int x;
+    private final int y;
 
     public CellModel(int x, int y, CellState cellState) {
         this.cellState = cellState;
@@ -18,19 +17,11 @@ public class CellModel {
         this.cellState = cellState;
     }
 
-    public void updateCellCordX(int x){
-        this.x = x;
-    }
-
-    public void updateCellCordY(int y){
-        this.y = y;
-    }
-
-    public int getCellCoordX(){
+    public int getX() {
         return this.x;
     }
 
-    public int getCellCoordY(){
+    public int getY() {
         return this.y;
     }
 
@@ -38,7 +29,7 @@ public class CellModel {
         return this.cellState;
     }
 
-    public boolean checkHitStatus(){
+    public boolean isHit() {
         return this.cellState == CellState.HIT;
     }
 }
