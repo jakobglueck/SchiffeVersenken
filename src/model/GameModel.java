@@ -79,6 +79,14 @@ public class GameModel {
         return this.playerTwo;
     }
 
+    public PlayerModel getCurrentPlayer() {
+        return this.currentPlayer;
+    }
+
+    public GameState getGameState() {
+        return this.gameState;
+    }
+
     public void playerGameMove(int x, int y) {
         this.currentPlayer.takeTurn(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne, x, y);
     }
