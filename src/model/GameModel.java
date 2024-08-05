@@ -69,17 +69,8 @@ public class GameModel {
         this.playerOne = createPlayer(playerName);
         this.playerTwo = new ComputerPlayerModel("Computer");
 
-        this.playerOne.placeShips();
-        this.playerTwo.placeShips();
+        this.currentPlayer = playerOne;
     }
-
-    private void createRandomBoardWithShip() {
-        Random random = new Random();
-        if (random.nextInt(10) < RANDOM_THRESHOLD) {
-            this.playerOne.getBoard().placeAllShips();
-            this.playerTwo.getBoard().placeAllShips();
-            this.currentPlayer = playerOne;
-        } else {
             this.playerTwo.getBoard().placeAllShips();
             this.playerOne.getBoard().placeAllShips();
             this.currentPlayer = playerTwo;
@@ -98,7 +89,7 @@ public class GameModel {
         this.currentPlayer.takeTurn(this.currentPlayer == playerOne ? playerTwo : playerOne, x, y);
     }
 
-    private void switchPlayer() {
+    public void switchPlayer() {
         this.currentPlayer = (this.currentPlayer == this.playerOne) ? this.playerTwo : this.playerOne;
     }
 
