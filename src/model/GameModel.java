@@ -12,6 +12,9 @@ public class GameModel {
     private GameState gameState;
     private PlayerModel currentPlayer;
 
+    private static final int RANDOM_THRESHOLD = 5;
+    private static final String DEFAULT_PLAYER_NAME = "Default Player";
+
     public enum GameState {
         NORMAL,
         DEBUG,
@@ -19,32 +22,35 @@ public class GameModel {
     }
 
     public GameModel() {
-        this.createBasementGame();
     }
 
-    public PlayerModel createPlayer() {
+    private PlayerModel createPlayer() {
         return new PlayerModel();
     }
 
-    public String createPlayerName() {
+    private String createPlayerName() {
         System.out.print("Enter player name: ");
-        Scanner sc = new Scanner(System.in);
-        String playerName = "Default Player";
-        if (sc.hasNextLine()) {
-            playerName = sc.nextLine();
+        String playerName = DEFAULT_PLAYER_NAME;
+        try (Scanner sc = new Scanner(System.in)) {
+            if (sc.hasNextLine()) {
+                String input = sc.nextLine().trim();
+                if (!input.isEmpty()) {
+                    playerName = input;
+                }
+            }
         }
         return playerName;
     }
 
-    public BoardModel createPlayerBoard() {
+    private BoardModel createPlayerBoard() {
         return new BoardModel();
     }
 
-    public void addGameState(GameState gameState) {
+    public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
 
-    public void createBasementGame() {
+    private void createBasementGame() {
         this.playerOne = createPlayer();
         this.playerTwo = createPlayer();
 
@@ -53,12 +59,11 @@ public class GameModel {
 
         this.playerOne.setBoard(this.createPlayerBoard());
         this.playerTwo.setBoard(this.createPlayerBoard());
-
     }
 
-    public void createRandomBoardWithShip(){
-        int randomNumber = 1 + (int)(Math.random() * 10);
-        if (randomNumber <= 5) {
+    private void createRandomBoardWithShip() {
+        Random random = new Random();
+        if (random.nextInt(10) < RANDOM_THRESHOLD) {
             this.playerOne.placeShip();
             this.playerTwo.placeShip();
             this.currentPlayer = playerOne;
@@ -69,7 +74,7 @@ public class GameModel {
         }
     }
 
-    public void createRandomBoardForComputer(){
+    private void createRandomBoardForComputer() {
         this.playerTwo.placeShip();
     }
 
@@ -87,37 +92,33 @@ public class GameModel {
     }
 
     private void switchPlayer() {
-        this.currentPlayer = ( this.currentPlayer ==  this.playerOne) ?  this.playerTwo :  this.playerOne;
+        this.currentPlayer = (this.currentPlayer == this.playerOne) ? this.playerTwo : this.playerOne;
+    }
+
+    private void playGameLoop(PlayerModel opponent) {
+        while (true) {
+            this.currentPlayer.playerMove(opponent);
+
+            if (opponent.getBoard().allShipsAreHit()) {
+                System.out.println(this.currentPlayer.getPlayerName() + " wins!");
+                break;
+            }
+            this.switchPlayer();
+        }
     }
 
     public void startNormalGame() {
-
-        while (true) {
-            PlayerModel opponent = ( this.currentPlayer ==  this.playerOne) ?  this.playerTwo :  this.playerOne;
-            this.currentPlayer.playerMove(opponent);
-
-            if (opponent.getBoard().allShipsAreHit()) {
-                System.out.println( this.currentPlayer.getPlayerName() + " wins!");
-                break;
-            }
-            this.switchPlayer();
-        }
+        createRandomBoardWithShip();
+        playGameLoop(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
     }
 
     public void startComputerGame() {
-        while (true) {
-            PlayerModel opponent =   this.playerTwo;
-            this.currentPlayer.playerMove(opponent);
-
-            if (opponent.getBoard().allShipsAreHit()) {
-                System.out.println( this.currentPlayer.getPlayerName() + " wins!");
-                break;
-            }
-            this.switchPlayer();
-        }
+        this.currentPlayer = this.playerOne;
+        playGameLoop(this.playerTwo);
     }
 
     public void playGame() {
+        this.createBasementGame();
         switch (this.gameState) {
             case DEBUG:
                 this.playerGameMove();
