@@ -1,5 +1,7 @@
 package model;
 
+import model.PlayerModel;
+import utils.GameState;
 import java.util.Random;
 
 public class GameModel {
@@ -9,14 +11,8 @@ public class GameModel {
     private GameState gameState;
     private PlayerModel currentPlayer;
 
-    private static final int RANDOM_THRESHOLD = 5;
+    private static final int RANDOM_NUMBER = 5;
     private static final String DEFAULT_PLAYER_NAME = "Default Player";
-
-    public enum GameState {
-        NORMAL,
-        DEBUG,
-        COMPUTER
-    }
 
     public GameModel() {
     }
@@ -36,23 +32,20 @@ public class GameModel {
     public void startGame() {
         switch (this.gameState) {
             case NORMAL:
-                createPlayersForNormalGame();
-                createRandomBoardWithShip();
+                this.createPlayersForNormalGame();
                 break;
             case DEBUG:
-                createPlayersForDebugGame();
-                createRandomBoardWithShip();
+                this.createPlayersForDebugGame();
                 break;
             case COMPUTER:
-                createPlayerAndComputer();
-                createRandomBoardWithShip();
+                this.createPlayerAndComputer();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + this.gameState);
         }
     }
 
-    private void createPlayersForNormalGame() {
+    private void createPlayerNames(){
         String playerOneName = createPlayerName();
         String playerTwoName = createPlayerName();
 
@@ -60,21 +53,32 @@ public class GameModel {
         this.playerTwo = createPlayer(playerTwoName);
     }
 
+    private void createPlayersForNormalGame() {
+        this.createPlayerNames();
+        this.createBoardWithShip();
+    }
+
+    private void createBoardWithShip() {
+        this.playerOne.placeShipsManually();
+    }
+
     private void createPlayersForDebugGame() {
-        this.createPlayersForNormalGame();
+        this.createPlayerNames();
+
+        this.playerOne.getBoard().placeAllShips();
+        this.playerTwo.getBoard().placeAllShips();
     }
 
     private void createPlayerAndComputer() {
-        String playerName = createPlayerName();
-        this.playerOne = createPlayer(playerName);
+
+        this.playerOne = createPlayer(this.createPlayerName());
         this.playerTwo = new ComputerPlayerModel("Computer");
 
         this.currentPlayer = playerOne;
-    }
-            this.playerTwo.getBoard().placeAllShips();
-            this.playerOne.getBoard().placeAllShips();
-            this.currentPlayer = playerTwo;
-        }
+
+        this.playerTwo.placeShipsManually();
+        this.playerOne.getBoard().placeAllShips();
+
     }
 
     public PlayerModel getPlayerOne() {
@@ -86,7 +90,7 @@ public class GameModel {
     }
 
     public void playerGameMove(int x, int y) {
-        this.currentPlayer.takeTurn(this.currentPlayer == playerOne ? playerTwo : playerOne, x, y);
+        this.currentPlayer.takeTurn(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne, x, y);
     }
 
     public void switchPlayer() {
@@ -94,25 +98,25 @@ public class GameModel {
     }
 
     public boolean isGameOver() {
-        return playerOne.getBoard().allShipsAreHit() || playerTwo.getBoard().allShipsAreHit();
+        return this.playerOne.getBoard().allShipsAreHit() || this.playerTwo.getBoard().allShipsAreHit();
     }
 
     public void playTurn(int x, int y) {
         playerGameMove(x, y);
-        if (!isGameOver()) {
-            switchPlayer();
+        if (!this.isGameOver()) {
+            this.switchPlayer();
         } else {
-            System.out.println(currentPlayer.getPlayerName() + " wins!");
+            System.out.println(this.currentPlayer.getPlayerName() + " wins!");
         }
     }
 
     public void playComputerTurn() {
-        if (currentPlayer instanceof ComputerPlayerModel) {
-            ((ComputerPlayerModel) currentPlayer).makeMove(this.currentPlayer == playerOne ? playerTwo : playerOne);
+        if (this.currentPlayer instanceof ComputerPlayerModel) {
+            ((ComputerPlayerModel) this.currentPlayer).makeMove(this.currentPlayer == this.playerOne ? this.playerTwo: this.playerOne);
             if (!isGameOver()) {
-                switchPlayer();
+                this.switchPlayer();
             } else {
-                System.out.println(currentPlayer.getPlayerName() + " wins!");
+                System.out.println(this.currentPlayer.getPlayerName() + " wins!");
             }
         }
     }
