@@ -10,7 +10,7 @@ public class ComputerPlayerModel extends PlayerModel {
 
     public ComputerPlayerModel(String playerName) {
         super(playerName);
-        initializeAvailableMoves();
+        this.initializeAvailableMoves();
     }
 
     private void initializeAvailableMoves() {
