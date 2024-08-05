@@ -40,7 +40,6 @@ public class PlayerModel {
     }
 
     public void takeTurn(PlayerModel opponent, int x , int y) {
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
                 if (this.makeMove(opponent, x, y)) {
@@ -50,7 +49,6 @@ public class PlayerModel {
                 }
             } catch (java.util.InputMismatchException e) {
                 System.out.println("Invalid input. Please enter numbers only.");
-                scanner.nextLine(); // Clear the invalid input
             }
         }
     }
