@@ -93,8 +93,6 @@ public class BoardModel {
         for (int length : BOAT_SIZES) {
             boolean placed = false;
             while (!placed) {
-                int startX = random.nextInt(WIDTH);
-                int startY = random.nextInt(HEIGHT);
                 boolean horizontal = random.nextBoolean();
 
                 if (this.placeShip(startX, startY, horizontal, length)) {
