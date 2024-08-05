@@ -116,16 +116,16 @@ public class GameModel {
             this.switchPlayer();
         }
     }
-    
+
     public void playGame() {
         switch (this.gameState) {
             case DEBUG:
                 this.playerGameMove();
                 this.createRandomBoardWithShip();
-
+                this.startComputerGame();
                 break;
             case NORMAL:
-                this.startGame();
+                this.startNormalGame();
                 break;
             case COMPUTER:
                 this.playerOne.placeShip();
