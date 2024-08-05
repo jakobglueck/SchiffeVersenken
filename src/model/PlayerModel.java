@@ -52,12 +52,12 @@ public class PlayerModel {
             if (player.validMove(x, y, player)) {
                 CellState newState;
 
-                if (player.board.getCell(x,y).getCellState() == CellState.FREE) {
+                if (player.board.registerHit(x,y)){
+                    System.out.println("You hit a Target!");
                     newState = CellState.HIT;
-                } else {
-                    newState = CellState.REVEAL;
+                    player.board.changeCellOnBoard(x, y, newState);
                 }
-                player.board.changeCellOnBoard(x, y, newState);
+
                 System.out.println("Move accepted.");
                 break;
             } else {
