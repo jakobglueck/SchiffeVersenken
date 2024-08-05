@@ -2,8 +2,6 @@ package model;
 
 import utils.CellState;
 
-import java.util.Scanner;
-
 public class PlayerModel {
     private String playerName;
     private BoardModel board;
@@ -21,8 +19,16 @@ public class PlayerModel {
         return board;
     }
 
-    public void placeShips() {
-        this.board.placeAllShips();
+    public void placeShipsManually() {
+        // Assume this method will be called with proper inputs in the GUI or controller
+        for (int length : BoardModel.BOAT_SIZES) {
+            boolean placed = false;
+            while (!placed) {
+                // Wait for user to input startX, startY, and orientation (horizontal)
+                // Example: placeShip(startX, startY, horizontal, length);
+                // placed = true if ship placed successfully
+            }
+        }
     }
 
     public boolean makeMove(PlayerModel opponent, int x, int y) {
@@ -39,17 +45,11 @@ public class PlayerModel {
         return true;
     }
 
-    public void takeTurn(PlayerModel opponent, int x , int y) {
-        while (true) {
-            try {
-                if (this.makeMove(opponent, x, y)) {
-                    break;
-                } else {
-                    System.out.println("Invalid move. Please try again.");
-                }
-            } catch (java.util.InputMismatchException e) {
-                System.out.println("Invalid input. Please enter numbers only.");
-            }
+    public void takeTurn(PlayerModel opponent, int x, int y) {
+        if (makeMove(opponent, x, y)) {
+            System.out.println(playerName + " made a move.");
+        } else {
+            System.out.println("Invalid move. Please try again.");
         }
     }
 
