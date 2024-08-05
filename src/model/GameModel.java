@@ -1,9 +1,6 @@
 package model;
 
-import utils.CellState;
-
-import java.util.Random;
-import java.util.Scanner;
+import utils.GameState;
 
 public class GameModel {
 
@@ -12,59 +9,66 @@ public class GameModel {
     private GameState gameState;
     private PlayerModel currentPlayer;
 
-    public enum GameState {
-        OFFLINE,
-        DEBUG,
-        NORMAL,
-        COMPUTER
-    }
+    private static final int RANDOM_NUMBER = 5;
+    private static final String DEFAULT_PLAYER_NAME = "Default Player";
 
     public GameModel() {
-        this.createBasementGame();
     }
 
-    public PlayerModel createPlayer() {
-        return new PlayerModel();
+    private PlayerModel createPlayer(String playerName) {
+        return new PlayerModel(playerName);
     }
 
-    public String createPlayerName() {
-        System.out.print("Enter player name: ");
-        Scanner sc = new Scanner(System.in);
-        String playerName = "Default Player";
-        if (sc.hasNextLine()) {
-            playerName = sc.nextLine();
-        }
-        return playerName;
+    private String createPlayerName() {
+        return DEFAULT_PLAYER_NAME;
     }
 
-    public BoardModel createPlayerBoard() {
-        return new BoardModel();
-    }
-
-    public void addGameState(GameState gameState) {
+    public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
 
-    public void createBasementGame() {
-        this.playerOne = createPlayer();
-        this.playerTwo = createPlayer();
-
-        this.playerOne.setPlayerName(this.createPlayerName());
-        this.playerTwo.setPlayerName(this.createPlayerName());
-
-        this.playerOne.setBoard(this.createPlayerBoard());
-        this.playerTwo.setBoard(this.createPlayerBoard());
-
-        int randomNumber = 1 + (int)(Math.random() * 10);
-        if (randomNumber <= 5) {
-            this.playerOne.placeShip();
-            this.playerTwo.placeShip();
-            this.currentPlayer = playerOne;
-        } else {
-            this.playerTwo.placeShip();
-            this.playerOne.placeShip();
-            this.currentPlayer = playerTwo;
+    public void startGame() {
+        switch (this.gameState) {
+            case NORMAL:
+                this.createPlayersForNormalGame();
+                break;
+            case DEBUG:
+                this.createPlayersForDebugGame();
+                break;
+            case COMPUTER:
+                this.createPlayerAndComputer();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + this.gameState);
         }
+    }
+
+    private void createPlayerNames() {
+        String playerOneName = createPlayerName();
+        String playerTwoName = createPlayerName();
+
+        this.playerOne = createPlayer(playerOneName);
+        this.playerTwo = createPlayer(playerTwoName);
+    }
+
+    private void createPlayersForNormalGame() {
+        this.createPlayerNames();
+        this.currentPlayer = playerOne;
+    }
+
+    private void createPlayersForDebugGame() {
+        this.createPlayerNames();
+        this.playerOne.getBoard().placeAllShips();
+        this.playerTwo.getBoard().placeAllShips();
+        this.currentPlayer = playerOne;
+    }
+
+    private void createPlayerAndComputer() {
+        this.playerOne = createPlayer(this.createPlayerName());
+        this.playerTwo = new ComputerPlayerModel("Computer");
+        this.playerTwo.getBoard().placeAllShips();
+        this.currentPlayer = playerOne;
+
     }
 
     public PlayerModel getPlayerOne() {
@@ -75,48 +79,47 @@ public class GameModel {
         return this.playerTwo;
     }
 
-    public void playerGameMove() {
-        this.playerOne.playerMove(this.playerTwo);
-        this.playerTwo.playerMove(this.playerOne);
+    public void playerGameMove(int x, int y) {
+        this.currentPlayer.takeTurn(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne, x, y);
     }
 
-    private void switchPlayer() {
-        this.currentPlayer = ( this.currentPlayer ==  this.playerOne) ?  this.playerTwo :  this.playerOne;
+    public void switchPlayer() {
+        this.currentPlayer = (this.currentPlayer == this.playerOne) ? this.playerTwo : this.playerOne;
     }
 
-    public void startGame() {
-        System.out.println("Starting the game...");
-        System.out.println( this.currentPlayer.getPlayerName() + " goes first.");
+    public boolean isGameOver() {
+        return this.playerOne.getBoard().allShipsAreHit() || this.playerTwo.getBoard().allShipsAreHit();
+    }
 
-        while (true) {
-            System.out.println("\n" +  this.currentPlayer.getPlayerName() + "'s turn:");
-            PlayerModel opponent = ( this.currentPlayer ==  this.playerOne) ?  this.playerTwo :  this.playerOne;
-            this.currentPlayer.playerMove(opponent);
+    public void playerTurn(int x, int y) {
+        playerGameMove(x, y);
+        if (!this.isGameOver()) {
+            this.switchPlayer();
+        } else {
+            System.out.println(this.currentPlayer.getPlayerName() + " wins!");
+        }
+    }
 
-            if (opponent.getBoard().allShipsAreHit()) {
-                System.out.println( this.currentPlayer.getPlayerName() + " wins!");
-                break;
+    public void computerPlayTurn() {
+        if (this.currentPlayer instanceof ComputerPlayerModel) {
+            ((ComputerPlayerModel) this.currentPlayer).makeMove(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
+            if (!isGameOver()) {
+                this.switchPlayer();
+            } else {
+                System.out.println(this.currentPlayer.getPlayerName() + " wins!");
             }
+        }
+    }
 
+    public boolean placeNextShip(int startX, int startY, boolean horizontal) {
+        boolean placed = this.currentPlayer.placeNextShip(startX, startY, horizontal);
+        if (placed && this.currentPlayer.allShipsPlaced()) {
             this.switchPlayer();
         }
+        return placed;
     }
 
-    public void playGame() {
-        switch (this.gameState) {
-            case DEBUG:
-                this.playerGameMove();
-                break;
-            case NORMAL:
-                this.startGame();
-                break;
-            case COMPUTER:
-                System.out.println("Computer game mode not implemented yet.");
-                break;
-            case OFFLINE:
-            default:
-                System.out.println("Game is offline or in an unknown state.");
-                break;
-        }
+    public boolean allShipsPlaced() {
+        return this.playerOne.allShipsPlaced() && this.playerTwo.allShipsPlaced();
     }
 }

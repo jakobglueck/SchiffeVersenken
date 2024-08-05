@@ -1,21 +1,18 @@
 import View.*;
-import model.BoardModel;
+
 import model.GameModel;
+import utils.*;
+import utils.GameState;
 
 public class SchiffeVersenkenMain{
     public static void main(String[] args){
 
-        //Model - TODO
-        BoardModel bm = new BoardModel();
-        //View
-
         GameModel gm = new GameModel();
+        gm.setGameState(GameState.DEBUG);
+        gm.startGame();
 
         GameView gameView = new GameView(gm);
 
         //Controller - TODO
-        gm.playerGameMove();
-        gm.playerGameMove();
     }
 }
-

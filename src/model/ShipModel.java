@@ -6,23 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShipModel {
-    private List<CellModel> shipCells;
-    private int length;
-    private boolean horizontal;
-    private boolean shipStatus;
+    private final List<CellModel> shipCells;
+    private final int length;
+    private final boolean horizontal;
+    private boolean sunk;
 
-    public ShipModel() {
-        this.shipCells = new ArrayList<>();
-    }
-
-    public void setShipParameters(CellModel startCell, int length, boolean horizontal) {
+    public ShipModel(int startX, int startY, int length, boolean horizontal) {
         this.length = length;
         this.horizontal = horizontal;
-        this.shipStatus = true;
-        this.shipCells.clear();
-
-        int startX = startCell.getCellCoordX();
-        int startY = startCell.getCellCoordY();
+        this.sunk = false;
+        this.shipCells = new ArrayList<>();
 
         for (int i = 0; i < length; i++) {
             int currentX = horizontal ? startX + i : startX;
@@ -31,67 +24,26 @@ public class ShipModel {
         }
     }
 
-    public void changeDirection() {
-        this.horizontal = !this.horizontal;
-        updateShipCells();
+    public boolean isHit(int x, int y) {
+        return shipCells.stream().anyMatch(cell -> cell.getX() == x && cell.getY() == y);
     }
 
-    private void updateShipCells() {
-        CellModel startCell = shipCells.get(0);
-        int startX = startCell.getCellCoordX();
-        int startY = startCell.getCellCoordY();
-
-        for (int i = 0; i < length; i++) {
-            CellModel cell = shipCells.get(i);
-            int newX = horizontal ? startX + i : startX;
-            int newY = horizontal ? startY : startY + i;
-            cell.updateCellCordX(newX);
-            cell.updateCellCordY(newY);
-        }
+    public void checkShipStatus(BoardModel board) {
+        this.sunk = shipCells.stream().allMatch(cell -> {
+            CellModel boardCell = board.getCell(cell.getX(), cell.getY());
+            return boardCell != null && boardCell.getCellState() == CellState.HIT;
+        });
     }
 
-    public CellModel getStartCell() {
-        return shipCells.get(0);
-    }
-
-    public CellModel getEndCell() {
-        return shipCells.get(shipCells.size() - 1);
+    public boolean isSunk() {
+        return this.sunk;
     }
 
     public int getLength() {
         return this.length;
     }
 
-    public boolean getHorizontal() {
+    public boolean isHorizontal() {
         return this.horizontal;
-    }
-
-    public boolean getShipStatus() {
-        return this.shipStatus;
-    }
-
-    public boolean isValidLength() {
-        return this.length >= 2 && this.length <= 5;
-    }
-
-    public boolean isHit(int x, int y) {
-        for (CellModel cell : shipCells) {
-            if (cell.getCellCoordX() == x && cell.getCellCoordY() == y) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void checkShipStatus(BoardModel board) {
-        boolean allCellsHit = true;
-        for (CellModel cell : shipCells) {
-            CellModel boardCell = board.getCell(cell.getCellCoordX(), cell.getCellCoordY());
-            if (boardCell.getCellState() != CellState.HIT) {
-                allCellsHit = false;
-                break;
-            }
-        }
-        this.shipStatus = !allCellsHit;
     }
 }
