@@ -21,7 +21,6 @@ public class GameView extends JFrame {
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
-        setResizable(false); // Fenstergröße fixieren
 
         this.playerOne = gm.getPlayerOne();
         this.playerTwo = gm.getPlayerTwo();
@@ -29,19 +28,11 @@ public class GameView extends JFrame {
         this.playerBoardOne = new BoardView(playerOne.getBoard());
         this.playerBoardTwo = new BoardView(playerTwo.getBoard());
 
-        playerBoardOne.updateBoard(); // Aktualisiere das Spielbrett
+        playerBoardOne.updateBoard();
 
         setLayout(new BorderLayout());
 
-        // PlayerViews für Spieler 1 und Spieler 2
-        JPanel playerNamePanel = new JPanel(new GridLayout(1, 2));
-        PlayerView playerViewOne = new PlayerView(this.playerOne.getPlayerName());
-        PlayerView playerViewTwo = new PlayerView(this.playerTwo.getPlayerName());
-
-        playerNamePanel.add(playerViewOne);
-        playerNamePanel.add(playerViewTwo);
-
-        add(playerNamePanel, BorderLayout.NORTH);
+        add(createPlayerNamePanel(), BorderLayout.NORTH);
 
         // ControlView direkt unter den Spielernamen
         controlView = new ControlView();
@@ -57,13 +48,24 @@ public class GameView extends JFrame {
         // Unterer Bereich für InfoPanelView und StatusView
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2));
         infoPanelView = new InfoPanelView();
-        statusView = new StatusView(); // Füge das StatusView hinzu, wenn es benötigt wird
+        statusView = new StatusView();
         bottomPanel.add(infoPanelView);
         bottomPanel.add(statusView); // Füge das StatusView dem bottomPanel hinzu
 
         add(bottomPanel, BorderLayout.SOUTH);
 
         setVisible(true); // Fenster sichtbar machen
+    }
+
+    private JPanel createPlayerNamePanel() {
+        JPanel playerNamePanel = new JPanel(new GridLayout(1, 2));
+        PlayerView playerViewOne = new PlayerView(this.playerOne.getPlayerName());
+        PlayerView playerViewTwo = new PlayerView(this.playerTwo.getPlayerName());
+
+        playerNamePanel.add(playerViewOne);
+        playerNamePanel.add(playerViewTwo);
+
+        return playerNamePanel;
     }
 
 }
