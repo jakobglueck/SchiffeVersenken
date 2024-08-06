@@ -2,6 +2,8 @@ package model;
 
 import utils.GameState;
 
+import java.util.Random;
+
 public class GameModel {
 
     private PlayerModel playerOne;
@@ -51,16 +53,24 @@ public class GameModel {
         this.playerTwo = createPlayer(playerTwoName);
     }
 
+    private PlayerModel randomPlayer(){
+        Random ra = new Random();
+        if(ra.nextInt(10)< RANDOM_NUMBER){
+            return this.playerOne;
+        }
+        return this.playerTwo;
+    }
+
     private void createPlayersForNormalGame() {
         this.createPlayerNames();
-        this.currentPlayer = playerOne;
+        this.currentPlayer = this.randomPlayer();
     }
 
     private void createPlayersForDebugGame() {
         this.createPlayerNames();
         this.playerOne.getBoard().placeAllShips();
         this.playerTwo.getBoard().placeAllShips();
-        this.currentPlayer = playerOne;
+        this.currentPlayer = this.randomPlayer();
     }
 
     private void createPlayerAndComputer() {
@@ -110,6 +120,7 @@ public class GameModel {
 
     public void computerPlayTurn() {
         if (this.currentPlayer instanceof ComputerPlayerModel) {
+            // TODO neu
             ((ComputerPlayerModel) this.currentPlayer).makeMove(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
             if (!isGameOver()) {
                 this.switchPlayer();
