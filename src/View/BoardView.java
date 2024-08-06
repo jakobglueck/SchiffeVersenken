@@ -18,24 +18,24 @@ public class BoardView extends JPanel {
 
     public BoardView(BoardModel playerBoard) {
         this.playerBoard = playerBoard;
-        this.labels = new JLabel[10][10];  // Initialisiere das JLabel-Array
+        this.labels = new JLabel[10][10];
 
-        this.setLayout(new BorderLayout());  // Setze Layout des Panels
+        this.setLayout(new BorderLayout());
 
-        infoPanelView = new InfoPanelView();  // InfoPanel initialisieren
+        infoPanelView = new InfoPanelView();
 
-        JPanel mainPanel = new JPanel(new BorderLayout());  // Erzeuge ein Hauptpanel mit BorderLayout
-        mainPanel.add(createLabelsPanel(true), BorderLayout.NORTH);  // Zahlen-Labels oben
-        mainPanel.add(createLabelsPanel(false), BorderLayout.WEST);  // Buchstaben-Labels links
-        mainPanel.add(createGridPanel(), BorderLayout.CENTER);  // Grid in der Mitte
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(createLabelsPanel(true), BorderLayout.NORTH);
+        mainPanel.add(createLabelsPanel(false), BorderLayout.WEST);
+        mainPanel.add(createGridPanel(), BorderLayout.CENTER);
 
-        this.add(mainPanel, BorderLayout.CENTER);  // Hauptpanel in der Mitte
-        this.add(infoPanelView, BorderLayout.SOUTH);  // Informationen unten
+        this.add(mainPanel, BorderLayout.CENTER);
+        this.add(infoPanelView, BorderLayout.SOUTH);
 
         this.setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
 
         this.setVisible(true);
-        updateBoard(); // Initialisiere das Spielfeld
+        updateBoard();
     }
 
     private JPanel createLabelsPanel(boolean isNumeric) {
@@ -87,25 +87,65 @@ public class BoardView extends JPanel {
     private void handleCellClick(int row, int col, JLabel label) {
         CellModel cell = playerBoard.getCell(row, col);
         if (cell.getCellState() == CellState.FREE) {
-            cell.updateCellState(CellState.SET);
-            label.setBackground(Color.GRAY);
-        } else if (cell.getCellState() == CellState.SET) {
-            cell.updateCellState(CellState.FREE);
+            markAsMiss(label);
+        } else if (cell.getCellState() == CellState.SET || cell.getCellState() == CellState.HIT) {
+            playerBoard.registerHit(row, col);
+        }
+        updateBoard();
+    }
+
+    public void updateBoard() {
+        for (int row = 0; row < 10; row++) {
+            for (int col = 0; col < 10; col++) {
+                updateCell(row, col);
+            }
+        }
+    }
+
+    private void updateCell(int row, int col) {
+        CellModel cell = playerBoard.getCell(row, col);
+        JLabel label = labels[row][col];
+
+        switch (cell.getCellState()) {
+            case FREE:
+                updateFreeCell(label);
+                break;
+            case SET:
+                updateSetCell(label);
+                break;
+            case HIT:
+                updateHitCell(label);
+                break;
+            case REVEAL:
+                updateRevealedCell(label);
+                break;
+        }
+
+        label.repaint();
+    }
+
+    private void updateFreeCell(JLabel label) {
+        if (label.getIcon() == null) {
+            label.setIcon(null);
             label.setBackground(Color.WHITE);
         }
     }
 
-    public void updateBoard() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                CellModel cell = playerBoard.getCell(i, j);
-                if (cell.getCellState() == CellState.SET) {
-                    labels[i][j].setBackground(Color.GRAY);
-                } else {
-                    labels[i][j].setBackground(Color.WHITE);
-                }
-                labels[i][j].repaint();
-            }
-        }
+    private void updateSetCell(JLabel label) {
+        label.setIcon(null);
+        label.setBackground(Color.GRAY);
+    }
+
+    private void updateHitCell(JLabel label) {
+        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
+        label.setBackground(Color.GRAY);
+    }
+
+    private void updateRevealedCell(JLabel label) {
+        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
+        label.setBackground(Color.RED);
+    }
+    private void markAsMiss(JLabel label) {
+        label.setIcon(IconFactoryView.createPointIcon(Color.BLACK, CELL_SIZE / 4));
     }
 }
