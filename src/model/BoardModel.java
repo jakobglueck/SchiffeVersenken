@@ -19,7 +19,7 @@ public class BoardModel {
     public BoardModel() {
         this.board = new CellModel[HEIGHT][WIDTH];
         this.playerShips = new ArrayList<>();
-        initializeBoard();
+        this.initializeBoard();
     }
 
     private void initializeBoard() {
