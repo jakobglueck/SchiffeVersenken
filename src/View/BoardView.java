@@ -2,6 +2,7 @@ package View;
 
 import model.BoardModel;
 import model.CellModel;
+import model.ShipModel;
 import utils.CellState;
 import javax.swing.*;
 import java.awt.*;
@@ -71,13 +72,12 @@ public class BoardView extends JPanel {
 
     private JLabel createStyledLabel(int row, int col) {
         JLabel label = new JLabel();
-        label.setOpaque(true);
+        //label.setOpaque(true);
         label.setBackground(Color.WHITE);
         label.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));
         label.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
-
         // Hinzufügen eines Maus-Listeners, der auf Mausklicks reagiert
         label.addMouseListener(new MouseAdapter() {
             //Beim klicken wird diese Methode aufgerufen
@@ -99,10 +99,21 @@ public class BoardView extends JPanel {
         // Holt die Zelle im angegebenen (row, col) vom playerBoard, welche angeklickt wurde
         CellModel cell = playerBoard.getCell(row, col);
 
-        if (cell.getCellState() == CellState.FREE) {
-            markAsMiss(label);
-        } else if (cell.getCellState() == CellState.SET || cell.getCellState() == CellState.HIT) {
-            playerBoard.registerHit(row, col);
+        switch(cell.getCellState()){
+            case FREE:
+                this.markAsMiss(label);
+                break;
+            case SET:
+                if(playerBoard.registerHit(row, col)){
+                    for (ShipModel ship : playerBoard.getPlayerShips()){
+                        if(ship.isSunk()){
+                            this.updateRevealedCell(label);
+                        };
+                    }
+                };
+                break;
+            default:
+                System.out.println("Du Hure hast falsch gedrückt");
         }
         updateBoard();
     }
@@ -132,10 +143,8 @@ public class BoardView extends JPanel {
             case HIT:
                 updateHitCell(label);
                 break;
-            case REVEAL:
-                updateRevealedCell(label);
-                break;
-            default: System.exit(0);
+            default:
+                System.exit(0);
         }
 
         label.repaint();
@@ -160,9 +169,9 @@ public class BoardView extends JPanel {
     //Markiert eine Zelle als aufgedeckt, mithilfe eines roten Kreuz-Icon & einer roten Hintergrundfarbe
     private void updateRevealedCell(JLabel label) {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
+        label.setOpaque(false);
         label.setBackground(Color.RED);
     }
-
 
      // Markiert eine Zelle als verfehlt mithilfe eines schwarzen Punktes.
     private void markAsMiss(JLabel label) {
