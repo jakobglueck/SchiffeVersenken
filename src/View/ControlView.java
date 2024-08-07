@@ -10,7 +10,7 @@ public class ControlView extends JPanel {
         setLayout(new FlowLayout());
 
         JButton mainMenuButton = new JButton("Zurück zum Hauptmenü");
-        JButton pauseGameButton = new JButton("Spiel pausieren");
+        JButton pauseGameButton = new JButton("Spiel neu starten");
         JButton endGameButton = new JButton("Spiel verlassen");
 
         endGameButton.addActionListener(new ActionListener() {
@@ -27,13 +27,11 @@ public class ControlView extends JPanel {
             }
         });
 
-        // Hier könnte noch eine Action für das Hauptmenü-Button hinzugefügt werden, falls notwendig.
 
         add(mainMenuButton);
         add(pauseGameButton);
         add(endGameButton);
 
-        // Setze Padding für das Panel
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 }
