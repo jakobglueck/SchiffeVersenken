@@ -26,14 +26,21 @@ public class ShipModel {
     }
 
     public boolean isHit(int x, int y) {
-        return shipCells.stream().anyMatch(cell -> cell.getX() == x && cell.getY() == y);
+        for (CellModel cell : this.shipCells) {
+            if (cell.getX() == x && cell.getY() == y) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void checkShipStatus(BoardModel board) {
-        this.sunk = shipCells.stream().allMatch(cell -> {
-            CellModel boardCell = board.getCell(cell.getX(), cell.getY());
-            return boardCell != null && boardCell.getCellState() == CellState.HIT;
-        });
+    public void checkShipStatus() {
+        for (CellModel cell : this.shipCells) {
+            if (cell.getCellState() != CellState.HIT) {
+                return;
+            }
+        }
+        this.sunk = true;
     }
 
     public boolean isSunk() {
@@ -46,5 +53,9 @@ public class ShipModel {
 
     public boolean isHorizontal() {
         return this.horizontal;
+    }
+
+    public List<CellModel> getShipCells() {
+        return this.shipCells;
     }
 }

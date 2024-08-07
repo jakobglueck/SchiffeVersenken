@@ -104,23 +104,23 @@ public class BoardModel {
         }
     }
 
-    public boolean registerHit(int x, int y) {
+    public ShipModel registerHit(int x, int y) {
         if (!isValidCoordinate(x, y)) {
-            return false;
+            return null;
         }
 
         if (this.getCell(x, y).getCellState() == CellState.SET) {
             this.getCell(x, y).updateCellState(CellState.HIT);
             for (ShipModel ship : this.playerShips) {
                 if (ship.isHit(x, y)) {
-                    ship.checkShipStatus(this);
-                    return true;
+                    ship.checkShipStatus();
+                    return ship;
                 }
             }
         } else if (this.getCell(x, y).getCellState() == CellState.FREE) {
             this.getCell(x, y).updateCellState(CellState.FREE);
         }
-        return false;
+        return null;
     }
 
     public boolean allShipsAreHit() {

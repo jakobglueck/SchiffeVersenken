@@ -104,18 +104,33 @@ public class BoardView extends JPanel {
                 this.markAsMiss(label);
                 break;
             case SET:
-                if(playerBoard.registerHit(row, col)){
-                    for (ShipModel ship : playerBoard.getPlayerShips()){
-                        if(ship.isSunk()){
-                            this.updateRevealedCell(label);
-                        };
+                ShipModel model = playerBoard.registerHit(row, col);
+                if (model != null) {
+                    this.updateHitCell(label);
+                    if (model.isSunk()) {
+                        this.updateRevealedShip(model);  // Oder eine Methode zum Färben des gesamten Schiffs
                     }
-                };
+                }
                 break;
             default:
                 System.out.println("Du Hure hast falsch gedrückt");
         }
+
         updateBoard();
+        if(playerBoard.allShipsAreHit()){
+            System.exit(0);
+        }
+    }
+
+    private void updateRevealedShip(ShipModel ship) {
+        for (CellModel cell : ship.getShipCells()) {
+            JLabel cellLabel = getLabelForCell(cell.getX(), cell.getY());
+            this.updateRevealedCell(cellLabel);
+        }
+    }
+
+    private JLabel getLabelForCell(int x, int y) {
+        return labels[x][y];
     }
 
     //Diese Methode durchläuft alle Zellen des Spielfelds und aktualisiert jede einzelne Zelle.
@@ -126,7 +141,7 @@ public class BoardView extends JPanel {
             }
         }
     }
-    
+
     //Aktualisiert eine einzelne Zelle mithilfe der row & col basierend auf ihrem Zustand.
     private void updateCell(int row, int col) {
         CellModel cell = playerBoard.getCell(row, col);
