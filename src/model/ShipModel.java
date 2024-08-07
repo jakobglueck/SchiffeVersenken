@@ -11,16 +11,17 @@ public class ShipModel {
     private final boolean horizontal;
     private boolean sunk;
 
-    public ShipModel(int startX, int startY, int length, boolean horizontal) {
+    public ShipModel(BoardModel boardModel, int startX, int startY, int length, boolean horizontal) {
         this.length = length;
         this.horizontal = horizontal;
         this.sunk = false;
         this.shipCells = new ArrayList<>();
 
         for (int i = 0; i < length; i++) {
-            int currentX = horizontal ? startX + i : startX;
-            int currentY = horizontal ? startY : startY + i;
-            this.shipCells.add(new CellModel(currentX, currentY, CellState.SET));
+            int currentX = horizontal ? boardModel.getCell(startX,startY).getX() + i : boardModel.getCell(startX,startY).getX() ;
+            int currentY = horizontal ? boardModel.getCell(startX,startY).getY() : boardModel.getCell(startX,startY).getY() + i;
+            boardModel.getCell(currentX,currentY).updateCellState(CellState.SET);
+            this.shipCells.add(boardModel.getCell(currentX,currentY));
         }
     }
 
