@@ -11,7 +11,8 @@ public class GameView extends JFrame {
     private BoardView playerBoardOne;
     private BoardView playerBoardTwo;
     private GameModel gameModel;
-    private InfoPanelView infoPanelView;
+    private InfoPanelView infoPanelViewOne;
+    private InfoPanelView infoPanelViewTwo;
     private StatusView statusView;
     private ControlView controlView;
 
@@ -29,43 +30,62 @@ public class GameView extends JFrame {
         this.playerBoardTwo = new BoardView(playerTwo.getBoard());
 
         playerBoardOne.updateBoard();
+        playerBoardTwo.updateBoard();
 
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
 
-        add(createPlayerNamePanel(), BorderLayout.NORTH);
+        // Zeile 1: PlayerPanel (10% Höhe)
+        gbc.weighty = 0.1;
+        add(createPlayerPanel(), gbc);
 
-        // ControlView direkt unter den Spielernamen
+        // Zeile 2: BoardPanel (60% Höhe)
+        gbc.weighty = 0.6;
+        add(createBoardPanel(), gbc);
+
+        // Zeile 3: InfoPanel/StatusPanel (20% Höhe)
+        gbc.weighty = 0.2;
+        add(createInfoStatusPanel(), gbc);
+
+        // Zeile 4: ControlPanel (10% Höhe)
+        gbc.weighty = 0.1;
         controlView = new ControlView();
-        add(controlView, BorderLayout.AFTER_LAST_LINE);
+        add(controlView, gbc);
 
-        // BoardView für Spieler 1 und Spieler 2
-        JPanel boardPanel = new JPanel(new GridLayout(1, 2));
-        boardPanel.add(playerBoardOne);
-        boardPanel.add(playerBoardTwo);
-
-        add(boardPanel, BorderLayout.CENTER);
-
-        // Unterer Bereich für InfoPanelView und StatusView
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2));
-        infoPanelView = new InfoPanelView();
-        statusView = new StatusView();
-        bottomPanel.add(infoPanelView);
-        bottomPanel.add(statusView); // Füge das StatusView dem bottomPanel hinzu
-
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        setVisible(true); // Fenster sichtbar machen
+        setVisible(true);
     }
 
-    private JPanel createPlayerNamePanel() {
-        JPanel playerNamePanel = new JPanel(new GridLayout(1, 2));
+    private JPanel createPlayerPanel() {
+        JPanel playerPanel = new JPanel(new GridLayout(1, 2));
         PlayerView playerViewOne = new PlayerView(this.playerOne.getPlayerName());
         PlayerView playerViewTwo = new PlayerView(this.playerTwo.getPlayerName());
 
-        playerNamePanel.add(playerViewOne);
-        playerNamePanel.add(playerViewTwo);
+        playerPanel.add(playerViewOne);
+        playerPanel.add(playerViewTwo);
 
-        return playerNamePanel;
+        return playerPanel;
     }
 
+    private JPanel createBoardPanel() {
+        JPanel boardPanel = new JPanel(new GridLayout(1, 2));
+        boardPanel.add(playerBoardOne);
+        boardPanel.add(playerBoardTwo);
+        return boardPanel;
+    }
+
+    private JPanel createInfoStatusPanel() {
+        JPanel infoStatusPanel = new JPanel(new BorderLayout());
+        infoPanelViewOne = new InfoPanelView();
+        statusView = new StatusView();
+        infoPanelViewTwo = new InfoPanelView();
+
+        infoStatusPanel.add(infoPanelViewOne,BorderLayout.WEST);
+        infoStatusPanel.add(statusView, BorderLayout.CENTER);
+        infoStatusPanel.add(infoPanelViewTwo, BorderLayout.EAST);
+
+        return infoStatusPanel;
+    }
 }
