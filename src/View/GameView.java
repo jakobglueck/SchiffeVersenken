@@ -21,7 +21,8 @@ public class GameView extends JFrame {
 
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1000, 800);
+        setResizable(false);
 
         this.playerOne = gm.getPlayerOne();
         this.playerTwo = gm.getPlayerTwo();
