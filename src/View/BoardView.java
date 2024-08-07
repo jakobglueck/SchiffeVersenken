@@ -78,9 +78,9 @@ public class BoardView extends JPanel {
         label.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
-        // Hinzufügen eines Maus-Listeners, der auf Mausklicks reagiert
+
         label.addMouseListener(new MouseAdapter() {
-            //Beim klicken wird diese Methode aufgerufen
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 handleCellClick(row, col, label);
@@ -96,28 +96,27 @@ public class BoardView extends JPanel {
      * @param label Das geklickte JLabel.
      */
     private void handleCellClick(int row, int col, JLabel label) {
-        // Holt die Zelle im angegebenen (row, col) vom playerBoard, welche angeklickt wurde
         CellModel cell = playerBoard.getCell(row, col);
 
-        switch(cell.getCellState()){
+        switch(cell.getCellState()) {
             case FREE:
                 this.markAsMiss(label);
+                playerBoard.changeCellState(row, col, CellState.FREE);
                 break;
             case SET:
                 ShipModel model = playerBoard.registerHit(row, col);
                 if (model != null) {
                     this.updateHitCell(label);
                     if (model.isSunk()) {
-                        this.updateRevealedShip(model);  // Oder eine Methode zum Färben des gesamten Schiffs
+                        this.updateRevealedShip(model); // Aktualisieren Sie alle Labels des versenkten Schiffs
+                        this.markSurroundingCellsAsMiss(model); // Markieren Sie alle Zellen um das versenkte Schiff als verfehlt
                     }
                 }
                 break;
             default:
-                System.out.println("Du Hure hast falsch gedrückt");
+                System.out.println("Ungültiger Klick.");
         }
-
-        updateBoard();
-        if(playerBoard.allShipsAreHit()){
+        if(this.playerBoard.allShipsAreHit()){
             System.exit(0);
         }
     }
@@ -130,7 +129,28 @@ public class BoardView extends JPanel {
     }
 
     private JLabel getLabelForCell(int x, int y) {
+
         return labels[x][y];
+    }
+
+    private void markSurroundingCellsAsMiss(ShipModel ship) {
+        for (CellModel cell : ship.getShipCells()) {
+            int startX = Math.max(0, cell.getX() - 1);
+            int endX = Math.min(BoardModel.WIDTH - 1, cell.getX() + 1);
+            int startY = Math.max(0, cell.getY() - 1);
+            int endY = Math.min(BoardModel.HEIGHT - 1, cell.getY() + 1);
+
+            for (int x = startX; x <= endX; x++) {
+                for (int y = startY; y <= endY; y++) {
+                    CellModel surroundingCell = playerBoard.getCell(x, y);
+                    if (surroundingCell.getCellState() == CellState.FREE) {
+                        JLabel surroundingLabel = getLabelForCell(x, y);
+                        this.markAsMiss(surroundingLabel);
+                        playerBoard.changeCellState(x, y, CellState.FREE);
+                    }
+                }
+            }
+        }
     }
 
     //Diese Methode durchläuft alle Zellen des Spielfelds und aktualisiert jede einzelne Zelle.
