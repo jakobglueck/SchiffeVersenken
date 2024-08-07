@@ -11,7 +11,7 @@ public class InfoPanelView extends JPanel {
     private JLabel sunkShipsLabel;
 
     public InfoPanelView() {
-        setLayout(new GridLayout(4, 1)); // GridLayout mit 4 Zeilen und 1 Spalte
+        setLayout(new GridLayout(4, 1));
 
         totalClicksLabel = new JLabel("Anzahl gesamter Klicks: 0");
         hitsLabel = new JLabel("Davon Getroffen (Hits): 0");
@@ -26,7 +26,6 @@ public class InfoPanelView extends JPanel {
         this.setBorder(BorderFactory.createEmptyBorder(25, 15, 0, 15));
     }
 
-    // Getter-Methoden für die Labels
     public JLabel getTotalClicksLabel() {
         return totalClicksLabel;
     }
