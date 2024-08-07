@@ -72,7 +72,7 @@ public class BoardView extends JPanel {
 
     private JLabel createStyledLabel(int row, int col) {
         JLabel label = new JLabel();
-        //label.setOpaque(true);
+        label.setOpaque(true);
         label.setBackground(Color.WHITE);
         label.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));
         label.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
@@ -126,8 +126,7 @@ public class BoardView extends JPanel {
             }
         }
     }
-
-
+    
     //Aktualisiert eine einzelne Zelle mithilfe der row & col basierend auf ihrem Zustand.
     private void updateCell(int row, int col) {
         CellModel cell = playerBoard.getCell(row, col);
@@ -147,7 +146,6 @@ public class BoardView extends JPanel {
                 System.exit(0);
         }
 
-        label.repaint();
     }
 
     // Markiert die Zelle weiß, um anzuzeigen, dass die Zelle frei ist.
@@ -163,13 +161,11 @@ public class BoardView extends JPanel {
    //Markiert eine Zelle als getroffen, mithilfe eines roten Kreuz-Icon
     private void updateHitCell(JLabel label) {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
-        label.setBackground(Color.GRAY);
     }
 
     //Markiert eine Zelle als aufgedeckt, mithilfe eines roten Kreuz-Icon & einer roten Hintergrundfarbe
     private void updateRevealedCell(JLabel label) {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
-        label.setOpaque(false);
         label.setBackground(Color.RED);
     }
 
