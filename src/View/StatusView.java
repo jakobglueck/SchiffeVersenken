@@ -4,18 +4,22 @@ import javax.swing.*;
 import java.awt.*;
 
 public class StatusView extends JPanel {
+    private JLabel titleLabel;
     private JLabel statusLabel;
 
     public StatusView() {
-        this.setLayout(new BorderLayout());
-        statusLabel = new JLabel("Status: Warten auf Spielbeginn", SwingConstants.CENTER);
-        this.add(statusLabel, BorderLayout.CENTER);
+        this.setLayout(new GridLayout(2, 1,0,-75));
 
-        // Setze Padding
+        titleLabel = new JLabel("Status", SwingConstants.CENTER);
+        statusLabel = new JLabel("Warten auf Spielbeginn", SwingConstants.CENTER);
+
+        this.add(titleLabel);
+        this.add(statusLabel);
+        
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
     public void updateStatus(String status) {
-        statusLabel.setText("Status: " + status);
+        statusLabel.setText(status);
     }
 }
