@@ -1,5 +1,6 @@
 import View.*;
 
+import controller.GameController;
 import model.GameModel;
 import utils.*;
 import utils.GameState;

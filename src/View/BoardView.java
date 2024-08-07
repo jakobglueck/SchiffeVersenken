@@ -72,13 +72,12 @@ public class BoardView extends JPanel {
 
     private JLabel createStyledLabel(int row, int col) {
         JLabel label = new JLabel();
-        label.setOpaque(true);
+        //label.setOpaque(true);
         label.setBackground(Color.WHITE);
         label.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));
         label.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
-
         // Hinzufügen eines Maus-Listeners, der auf Mausklicks reagiert
         label.addMouseListener(new MouseAdapter() {
             //Beim klicken wird diese Methode aufgerufen
@@ -170,6 +169,7 @@ public class BoardView extends JPanel {
     //Markiert eine Zelle als aufgedeckt, mithilfe eines roten Kreuz-Icon & einer roten Hintergrundfarbe
     private void updateRevealedCell(JLabel label) {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
+        label.setOpaque(false);
         label.setBackground(Color.RED);
     }
 

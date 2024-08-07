@@ -89,4 +89,7 @@ public class GameView extends JFrame {
 
         return infoStatusPanel;
     }
+    public BoardView getPlayerBoardOne() {
+        return this.playerBoardOne;
+    }
 }
