@@ -12,7 +12,6 @@ public class BoardView extends JPanel {
 
     private BoardModel playerBoard;
     private JLabel[][] labels;
-    private InfoPanelView infoPanelView;
 
     private static final int CELL_SIZE = 50;
 
@@ -22,15 +21,12 @@ public class BoardView extends JPanel {
 
         this.setLayout(new BorderLayout());
 
-        infoPanelView = new InfoPanelView();
-
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(createLabelsPanel(true), BorderLayout.NORTH);
         mainPanel.add(createLabelsPanel(false), BorderLayout.WEST);
         mainPanel.add(createGridPanel(), BorderLayout.CENTER);
 
         this.add(mainPanel, BorderLayout.CENTER);
-        this.add(infoPanelView, BorderLayout.SOUTH);
 
         this.setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
 
