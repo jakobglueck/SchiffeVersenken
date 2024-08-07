@@ -2,6 +2,7 @@ package View;
 
 import model.BoardModel;
 import model.CellModel;
+import model.ShipModel;
 import utils.CellState;
 import javax.swing.*;
 import java.awt.*;
@@ -99,10 +100,21 @@ public class BoardView extends JPanel {
         // Holt die Zelle im angegebenen (row, col) vom playerBoard, welche angeklickt wurde
         CellModel cell = playerBoard.getCell(row, col);
 
-        if (cell.getCellState() == CellState.FREE) {
-            markAsMiss(label);
-        } else if (cell.getCellState() == CellState.SET || cell.getCellState() == CellState.HIT) {
-            playerBoard.registerHit(row, col);
+        switch(cell.getCellState()){
+            case FREE:
+                this.markAsMiss(label);
+                break;
+            case SET:
+                if(playerBoard.registerHit(row, col)){
+                    for (ShipModel ship : playerBoard.getPlayerShips()){
+                        if(ship.isSunk()){
+                            this.updateRevealedCell(label);
+                        };
+                    }
+                };
+                break;
+            default:
+                System.out.println("Du Hure hast falsch gedrückt");
         }
         updateBoard();
     }
@@ -132,10 +144,8 @@ public class BoardView extends JPanel {
             case HIT:
                 updateHitCell(label);
                 break;
-            case REVEAL:
-                updateRevealedCell(label);
-                break;
-            default: System.exit(0);
+            default:
+                System.exit(0);
         }
 
         label.repaint();
@@ -162,7 +172,6 @@ public class BoardView extends JPanel {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
         label.setBackground(Color.RED);
     }
-
 
      // Markiert eine Zelle als verfehlt mithilfe eines schwarzen Punktes.
     private void markAsMiss(JLabel label) {

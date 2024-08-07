@@ -10,9 +10,9 @@ public class SchiffeVersenkenMain{
         GameModel gm = new GameModel();
         gm.setGameState(GameState.DEBUG);
         gm.startGame();
-
         GameView gameView = new GameView(gm);
 
         //Controller - TODO
+        int a =  10;
     }
 }
