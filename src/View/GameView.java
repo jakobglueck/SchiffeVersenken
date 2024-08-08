@@ -92,4 +92,14 @@ public class GameView extends JFrame {
     public BoardView getPlayerBoardOne() {
         return this.playerBoardOne;
     }
+
+    public void updateBoardVisibility(PlayerModel currentPlayer) {
+        if (currentPlayer == playerOne) {
+            playerBoardOne.setCovered(false);
+            playerBoardTwo.setCovered(true);
+        } else {
+            playerBoardOne.setCovered(true);
+            playerBoardTwo.setCovered(false);
+        }
+    }
 }

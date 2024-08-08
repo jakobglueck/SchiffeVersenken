@@ -10,29 +10,36 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class BoardView extends JPanel {
-
     private BoardModel playerBoard;
     private JLabel[][] labels;
+    private JPanel coverPanel;
 
     private static final int CELL_SIZE = 50;
+    private static final int BOARD_SIZE = 10;
 
     public BoardView(BoardModel playerBoard) {
         this.playerBoard = playerBoard;
-        this.labels = new JLabel[10][10];
+        this.labels = new JLabel[BOARD_SIZE][BOARD_SIZE];
 
-        this.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(createNumericLabelsPanel(), BorderLayout.NORTH);
         mainPanel.add(createAlphabeticLabelsPanel(), BorderLayout.WEST);
         mainPanel.add(createGridPanel(), BorderLayout.CENTER);
 
-        this.add(mainPanel, BorderLayout.CENTER);
+        // Initialize the cover panel
+        this.coverPanel = new JPanel();
+        this.coverPanel.setBackground(Color.GRAY);
+        this.coverPanel.setOpaque(true);
+        this.coverPanel.setVisible(false);
 
-        this.setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
+        setLayout(new OverlayLayout(this));
+        add(coverPanel);
+        add(mainPanel);
 
-        this.setVisible(true);
-        updateBoard();
+        setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
+        setVisible(true);
     }
 
       private JPanel createNumericLabelsPanel() {
@@ -207,5 +214,9 @@ public class BoardView extends JPanel {
      // Markiert eine Zelle als verfehlt mithilfe eines schwarzen Punktes.
     private void markAsMiss(JLabel label) {
         label.setIcon(IconFactoryView.createPointIcon(Color.BLACK, CELL_SIZE / 4));
+    }
+
+    public void setCovered(boolean covered) {
+        this.coverPanel.setVisible(covered);
     }
 }
