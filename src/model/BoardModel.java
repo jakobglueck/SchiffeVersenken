@@ -56,7 +56,7 @@ public class BoardModel {
             return false;
         }
 
-        ShipModel ship = new ShipModel(startX, startY, length, horizontal);
+        ShipModel ship = new ShipModel(this,startX, startY, length, horizontal);
         for (int i = 0; i < length; i++) {
             int x = horizontal ? startX + i : startX;
             int y = horizontal ? startY : startY + i;
@@ -104,24 +104,23 @@ public class BoardModel {
         }
     }
 
-    public boolean registerHit(int x, int y) {
+    public ShipModel registerHit(int x, int y) {
         if (!isValidCoordinate(x, y)) {
-            return false;
+            return null;
         }
 
-        CellModel cell = this.getCell(x, y);
-        if (cell.getCellState() == CellState.SET) {
-            cell.updateCellState(CellState.HIT);
+        if (this.getCell(x, y).getCellState() == CellState.SET) {
+            this.getCell(x, y).updateCellState(CellState.HIT);
             for (ShipModel ship : this.playerShips) {
                 if (ship.isHit(x, y)) {
-                    ship.checkShipStatus(this);
-                    return true;
+                    ship.checkShipStatus();
+                    return ship;
                 }
             }
-        } else if (cell.getCellState() == CellState.FREE) {
-            cell.updateCellState(CellState.FREE);
+        } else if (this.getCell(x, y).getCellState() == CellState.FREE) {
+            this.getCell(x, y).updateCellState(CellState.FREE);
         }
-        return false;
+        return null;
     }
 
     public boolean allShipsAreHit() {

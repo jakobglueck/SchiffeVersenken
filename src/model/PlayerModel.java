@@ -42,7 +42,13 @@ public class PlayerModel {
             return false;
         }
 
-        boolean hit = opponent.getBoard().registerHit(x, y);
+        boolean hit = false;
+        for(ShipModel ship : this.board.getPlayerShips()){
+            if(ship.isHit(x,y)){
+                hit = true;
+            }
+        }
+
         if (hit) {
             System.out.println(playerName + " hit a target!");
         } else {

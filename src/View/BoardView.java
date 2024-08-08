@@ -72,15 +72,15 @@ public class BoardView extends JPanel {
 
     private JLabel createStyledLabel(int row, int col) {
         JLabel label = new JLabel();
-        //label.setOpaque(true);
+        label.setOpaque(true);
         label.setBackground(Color.WHITE);
         label.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));
         label.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
-        // Hinzufügen eines Maus-Listeners, der auf Mausklicks reagiert
+
         label.addMouseListener(new MouseAdapter() {
-            //Beim klicken wird diese Methode aufgerufen
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 handleCellClick(row, col, label);
@@ -96,26 +96,61 @@ public class BoardView extends JPanel {
      * @param label Das geklickte JLabel.
      */
     private void handleCellClick(int row, int col, JLabel label) {
-        // Holt die Zelle im angegebenen (row, col) vom playerBoard, welche angeklickt wurde
         CellModel cell = playerBoard.getCell(row, col);
 
-        switch(cell.getCellState()){
+        switch(cell.getCellState()) {
             case FREE:
                 this.markAsMiss(label);
+                playerBoard.changeCellState(row, col, CellState.FREE);
                 break;
             case SET:
-                if(playerBoard.registerHit(row, col)){
-                    for (ShipModel ship : playerBoard.getPlayerShips()){
-                        if(ship.isSunk()){
-                            this.updateRevealedCell(label);
-                        };
+                ShipModel model = playerBoard.registerHit(row, col);
+                if (model != null) {
+                    this.updateHitCell(label);
+                    if (model.isSunk()) {
+                        this.updateRevealedShip(model); // Aktualisieren Sie alle Labels des versenkten Schiffs
+                        this.markSurroundingCellsAsMiss(model); // Markieren Sie alle Zellen um das versenkte Schiff als verfehlt
                     }
-                };
+                }
                 break;
             default:
-                System.out.println("Du Hure hast falsch gedrückt");
+                System.out.println("Ungültiger Klick.");
         }
-        updateBoard();
+        if(this.playerBoard.allShipsAreHit()){
+            System.exit(0);
+        }
+    }
+
+    private void updateRevealedShip(ShipModel ship) {
+        for (CellModel cell : ship.getShipCells()) {
+            JLabel cellLabel = getLabelForCell(cell.getX(), cell.getY());
+            this.updateRevealedCell(cellLabel);
+        }
+    }
+
+    private JLabel getLabelForCell(int x, int y) {
+
+        return labels[x][y];
+    }
+
+    private void markSurroundingCellsAsMiss(ShipModel ship) {
+        for (CellModel cell : ship.getShipCells()) {
+            int startX = Math.max(0, cell.getX() - 1);
+            int endX = Math.min(BoardModel.WIDTH - 1, cell.getX() + 1);
+            int startY = Math.max(0, cell.getY() - 1);
+            int endY = Math.min(BoardModel.HEIGHT - 1, cell.getY() + 1);
+
+            for (int x = startX; x <= endX; x++) {
+                for (int y = startY; y <= endY; y++) {
+                    CellModel surroundingCell = playerBoard.getCell(x, y);
+                    if (surroundingCell.getCellState() == CellState.FREE) {
+                        JLabel surroundingLabel = getLabelForCell(x, y);
+                        this.markAsMiss(surroundingLabel);
+                        playerBoard.changeCellState(x, y, CellState.FREE);
+                    }
+                }
+            }
+        }
     }
 
     //Diese Methode durchläuft alle Zellen des Spielfelds und aktualisiert jede einzelne Zelle.
@@ -126,7 +161,6 @@ public class BoardView extends JPanel {
             }
         }
     }
-
 
     //Aktualisiert eine einzelne Zelle mithilfe der row & col basierend auf ihrem Zustand.
     private void updateCell(int row, int col) {
@@ -147,7 +181,6 @@ public class BoardView extends JPanel {
                 System.exit(0);
         }
 
-        label.repaint();
     }
 
     // Markiert die Zelle weiß, um anzuzeigen, dass die Zelle frei ist.
@@ -163,13 +196,11 @@ public class BoardView extends JPanel {
    //Markiert eine Zelle als getroffen, mithilfe eines roten Kreuz-Icon
     private void updateHitCell(JLabel label) {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
-        label.setBackground(Color.GRAY);
     }
 
     //Markiert eine Zelle als aufgedeckt, mithilfe eines roten Kreuz-Icon & einer roten Hintergrundfarbe
     private void updateRevealedCell(JLabel label) {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
-        label.setOpaque(false);
         label.setBackground(Color.RED);
     }
 

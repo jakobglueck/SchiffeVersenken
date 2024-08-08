@@ -11,28 +11,36 @@ public class ShipModel {
     private final boolean horizontal;
     private boolean sunk;
 
-    public ShipModel(int startX, int startY, int length, boolean horizontal) {
+    public ShipModel(BoardModel boardModel, int startX, int startY, int length, boolean horizontal) {
         this.length = length;
         this.horizontal = horizontal;
         this.sunk = false;
         this.shipCells = new ArrayList<>();
 
         for (int i = 0; i < length; i++) {
-            int currentX = horizontal ? startX + i : startX;
-            int currentY = horizontal ? startY : startY + i;
-            this.shipCells.add(new CellModel(currentX, currentY, CellState.SET));
+            int currentX = horizontal ? boardModel.getCell(startX,startY).getX() + i : boardModel.getCell(startX,startY).getX() ;
+            int currentY = horizontal ? boardModel.getCell(startX,startY).getY() : boardModel.getCell(startX,startY).getY() + i;
+            boardModel.getCell(currentX,currentY).updateCellState(CellState.SET);
+            this.shipCells.add(boardModel.getCell(currentX,currentY));
         }
     }
 
     public boolean isHit(int x, int y) {
-        return shipCells.stream().anyMatch(cell -> cell.getX() == x && cell.getY() == y);
+        for (CellModel cell : this.shipCells) {
+            if (cell.getX() == x && cell.getY() == y) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void checkShipStatus(BoardModel board) {
-        this.sunk = shipCells.stream().allMatch(cell -> {
-            CellModel boardCell = board.getCell(cell.getX(), cell.getY());
-            return boardCell != null && boardCell.getCellState() == CellState.HIT;
-        });
+    public void checkShipStatus() {
+        for (CellModel cell : this.shipCells) {
+            if (cell.getCellState() != CellState.HIT) {
+                return;
+            }
+        }
+        this.sunk = true;
     }
 
     public boolean isSunk() {
@@ -45,5 +53,9 @@ public class ShipModel {
 
     public boolean isHorizontal() {
         return this.horizontal;
+    }
+
+    public List<CellModel> getShipCells() {
+        return this.shipCells;
     }
 }
