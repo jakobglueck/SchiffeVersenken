@@ -219,4 +219,8 @@ public class BoardView extends JPanel {
     public void setCovered(boolean covered) {
         this.coverPanel.setVisible(covered);
     }
+
+    public int getCellSize() {
+        return CELL_SIZE;
+    }
 }

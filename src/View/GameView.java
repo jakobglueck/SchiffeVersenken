@@ -8,16 +8,16 @@ public class GameView extends JFrame {
 
     private PlayerModel playerOne;
     private PlayerModel playerTwo;
+    private GameModel game;
     private BoardView playerBoardOne;
     private BoardView playerBoardTwo;
-    private GameModel gameModel;
     private InfoPanelView infoPanelViewOne;
     private InfoPanelView infoPanelViewTwo;
     private StatusView statusView;
     private ControlView controlView;
 
     public GameView(GameModel gm) {
-        this.gameModel = gm;
+        this.game = gm;
 
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,6 +93,10 @@ public class GameView extends JFrame {
         return this.playerBoardOne;
     }
 
+    public BoardView getPlayerBoardTwo() {
+        return this.playerBoardTwo;
+    }
+
     public void updateBoardVisibility(PlayerModel currentPlayer) {
         if (currentPlayer == playerOne) {
             playerBoardOne.setCovered(false);
@@ -101,5 +105,17 @@ public class GameView extends JFrame {
             playerBoardOne.setCovered(true);
             playerBoardTwo.setCovered(false);
         }
+    }
+
+    public InfoPanelView getInfoPanelViewOne() {
+        return this.infoPanelViewOne;
+    }
+
+    public InfoPanelView getInfoPanelViewTwo() {
+        return this.infoPanelViewTwo;
+    }
+
+    public ControlView getControlView() {
+        return this.controlView;
     }
 }

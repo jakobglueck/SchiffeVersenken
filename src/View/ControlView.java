@@ -6,12 +6,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ControlView extends JPanel {
+    private JButton mainMenuButton;
+    private JButton pauseGameButton;
+    private JButton endGameButton;
+
     public ControlView() {
         setLayout(new FlowLayout());
 
-        JButton mainMenuButton = new JButton("Zurück zum Hauptmenü");
-        JButton pauseGameButton = new JButton("Spiel neu starten");
-        JButton endGameButton = new JButton("Spiel verlassen");
+        mainMenuButton = new JButton("Zurück zum Hauptmenü");
+        pauseGameButton = new JButton("Spiel neu starten");
+        endGameButton = new JButton("Spiel verlassen");
 
         endGameButton.addActionListener(new ActionListener() {
             @Override
@@ -27,11 +31,22 @@ public class ControlView extends JPanel {
             }
         });
 
-
         add(mainMenuButton);
         add(pauseGameButton);
         add(endGameButton);
 
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    }
+
+    public JButton getMainMenuButton() {
+        return mainMenuButton;
+    }
+
+    public JButton getPauseGameButton() {
+        return pauseGameButton;
+    }
+
+    public JButton getEndGameButton() {
+        return endGameButton;
     }
 }
