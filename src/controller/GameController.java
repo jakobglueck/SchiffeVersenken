@@ -42,20 +42,20 @@ public class GameController {
 
     private void handleBoardClick(int row, int col, JLabel label) {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
+        BoardView currentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardOne() : gameView.getPlayerBoardTwo();
         CellModel cell = currentPlayer.getBoard().getCell(row, col);
 
         switch(cell.getCellState()) {
             case FREE:
-                markAsMiss(label);
+                currentBoardView.markAsMiss(label);  // Call markAsMiss on the BoardView instance
                 currentPlayer.getBoard().changeCellState(row, col, CellState.FREE);
                 break;
             case SET:
-                ShipModel model = currentPlayer.getBoard().registerHit(row, col);
-                if (model != null) {
-                    updateHitCell(label);
-                    if (model.isSunk()) {
-                        updateRevealedShip(model);
-                        markSurroundingCellsAsMiss(model);
+                ShipModel ship = currentPlayer.getBoard().registerHit(row, col);
+                if (ship != null) {
+                    if (ship.isSunk()) {
+                        currentBoardView.updateRevealedShip(ship);  // Call updateRevealedShip on the BoardView instance
+                        markSurroundingCellsAsMiss(ship, currentBoardView);  // Pass the BoardView instance to mark surrounding cells
                     }
                 }
                 break;
@@ -70,39 +70,19 @@ public class GameController {
         updateGameView();
     }
 
-    private void markAsMiss(JLabel label) {
-        label.setIcon(IconFactoryView.createPointIcon(Color.BLACK, gameView.getPlayerBoardOne().getCellSize() / 4));
-    }
-
-    private void updateHitCell(JLabel label) {
-        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, gameView.getPlayerBoardOne().getCellSize() / 2));
-    }
-
-    private void updateRevealedShip(ShipModel ship) {
-        for (CellModel cell : ship.getShipCells()) {
-            JLabel cellLabel = gameView.getPlayerBoardOne().getLabelForCell(cell.getX(), cell.getY());
-            updateRevealedCell(cellLabel);
-        }
-    }
-
-    private void updateRevealedCell(JLabel label) {
-        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, gameView.getPlayerBoardOne().getCellSize() / 2));
-        label.setBackground(Color.RED);
-    }
-
-    private void markSurroundingCellsAsMiss(ShipModel ship) {
+    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView currentBoardView) {
         for (CellModel cell : ship.getShipCells()) {
             int startX = Math.max(0, cell.getX() - 1);
-            int endX = Math.min(gameModel.getCurrentPlayer().getBoard().getWidth() - 1, cell.getX() + 1);
+            int endX = Math.min(10 - 1, cell.getX() + 1);
             int startY = Math.max(0, cell.getY() - 1);
-            int endY = Math.min(gameModel.getCurrentPlayer().getBoard().getHeight() - 1, cell.getY() + 1);
+            int endY = Math.min(10 - 1, cell.getY() + 1);
 
             for (int x = startX; x <= endX; x++) {
                 for (int y = startY; y <= endY; y++) {
                     CellModel surroundingCell = gameModel.getCurrentPlayer().getBoard().getCell(x, y);
                     if (surroundingCell.getCellState() == CellState.FREE) {
                         JLabel surroundingLabel = gameView.getPlayerBoardOne().getLabelForCell(x, y);
-                        markAsMiss(surroundingLabel);
+                        currentBoardView.markAsMiss(surroundingLabel);
                         gameModel.getCurrentPlayer().getBoard().changeCellState(x, y, CellState.FREE);
                     }
                 }
