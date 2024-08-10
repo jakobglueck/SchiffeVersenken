@@ -3,7 +3,10 @@ package controller;
 import model.ComputerPlayerModel;
 import model.GameModel;
 import model.PlayerModel;
+import model.ShipModel;
+import model.CellModel;
 import View.*;
+import utils.CellState;
 import utils.GameState;
 
 import javax.swing.*;
@@ -25,15 +28,86 @@ public class GameController {
     }
 
     private void initializeListeners() {
-
         homeScreenView.getLocalGameButton().addActionListener(new LocalGameButtonListener());
         homeScreenView.getDebugModeButton().addActionListener(new DebugModeButtonListener());
         homeScreenView.getExitButton().addActionListener(new ExitButtonListener());
         gameView.getControlView().getMainMenuButton().addActionListener(new MainMenuButtonListener());
         gameView.getControlView().getPauseGameButton().addActionListener(new PauseGameButtonListener());
         gameView.getControlView().getEndGameButton().addActionListener(new EndGameButtonListener());
-        gameView.getPlayerBoardOne().addMouseListener(new BoardClickListener());
-        gameView.getPlayerBoardTwo().addMouseListener(new BoardClickListener());
+
+        // Listener für die BoardViews
+        gameView.getPlayerBoardOne().setBoardClickListener(this::handleBoardClick);
+        gameView.getPlayerBoardTwo().setBoardClickListener(this::handleBoardClick);
+    }
+
+    private void handleBoardClick(int row, int col, JLabel label) {
+        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
+        CellModel cell = currentPlayer.getBoard().getCell(row, col);
+
+        switch(cell.getCellState()) {
+            case FREE:
+                markAsMiss(label);
+                currentPlayer.getBoard().changeCellState(row, col, CellState.FREE);
+                break;
+            case SET:
+                ShipModel model = currentPlayer.getBoard().registerHit(row, col);
+                if (model != null) {
+                    updateHitCell(label);
+                    if (model.isSunk()) {
+                        updateRevealedShip(model);
+                        markSurroundingCellsAsMiss(model);
+                    }
+                }
+                break;
+            default:
+                System.out.println("Ungültiger Klick.");
+        }
+
+        if(currentPlayer.getBoard().allShipsAreHit()){
+            showGameOverDialog();
+        }
+
+        updateGameView();
+    }
+
+    private void markAsMiss(JLabel label) {
+        label.setIcon(IconFactoryView.createPointIcon(Color.BLACK, gameView.getPlayerBoardOne().getCellSize() / 4));
+    }
+
+    private void updateHitCell(JLabel label) {
+        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, gameView.getPlayerBoardOne().getCellSize() / 2));
+    }
+
+    private void updateRevealedShip(ShipModel ship) {
+        for (CellModel cell : ship.getShipCells()) {
+            JLabel cellLabel = gameView.getPlayerBoardOne().getLabelForCell(cell.getX(), cell.getY());
+            updateRevealedCell(cellLabel);
+        }
+    }
+
+    private void updateRevealedCell(JLabel label) {
+        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, gameView.getPlayerBoardOne().getCellSize() / 2));
+        label.setBackground(Color.RED);
+    }
+
+    private void markSurroundingCellsAsMiss(ShipModel ship) {
+        for (CellModel cell : ship.getShipCells()) {
+            int startX = Math.max(0, cell.getX() - 1);
+            int endX = Math.min(gameModel.getCurrentPlayer().getBoard().getWidth() - 1, cell.getX() + 1);
+            int startY = Math.max(0, cell.getY() - 1);
+            int endY = Math.min(gameModel.getCurrentPlayer().getBoard().getHeight() - 1, cell.getY() + 1);
+
+            for (int x = startX; x <= endX; x++) {
+                for (int y = startY; y <= endY; y++) {
+                    CellModel surroundingCell = gameModel.getCurrentPlayer().getBoard().getCell(x, y);
+                    if (surroundingCell.getCellState() == CellState.FREE) {
+                        JLabel surroundingLabel = gameView.getPlayerBoardOne().getLabelForCell(x, y);
+                        markAsMiss(surroundingLabel);
+                        gameModel.getCurrentPlayer().getBoard().changeCellState(x, y, CellState.FREE);
+                    }
+                }
+            }
+        }
     }
 
     public void showHomeScreen() {
@@ -69,10 +143,8 @@ public class GameController {
     private void handleManualShipPlacement() {
         int shipTurns = gameModel.getPlayerTwo() instanceof ComputerPlayerModel ? 1 : 2;
 
-        // Beginne mit dem ersten Spieler
         placeShipsForCurrentPlayer();
 
-        // Wenn es einen zweiten menschlichen Spieler gibt, wechsle nach der Platzierung
         if (shipTurns == 2) {
             gameModel.switchPlayer();
             placeShipsForCurrentPlayer();
@@ -80,7 +152,7 @@ public class GameController {
 
         JOptionPane.showMessageDialog(gameView, "Alle Schiffe platziert. Das Spiel beginnt jetzt!");
         gameView.getStatusView().updateStatus("Spiel beginnt!");
-        runGameLoop(); // Start des Spiels nach der Schiffsplatzierung
+        runGameLoop();
     }
 
     private void placeShipsForCurrentPlayer() {
@@ -93,7 +165,6 @@ public class GameController {
 
         gameView.getStatusView().updateStatus(currentPlayer.getPlayerName() + ", platziere deine Schiffe");
 
-        // Entferne alte Listener, um Überschneidungen zu vermeiden
         for (MouseListener listener : gameView.getPlayerBoardOne().getMouseListeners()) {
             gameView.getPlayerBoardOne().removeMouseListener(listener);
         }
@@ -112,7 +183,7 @@ public class GameController {
                     if (currentPlayer.allShipsPlaced()) {
                         gameView.getPlayerBoardOne().removeMouseListener(this);
                         if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
-                            gameModel.switchPlayer(); // Falls Computer, automatisch den Spieler wechseln
+                            gameModel.switchPlayer();
                         }
                     }
                 } else {
@@ -223,22 +294,6 @@ public class GameController {
         }
     }
 
-    private class BoardClickListener extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            BoardView clickedBoard = (BoardView) e.getSource();
-            int cellSize = clickedBoard.getCellSize();
-            int x = e.getX() / cellSize;
-            int y = e.getY() / cellSize;
-
-            if (!gameModel.allShipsPlaced()) {
-                boolean horizontal = SwingUtilities.isLeftMouseButton(e);
-                handleShipPlacement(x, y, horizontal);
-            } else {
-                handlePlayerMove();
-            }
-        }
-    }
     public void runGameLoop() {
         if (gameModel.getGameState() == GameState.NORMAL) {
             gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
@@ -276,7 +331,6 @@ public class GameController {
 
             if (!gameModel.isGameOver()) {
                 gameModel.switchPlayer();
-                // Nur im normalen Modus die Sichtbarkeit des Boards aktualisieren
                 if (gameModel.getGameState() == GameState.NORMAL) {
                     gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
                 }
