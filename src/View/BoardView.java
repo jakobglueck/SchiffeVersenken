@@ -2,6 +2,7 @@ package View;
 
 import model.BoardModel;
 import model.CellModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -123,7 +124,7 @@ public class BoardView extends JPanel {
                 updateHitCell(label);
                 break;
             default:
-                System.exit(0);
+                label.setBackground(Color.WHITE);
         }
     }
 
@@ -154,6 +155,10 @@ public class BoardView extends JPanel {
 
     public int getCellSize() {
         return CELL_SIZE;
+    }
+
+    public JLabel getLabelForCell(int row, int col) {
+        return labels[row][col];
     }
 
     public interface BoardClickListener {
