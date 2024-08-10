@@ -21,7 +21,7 @@ public class GameController {
         this.gameModel = gameModel;
         this.gameView = gameView;
         this.homeScreenView = homeScreenView;
-        initializeListeners();
+        this.initializeListeners();
     }
 
     private void initializeListeners() {
@@ -59,7 +59,7 @@ public class GameController {
             gameModel.getPlayerTwo().getBoard().placeAllShips();
         }
 
-        updateGameView();
+        this.updateGameView();
         homeScreenView.setVisible(false);
         gameView.setVisible(true);
     }
@@ -113,11 +113,17 @@ public class GameController {
 
     private void updateInfoPanel() {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        InfoPanelView infoPanel = gameView.getInfoPanelViewOne();
-        infoPanel.getTotalClicksLabel().setText("Anzahl gesamter Klicks: " + currentPlayer.getTotalClicks());
-        infoPanel.getHitsLabel().setText("Davon Getroffen (Hits): " + currentPlayer.getHits());
-        infoPanel.getMissesLabel().setText("Verfehlt: " + currentPlayer.getMisses());
-        infoPanel.getSunkShipsLabel().setText("Gegnerische Schiffe versunken: " + currentPlayer.getSunkShips());
+        InfoPanelView infoPanel;
+        if(currentPlayer == gameModel.getPlayerOne()){
+            infoPanel = gameView.getInfoPanelViewOne();
+        }else{
+            infoPanel = gameView.getInfoPanelViewTwo();
+        }
+
+        infoPanel.getTotalClicksLabel().setText("Anzahl gesamter Klicks: " + currentPlayer.getPlayerStatus().getTotalClicks());
+        infoPanel.getHitsLabel().setText("Davon Getroffen (Hits): " + currentPlayer.getPlayerStatus().getHits());
+        infoPanel.getMissesLabel().setText("Verfehlt: " + currentPlayer.getPlayerStatus().getMisses());
+        infoPanel.getSunkShipsLabel().setText("Gegnerische Schiffe versunken: " + currentPlayer.getPlayerStatus().getShunkShips());
     }
 
     private void showGameOverDialog() {
