@@ -2,8 +2,6 @@ package View;
 
 import model.BoardModel;
 import model.CellModel;
-import model.ShipModel;
-import utils.CellState;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -13,6 +11,7 @@ public class BoardView extends JPanel {
     private BoardModel playerBoard;
     private JLabel[][] labels;
     private JPanel coverPanel;
+    private BoardClickListener boardClickListener;
 
     private static final int CELL_SIZE = 50;
     private static final int BOARD_SIZE = 10;
@@ -41,7 +40,7 @@ public class BoardView extends JPanel {
         setVisible(true);
     }
 
-      private JPanel createNumericLabelsPanel() {
+    private JPanel createNumericLabelsPanel() {
         JPanel labelsPanel = new JPanel(new GridLayout(1, 10));
 
         for (int i = 1; i <= 10; i++) {
@@ -86,77 +85,19 @@ public class BoardView extends JPanel {
         label.setVerticalAlignment(SwingConstants.CENTER);
 
         label.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleCellClick(row, col, label);
+                if (boardClickListener != null) {
+                    boardClickListener.onCellClicked(row, col, label);
+                }
             }
         });
+
         return label;
     }
 
-    /**
-     * Verarbeitet den Klick auf eine Zelle.
-     * @param row Die Zeile der geklickten Zelle.
-     * @param col Die Spalte der geklickten Zelle.
-     * @param label Das geklickte JLabel.
-     */
-    private void handleCellClick(int row, int col, JLabel label) {
-        CellModel cell = playerBoard.getCell(row, col);
-
-        switch(cell.getCellState()) {
-            case FREE:
-                this.markAsMiss(label);
-                playerBoard.changeCellState(row, col, CellState.FREE);
-                break;
-            case SET:
-                ShipModel model = playerBoard.registerHit(row, col);
-                if (model != null) {
-                    this.updateHitCell(label);
-                    if (model.isSunk()) {
-                        this.updateRevealedShip(model);
-                        this.markSurroundingCellsAsMiss(model);
-                    }
-                }
-                break;
-            default:
-                System.out.println("Ungültiger Klick.");
-        }
-        if(this.playerBoard.allShipsAreHit()){
-            System.exit(0);
-        }
-    }
-
-    private void updateRevealedShip(ShipModel ship) {
-        for (CellModel cell : ship.getShipCells()) {
-            JLabel cellLabel = getLabelForCell(cell.getX(), cell.getY());
-            this.updateRevealedCell(cellLabel);
-        }
-    }
-
-    private JLabel getLabelForCell(int x, int y) {
-
-        return labels[x][y];
-    }
-
-    private void markSurroundingCellsAsMiss(ShipModel ship) {
-        for (CellModel cell : ship.getShipCells()) {
-            int startX = Math.max(0, cell.getX() - 1);
-            int endX = Math.min(BoardModel.WIDTH - 1, cell.getX() + 1);
-            int startY = Math.max(0, cell.getY() - 1);
-            int endY = Math.min(BoardModel.HEIGHT - 1, cell.getY() + 1);
-
-            for (int x = startX; x <= endX; x++) {
-                for (int y = startY; y <= endY; y++) {
-                    CellModel surroundingCell = playerBoard.getCell(x, y);
-                    if (surroundingCell.getCellState() == CellState.FREE) {
-                        JLabel surroundingLabel = getLabelForCell(x, y);
-                        this.markAsMiss(surroundingLabel);
-                        playerBoard.changeCellState(x, y, CellState.FREE);
-                    }
-                }
-            }
-        }
+    public void setBoardClickListener(BoardClickListener listener) {
+        this.boardClickListener = listener;
     }
 
     public void updateBoard() {
@@ -184,7 +125,6 @@ public class BoardView extends JPanel {
             default:
                 System.exit(0);
         }
-
     }
 
     private void updateFreeCell(JLabel label) {
@@ -214,5 +154,9 @@ public class BoardView extends JPanel {
 
     public int getCellSize() {
         return CELL_SIZE;
+    }
+
+    public interface BoardClickListener {
+        void onCellClicked(int row, int col, JLabel label);
     }
 }
