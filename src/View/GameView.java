@@ -118,4 +118,8 @@ public class GameView extends JFrame {
     public ControlView getControlView() {
         return this.controlView;
     }
+
+    public StatusView getStatusView() {
+        return this.statusView;
+    }
 }
