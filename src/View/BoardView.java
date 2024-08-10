@@ -28,7 +28,6 @@ public class BoardView extends JPanel {
         mainPanel.add(createAlphabeticLabelsPanel(), BorderLayout.WEST);
         mainPanel.add(createGridPanel(), BorderLayout.CENTER);
 
-        // Initialize the cover panel
         this.coverPanel = new JPanel();
         this.coverPanel.setBackground(Color.GRAY);
         this.coverPanel.setOpaque(true);
@@ -115,8 +114,8 @@ public class BoardView extends JPanel {
                 if (model != null) {
                     this.updateHitCell(label);
                     if (model.isSunk()) {
-                        this.updateRevealedShip(model); // Aktualisieren Sie alle Labels des versenkten Schiffs
-                        this.markSurroundingCellsAsMiss(model); // Markieren Sie alle Zellen um das versenkte Schiff als verfehlt
+                        this.updateRevealedShip(model);
+                        this.markSurroundingCellsAsMiss(model);
                     }
                 }
                 break;
@@ -160,7 +159,6 @@ public class BoardView extends JPanel {
         }
     }
 
-    //Diese Methode durchläuft alle Zellen des Spielfelds und aktualisiert jede einzelne Zelle.
     public void updateBoard() {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
@@ -169,7 +167,6 @@ public class BoardView extends JPanel {
         }
     }
 
-    //Aktualisiert eine einzelne Zelle mithilfe der row & col basierend auf ihrem Zustand.
     private void updateCell(int row, int col) {
         CellModel cell = playerBoard.getCell(row, col);
         JLabel label = labels[row][col];
@@ -190,28 +187,23 @@ public class BoardView extends JPanel {
 
     }
 
-    // Markiert die Zelle weiß, um anzuzeigen, dass die Zelle frei ist.
     private void updateFreeCell(JLabel label) {
         label.setBackground(Color.WHITE);
     }
 
-    //Markiert die Zelle grau, um anzuzeigen, dass die Zelle ein Schiff enthält.
     private void updateSetCell(JLabel label) {
         label.setBackground(Color.GRAY);
     }
 
-   //Markiert eine Zelle als getroffen, mithilfe eines roten Kreuz-Icon
     private void updateHitCell(JLabel label) {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
     }
 
-    //Markiert eine Zelle als aufgedeckt, mithilfe eines roten Kreuz-Icon & einer roten Hintergrundfarbe
     private void updateRevealedCell(JLabel label) {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
         label.setBackground(Color.RED);
     }
 
-     // Markiert eine Zelle als verfehlt mithilfe eines schwarzen Punktes.
     private void markAsMiss(JLabel label) {
         label.setIcon(IconFactoryView.createPointIcon(Color.BLACK, CELL_SIZE / 4));
     }
