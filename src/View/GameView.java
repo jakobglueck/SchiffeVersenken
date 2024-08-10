@@ -23,9 +23,15 @@ public class GameView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 800);
         setResizable(false);
+    }
 
-        this.playerOne = gm.getPlayerOne();
-        this.playerTwo = gm.getPlayerTwo();
+    public void  createPlayerBase(){
+        this.playerOne = game.getPlayerOne();
+        this.playerTwo = game.getPlayerTwo();
+
+        if (playerOne == null || playerTwo == null) {
+            throw new IllegalStateException("Spieler müssen vor dem Aufruf dieser Methode initialisiert werden.");
+        }
 
         this.playerBoardOne = new BoardView(playerOne.getBoard());
         this.playerBoardTwo = new BoardView(playerTwo.getBoard());
