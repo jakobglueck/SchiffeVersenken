@@ -13,6 +13,7 @@ public class PlayerModel {
         this.playerName = playerName;
         this.board = new BoardModel();
         this.nextShipIndex = 0;
+        this.playerStatus = new PlayerStatus();
     }
 
     public String getPlayerName() {
@@ -45,7 +46,7 @@ public class PlayerModel {
         }
         boolean hit = false;
         for(ShipModel ship : this.board.getPlayerShips()){
-            if(ship.isHit(x,y)){
+            if(ship.isHit(x, y)){
                 hit = true;
             }
         }

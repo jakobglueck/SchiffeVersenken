@@ -18,6 +18,6 @@ public class SchiffeVersenkenMain {
         homeFrame.setVisible(true);
 
         GameView gw = new GameView(gm);
-        GameController controller = new GameController(gm, gw, hw, homeFrame); // Übergabe des homeFrame
+        GameController controller = new GameController(gm, gw, hw, homeFrame);// Übergabe des homeFrame
     }
 }

@@ -28,14 +28,15 @@ public class PlayerStatus {
 
     public void calculateHits(BoardModel boardModel) {
         int temp = 0;
-        for(ShipModel ship : boardModel.getPlayerShips()){
-          for(CellModel cell :  ship.getShipCells()){
-              if(cell.isHit()){
-                  temp++;
-              }
-          }
+        for (ShipModel ship : boardModel.getPlayerShips()) {
+            for (CellModel cell : ship.getShipCells()) {
+                if (cell.isHit()) {
+                    temp++;
+                }
+            }
         }
         this.hits = temp;
+        this.misses = this.calculateMisses();
     }
 
     public int getMisses() {

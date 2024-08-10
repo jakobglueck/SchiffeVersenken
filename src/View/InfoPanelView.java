@@ -2,6 +2,7 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
+import model.PlayerStatus;
 
 public class InfoPanelView extends JPanel {
 
@@ -26,6 +27,12 @@ public class InfoPanelView extends JPanel {
         this.setBorder(BorderFactory.createEmptyBorder(25, 15, 0, 15));
     }
 
+    public void updateStats(PlayerStatus status) {
+        totalClicksLabel.setText("Anzahl gesamter Klicks: " + status.getTotalClicks());
+        hitsLabel.setText("Davon Getroffen (Hits): " + status.getHits());
+        missesLabel.setText("Verfehlt: " + status.getMisses());
+        sunkShipsLabel.setText("Gegnerische Schiffe versunken: " + status.getShunkShips());
+    }
     public JLabel getTotalClicksLabel() {
         return totalClicksLabel;
     }

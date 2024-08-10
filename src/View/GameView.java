@@ -1,6 +1,8 @@
 package View;
 
 import model.*;
+import utils.GameState;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -104,14 +106,20 @@ public class GameView extends JFrame {
     }
 
     public void updateBoardVisibility(PlayerModel currentPlayer) {
-        if (currentPlayer == playerOne) {
-            playerBoardOne.setCovered(false);
-            playerBoardTwo.setCovered(true);
+        if (game.getGameState() == GameState.NORMAL) {
+            if (currentPlayer == playerOne) {
+                playerBoardOne.setCovered(false);
+                playerBoardTwo.setCovered(true);
+            } else {
+                playerBoardOne.setCovered(true);
+                playerBoardTwo.setCovered(false);
+            }
         } else {
-            playerBoardOne.setCovered(true);
+            playerBoardOne.setCovered(false);
             playerBoardTwo.setCovered(false);
         }
     }
+
 
     public InfoPanelView getInfoPanelViewOne() {
         return this.infoPanelViewOne;
