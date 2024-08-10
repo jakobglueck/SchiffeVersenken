@@ -2,6 +2,7 @@ package View;
 
 import model.BoardModel;
 import model.CellModel;
+import model.ShipModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -140,13 +141,16 @@ public class BoardView extends JPanel {
         label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
     }
 
-    private void updateRevealedCell(JLabel label) {
-        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
-        label.setBackground(Color.RED);
+    public void markAsMiss(JLabel label) {
+        label.setIcon(IconFactoryView.createPointIcon(Color.BLACK, CELL_SIZE / 4));
     }
 
-    private void markAsMiss(JLabel label) {
-        label.setIcon(IconFactoryView.createPointIcon(Color.BLACK, CELL_SIZE / 4));
+    public void updateRevealedShip(ShipModel ship) {
+        for (CellModel cell : ship.getShipCells()) {
+            JLabel cellLabel = getLabelForCell(cell.getX(), cell.getY());
+            cellLabel.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
+            cellLabel.setBackground(Color.RED);
+        }
     }
 
     public void setCovered(boolean covered) {
