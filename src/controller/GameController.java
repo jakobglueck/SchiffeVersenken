@@ -10,6 +10,7 @@ import utils.CellState;
 import utils.GameState;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class GameController {
@@ -88,49 +89,70 @@ public class GameController {
 
     private void handleBoardClick(int row, int col, JLabel label) {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        BoardView targetBoardView;
+        BoardView clickedBoardView = null;
 
-        if (gameModel.getGameState() == GameState.DEBUG) {
-            // Im Debug-Modus kann der Spieler auch auf das eigene Board klicken
-            if (label.getParent().getParent().equals(gameView.getPlayerBoardOne())) {
-                targetBoardView = gameView.getPlayerBoardOne();
-            } else {
-                targetBoardView = gameView.getPlayerBoardTwo();
+        // Bestimmen, welches Board angeklickt wurde, indem wir die Hierarchie durchlaufen
+        Container parent = label.getParent();
+        while (parent != null) {
+            if (parent instanceof BoardView) {
+                clickedBoardView = (BoardView) parent;
+                break;
             }
-        } else {
-            // Im normalen Modus klickt der Spieler auf das gegnerische Board
-            targetBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
+            parent = parent.getParent();
         }
 
-        CellModel cell = targetBoardView.getPlayerBoard().getCell(row, col);
+        if (clickedBoardView == null) {
+            System.out.println("Invalid click source");
+            return;
+        }
+
+        // Bestimmen, welches das gegnerische Board ist
+        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
+
+        // Im normalen Modus sicherstellen, dass der Spieler nur auf das gegnerische Board klicken kann
+        if (gameModel.getGameState() == GameState.NORMAL && clickedBoardView != opponentBoardView) {
+            System.out.println("Click on own board ignored");
+            // Wenn der Klick nicht auf das gegnerische Board erfolgt, tue nichts
+            return;
+        }
+
+        // Das angeklickte Feld auf dem gegnerischen Board weiterverarbeiten
+        CellModel cell = clickedBoardView.getPlayerBoard().getCell(row, col);
 
         switch (cell.getCellState()) {
             case FREE:
-                targetBoardView.markAsMiss(label);
-                targetBoardView.getPlayerBoard().changeCellState(row, col, CellState.FREE);
+                System.out.println("Miss detected");
+                clickedBoardView.markAsMiss(label);
+                clickedBoardView.getPlayerBoard().changeCellState(row, col, CellState.FREE);
                 break;
             case SET:
-                ShipModel ship = targetBoardView.getPlayerBoard().registerHit(row, col);
+                System.out.println("Hit detected");
+                ShipModel ship = clickedBoardView.getPlayerBoard().registerHit(row, col);
                 if (ship != null && ship.isSunk()) {
-                    targetBoardView.updateRevealedShip(ship);
-                    markSurroundingCellsAsMiss(ship, targetBoardView);
+                    System.out.println("Ship sunk");
+                    clickedBoardView.updateRevealedShip(ship);
+                    markSurroundingCellsAsMiss(ship, clickedBoardView);
                 }
                 break;
             default:
-                System.out.println("Ungültiger Klick.");
+                System.out.println("Invalid click");
         }
 
         updateGameView();  // Aktualisierung der GUI nach jedem gültigen Zug
 
-        if (targetBoardView.getPlayerBoard().allShipsAreHit()) {
+        if (clickedBoardView.getPlayerBoard().allShipsAreHit()) {
+            System.out.println("Game over detected");
             showGameOverDialog();
         } else {
             if (gameModel.getGameState() != GameState.DEBUG) {
+                System.out.println("Switching player");
                 gameModel.switchPlayer(); // Spielerwechsel nur im Nicht-Debug-Modus
                 SwingUtilities.invokeLater(this::runGameLoop);
             }
         }
     }
+
+
 
     private void setBoardEnabled(BoardView board, boolean enabled) {
         if (enabled) {
@@ -138,7 +160,15 @@ public class GameController {
             for (MouseListener listener : board.getMouseListeners()) {
                 board.removeMouseListener(listener);
             }
-            board.addMouseListener(board.getBoardClickListener());
+            board.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    JLabel label = (JLabel) e.getSource();
+                    int row = label.getY() / board.getCellSize();
+                    int col = label.getX() / board.getCellSize();
+                    handleBoardClick(row, col, label);
+                }
+            });
         } else {
             // Alle MouseListener entfernen
             for (MouseListener listener : board.getMouseListeners()) {
