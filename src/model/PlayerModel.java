@@ -2,15 +2,18 @@ package model;
 
 import utils.CellState;
 
+
 public class PlayerModel {
     private String playerName;
     private BoardModel board;
     private int nextShipIndex;
+    private PlayerStatus playerStatus;
 
     public PlayerModel(String playerName) {
         this.playerName = playerName;
         this.board = new BoardModel();
         this.nextShipIndex = 0;
+        this.playerStatus = new PlayerStatus();
     }
 
     public String getPlayerName() {
@@ -38,22 +41,13 @@ public class PlayerModel {
     }
 
     public boolean makeMove(PlayerModel opponent, int x, int y) {
-        if (!isValidMove(x, y)) {
+        if (!this.isValidMove(x, y)) {
             return false;
         }
-
-        boolean hit = false;
-        for(ShipModel ship : this.board.getPlayerShips()){
-            if(ship.isHit(x,y)){
-                hit = true;
-            }
-        }
-
-        if (hit) {
-            System.out.println(playerName + " hit a target!");
-        } else {
-            System.out.println(playerName + " missed.");
-        }
+        boolean hit = opponent.getBoard().registerHit(x, y) != null; // Trefferregistrierung auf dem Gegner-Board
+        this.playerStatus.updateTotalClicks();
+        this.playerStatus.calculateHits(opponent.getBoard()); // Korrekte Zuordnung zum Gegner-Board
+        this.playerStatus.calculateShunkShips(opponent.getBoard()); // Korrekte Zuordnung zum Gegner-Board
         return true;
     }
 
@@ -72,5 +66,9 @@ public class PlayerModel {
 
         CellState currentCellState = board.getCell(x, y).getCellState();
         return currentCellState != CellState.HIT && currentCellState != CellState.FREE;
+    }
+
+    public PlayerStatus getPlayerStatus() {
+        return playerStatus;
     }
 }

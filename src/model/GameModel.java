@@ -15,70 +15,65 @@ public class GameModel {
     private static final String DEFAULT_PLAYER_NAME = "Default Player";
 
     public GameModel() {
+        // Leerer Konstruktor
     }
 
-    private PlayerModel createPlayer(String playerName) {
+    public PlayerModel createPlayer(String playerName) {
         return new PlayerModel(playerName);
     }
 
-    private String createPlayerName() {
-        return DEFAULT_PLAYER_NAME;
-    }
-
+    /**
+     * Setzt den aktuellen Spielzustand.
+     * @param gameState Der Spielzustand.
+     */
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
 
+    /**
+     * Erstellt die Spieler mit den gegebenen Namen.
+     * @param playerOneName Name des ersten Spielers.
+     * @param playerTwoName Name des zweiten Spielers (oder "Computer").
+     */
+    public void createPlayerWithNames(String playerOneName, String playerTwoName) {
+        this.playerOne = createPlayer(playerOneName != null ? playerOneName : DEFAULT_PLAYER_NAME);
+        this.playerTwo = playerTwoName != null && !playerTwoName.equals("Computer")
+                ? createPlayer(playerTwoName)
+                : new ComputerPlayerModel("Computer");
+    }
+
+    /**
+     * Startet das Spiel basierend auf dem Spielzustand.
+     */
     public void startGame() {
+        if (this.playerOne == null || this.playerTwo == null) {
+            throw new IllegalStateException("Spieler müssen vor dem Start des Spiels initialisiert werden.");
+        }
+
         switch (this.gameState) {
             case NORMAL:
-                this.createPlayersForNormalGame();
+                this.currentPlayer = this.randomPlayer();
+                this.playerOne.getBoard().placeAllShips();
+                this.playerTwo.getBoard().placeAllShips();
                 break;
             case DEBUG:
-                this.createPlayersForDebugGame();
+                this.playerOne.getBoard().placeAllShips();
+                this.playerTwo.getBoard().placeAllShips();
+                this.currentPlayer = this.randomPlayer();
                 break;
             case COMPUTER:
-                this.createPlayerAndComputer();
+                this.playerTwo = new ComputerPlayerModel("Computer");
+                this.playerTwo.getBoard().placeAllShips();
+                this.currentPlayer = this.playerOne;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + this.gameState);
         }
     }
 
-    private void createPlayerNames() {
-        String playerOneName = createPlayerName();
-        String playerTwoName = createPlayerName();
-
-        this.playerOne = createPlayer(playerOneName);
-        this.playerTwo = createPlayer(playerTwoName);
-    }
-
-    private PlayerModel randomPlayer(){
+    private PlayerModel randomPlayer() {
         Random ra = new Random();
-        if(ra.nextInt(10)< RANDOM_NUMBER){
-            return this.playerOne;
-        }
-        return this.playerTwo;
-    }
-
-    private void createPlayersForNormalGame() {
-        this.createPlayerNames();
-        this.currentPlayer = this.randomPlayer();
-    }
-
-    private void createPlayersForDebugGame() {
-        this.createPlayerNames();
-        this.playerOne.getBoard().placeAllShips();
-        this.playerTwo.getBoard().placeAllShips();
-        this.currentPlayer = this.randomPlayer();
-    }
-
-    private void createPlayerAndComputer() {
-        this.playerOne = createPlayer(this.createPlayerName());
-        this.playerTwo = new ComputerPlayerModel("Computer");
-        this.playerTwo.getBoard().placeAllShips();
-        this.currentPlayer = playerOne;
-
+        return (ra.nextInt(10) < RANDOM_NUMBER) ? this.playerOne : this.playerTwo;
     }
 
     public PlayerModel getPlayerOne() {
@@ -101,14 +96,26 @@ public class GameModel {
         this.currentPlayer.takeTurn(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne, x, y);
     }
 
+    /**
+     * Wechselt den aktuellen Spieler.
+     */
     public void switchPlayer() {
         this.currentPlayer = (this.currentPlayer == this.playerOne) ? this.playerTwo : this.playerOne;
     }
 
+    /**
+     * Überprüft, ob das Spiel vorbei ist.
+     * @return true, wenn das Spiel vorbei ist; sonst false.
+     */
     public boolean isGameOver() {
         return this.playerOne.getBoard().allShipsAreHit() || this.playerTwo.getBoard().allShipsAreHit();
     }
 
+    /**
+     * Führt einen Zug für den aktuellen Spieler aus.
+     * @param x Die X-Koordinate des Zugs.
+     * @param y Die Y-Koordinate des Zugs.
+     */
     public void playerTurn(int x, int y) {
         playerGameMove(x, y);
         if (!this.isGameOver()) {
@@ -118,9 +125,11 @@ public class GameModel {
         }
     }
 
+    /**
+     * Führt einen Zug für den Computer aus, wenn dieser am Zug ist.
+     */
     public void computerPlayTurn() {
         if (this.currentPlayer instanceof ComputerPlayerModel) {
-            // TODO neu
             ((ComputerPlayerModel) this.currentPlayer).makeMove(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
             if (!isGameOver()) {
                 this.switchPlayer();
@@ -130,6 +139,13 @@ public class GameModel {
         }
     }
 
+    /**
+     * Platziert das nächste Schiff auf dem Brett des aktuellen Spielers.
+     * @param startX Die X-Koordinate des Schiffsanfangs.
+     * @param startY Die Y-Koordinate des Schiffsanfangs.
+     * @param horizontal Gibt an, ob das Schiff horizontal platziert wird.
+     * @return true, wenn das Schiff erfolgreich platziert wurde; sonst false.
+     */
     public boolean placeNextShip(int startX, int startY, boolean horizontal) {
         boolean placed = this.currentPlayer.placeNextShip(startX, startY, horizontal);
         if (placed && this.currentPlayer.allShipsPlaced()) {
@@ -138,6 +154,10 @@ public class GameModel {
         return placed;
     }
 
+    /**
+     * Überprüft, ob alle Schiffe platziert wurden.
+     * @return true, wenn alle Schiffe platziert wurden; sonst false.
+     */
     public boolean allShipsPlaced() {
         return this.playerOne.allShipsPlaced() && this.playerTwo.allShipsPlaced();
     }

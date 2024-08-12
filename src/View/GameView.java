@@ -1,6 +1,8 @@
 package View;
 
 import model.*;
+import utils.GameState;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,24 +10,30 @@ public class GameView extends JFrame {
 
     private PlayerModel playerOne;
     private PlayerModel playerTwo;
+    private GameModel game;
     private BoardView playerBoardOne;
     private BoardView playerBoardTwo;
-    private GameModel gameModel;
     private InfoPanelView infoPanelViewOne;
     private InfoPanelView infoPanelViewTwo;
     private StatusView statusView;
     private ControlView controlView;
 
     public GameView(GameModel gm) {
-        this.gameModel = gm;
+        this.game = gm;
 
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 800);
         setResizable(false);
+    }
 
-        this.playerOne = gm.getPlayerOne();
-        this.playerTwo = gm.getPlayerTwo();
+    public void createPlayerBase() {
+        this.playerOne = game.getPlayerOne();
+        this.playerTwo = game.getPlayerTwo();
+
+        if (playerOne == null || playerTwo == null) {
+            throw new IllegalStateException("Spieler müssen vor dem Aufruf dieser Methode initialisiert werden.");
+        }
 
         this.playerBoardOne = new BoardView(playerOne.getBoard());
         this.playerBoardTwo = new BoardView(playerTwo.getBoard());
@@ -83,23 +91,66 @@ public class GameView extends JFrame {
         statusView = new StatusView();
         infoPanelViewTwo = new InfoPanelView();
 
-        infoStatusPanel.add(infoPanelViewOne,BorderLayout.WEST);
+        infoStatusPanel.add(infoPanelViewOne, BorderLayout.WEST);
         infoStatusPanel.add(statusView, BorderLayout.CENTER);
         infoStatusPanel.add(infoPanelViewTwo, BorderLayout.EAST);
 
         return infoStatusPanel;
     }
+
     public BoardView getPlayerBoardOne() {
         return this.playerBoardOne;
     }
 
+    public BoardView getPlayerBoardTwo() {
+        return this.playerBoardTwo;
+    }
+
     public void updateBoardVisibility(PlayerModel currentPlayer) {
-        if (currentPlayer == playerOne) {
-            playerBoardOne.setCovered(false);
-            playerBoardTwo.setCovered(true);
-        } else {
-            playerBoardOne.setCovered(true);
-            playerBoardTwo.setCovered(false);
+        GameState gameState = game.getGameState();
+
+        switch (gameState) {
+            case NORMAL:
+                playerBoardOne.setCovered(currentPlayer == playerTwo);
+                playerBoardTwo.setCovered(currentPlayer == playerOne);
+                playerBoardOne.setOpaqueCover(false);
+                playerBoardTwo.setOpaqueCover(false);
+                break;
+            case DEBUG:
+                playerBoardOne.setCovered(false);
+                playerBoardTwo.setCovered(false);
+                playerBoardOne.setOpaqueCover(true);
+                playerBoardTwo.setOpaqueCover(true);
+                break;
+            case COMPUTER:
+                if (currentPlayer == playerOne) {
+                    playerBoardOne.setCovered(true);
+                    playerBoardTwo.setCovered(false);
+                    playerBoardOne.setOpaqueCover(false);
+                    playerBoardTwo.setOpaqueCover(true);
+                } else {
+                    playerBoardOne.setCovered(false);
+                    playerBoardTwo.setCovered(true);
+                    playerBoardOne.setOpaqueCover(true);
+                    playerBoardTwo.setOpaqueCover(false);
+                }
+                break;
         }
+    }
+
+    public InfoPanelView getInfoPanelViewOne() {
+        return this.infoPanelViewOne;
+    }
+
+    public InfoPanelView getInfoPanelViewTwo() {
+        return this.infoPanelViewTwo;
+    }
+
+    public ControlView getControlView() {
+        return this.controlView;
+    }
+
+    public StatusView getStatusView() {
+        return this.statusView;
     }
 }

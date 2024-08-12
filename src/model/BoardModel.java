@@ -124,7 +124,12 @@ public class BoardModel {
     }
 
     public boolean allShipsAreHit() {
-        return this.playerShips.stream().allMatch(ShipModel::isSunk);
+        for(ShipModel ship : this.playerShips) {
+            if(!ship.isSunk()){
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isValidCoordinate(int x, int y) {

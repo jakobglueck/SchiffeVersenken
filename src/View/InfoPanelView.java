@@ -3,6 +3,9 @@ package View;
 import javax.swing.*;
 import java.awt.*;
 
+import model.PlayerModel;
+import model.PlayerStatus;
+
 public class InfoPanelView extends JPanel {
 
     private JLabel totalClicksLabel;
@@ -13,10 +16,10 @@ public class InfoPanelView extends JPanel {
     public InfoPanelView() {
         setLayout(new GridLayout(4, 1));
 
-        totalClicksLabel = new JLabel("Anzahl gesamter Klicks: 0");
-        hitsLabel = new JLabel("Davon Getroffen (Hits): 0");
-        missesLabel = new JLabel("Verfehlt: 0");
-        sunkShipsLabel = new JLabel("Gegnerische Schiffe versunken: 0");
+        totalClicksLabel = new JLabel();
+        hitsLabel = new JLabel();
+        missesLabel = new JLabel();
+        sunkShipsLabel = new JLabel();
 
         add(totalClicksLabel);
         add(hitsLabel);
@@ -26,6 +29,20 @@ public class InfoPanelView extends JPanel {
         this.setBorder(BorderFactory.createEmptyBorder(25, 15, 0, 15));
     }
 
+    public void updateStats(PlayerModel playerModel) {
+        totalClicksLabel.setText("Anzahl gesamter Klicks: " + playerModel.getPlayerStatus().getTotalClicks());
+        hitsLabel.setText("Davon Getroffen (Hits): " + playerModel.getPlayerStatus().getHits());
+        missesLabel.setText("Verfehlt: " + playerModel.getPlayerStatus().getMisses());
+        sunkShipsLabel.setText("Gegnerische Schiffe versunken: " + playerModel.getPlayerStatus().getShunkShips());
+        totalClicksLabel.revalidate();
+        totalClicksLabel.repaint();
+        hitsLabel.revalidate();
+        hitsLabel.repaint();
+        missesLabel.revalidate();
+        missesLabel.repaint();
+        sunkShipsLabel.revalidate();
+        sunkShipsLabel.repaint();
+    }
     public JLabel getTotalClicksLabel() {
         return totalClicksLabel;
     }

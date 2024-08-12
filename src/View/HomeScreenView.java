@@ -6,19 +6,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class HomeScreenView extends JPanel {
+    private JButton localGameButton;
+    private JButton debugModeButton;
+    private JButton exitButton;
 
     public HomeScreenView() {
         setLayout(new GridLayout(2, 1));
 
         JLabel titleLabel = new JLabel("Schiffe versenken", JLabel.CENTER);
-        titleLabel.setFont(new Font("Serif", Font.BOLD, 24)); // Schriftart und Größe einstellen
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 24));
         add(titleLabel);
 
-        JPanel buttonPanel = new JPanel(); // Standard-Layout ist FlowLayout, zentriert die Buttons automatisch
+        JPanel buttonPanel = new JPanel();
 
-        JButton localGameButton = new JButton("Lokales Spiel starten");
-        JButton debugModeButton = new JButton("Debug Modus starten");
-        JButton exitButton = new JButton("Spiel beenden");
+        localGameButton = new JButton("Lokales Spiel starten");
+        debugModeButton = new JButton("Debug Modus starten");
+        exitButton = new JButton("Spiel beenden");
 
         localGameButton.addActionListener(new ActionListener() {
             @Override
@@ -46,5 +49,17 @@ public class HomeScreenView extends JPanel {
         buttonPanel.add(exitButton);
 
         add(buttonPanel);
+    }
+
+    public JButton getLocalGameButton() {
+        return localGameButton;
+    }
+
+    public JButton getDebugModeButton() {
+        return debugModeButton;
+    }
+
+    public JButton getExitButton() {
+        return exitButton;
     }
 }

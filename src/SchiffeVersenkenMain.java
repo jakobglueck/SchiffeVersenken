@@ -1,19 +1,24 @@
-import View.*;
 
 import controller.GameController;
 import model.GameModel;
-import utils.*;
-import utils.GameState;
+import View.HomeScreenView;
+import View.GameView;
+import javax.swing.*;
+import java.awt.*;
 
-public class SchiffeVersenkenMain{
-    public static void main(String[] args){
-
+public class SchiffeVersenkenMain {
+    public static void main(String[] args) {
         GameModel gm = new GameModel();
-        gm.setGameState(GameState.DEBUG);
-        gm.startGame();
-        GameView gameView = new GameView(gm);
+        HomeScreenView hw = new HomeScreenView();
 
-        //Controller - TODO
-        int a =  10;
+        JFrame homeFrame = new JFrame("Schiffe versenken");
+        homeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        homeFrame.setLocationRelativeTo(null);
+        homeFrame.setSize(400, 300);
+        homeFrame.setContentPane(hw);
+        homeFrame.setVisible(true);
+
+        GameView gw = new GameView(gm);
+        GameController controller = new GameController(gm, gw, hw, homeFrame);// Übergabe des homeFrame
     }
 }
