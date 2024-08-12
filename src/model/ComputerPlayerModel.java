@@ -22,10 +22,6 @@ public class ComputerPlayerModel extends PlayerModel {
         }
     }
 
-    public void placeShipsRandomly() {
-        this.getBoard().placeAllShips();
-    }
-
     public void makeMove(PlayerModel opponent) {
         if (!availableMoves.isEmpty()) {
             Random random = new Random();

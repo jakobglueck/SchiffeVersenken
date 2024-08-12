@@ -1,9 +1,6 @@
 package controller;
 
-import model.GameModel;
-import model.PlayerModel;
-import model.CellModel;
-import model.ShipModel;
+import model.*;
 import View.BoardView;
 import View.GameView;
 import utils.*;
@@ -129,11 +126,14 @@ public class BoardController {
         } else {
             if (gameModel.getGameState() != GameState.DEBUG) {
                 gameModel.switchPlayer();
-                SwingUtilities.invokeLater(gameController::runGameLoop);
+                if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
+                    SwingUtilities.invokeLater(gameController::runGameLoop);
+                } else {
+                    gameController.performComputerMove(); // Wenn der nächste Spieler der Computer ist, führe automatisch den Zug aus
+                }
             }
         }
     }
-
     private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponentBoardView) {
         for (CellModel cell : ship.getShipCells()) {
             int startX = Math.max(0, cell.getX() - 1);

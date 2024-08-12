@@ -1,5 +1,6 @@
 package controller;
 
+import model.ComputerPlayerModel;
 import model.GameModel;
 import View.GameView;
 import View.HomeScreenView;
@@ -67,6 +68,9 @@ public class GameController {
             boardController.enableBothBoards();
         } else {
             boardController.toggleBoardsForCurrentPlayer();
+            if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
+                performComputerMove(); // Wenn der aktuelle Spieler der Computer ist, führe automatisch den Zug aus
+            }
         }
     }
 
@@ -95,5 +99,15 @@ public class GameController {
         gameView.resetView();   // Zurücksetzen der Ansicht
         gameModel.startGame();  // Spiel neu starten
         runGameLoop();         // Spielschleife neu starten
+    }
+
+    public void performComputerMove() {
+        gameModel.computerPlayTurn();  // Führt den Zug des Computers aus
+        if (!gameModel.isGameOver()) {
+            gameModel.switchPlayer();  // Wenn das Spiel nicht vorbei ist, wechsle den Spieler
+            runGameLoop();  // Starte die nächste Runde
+        } else {
+            showGameOverDialog();  // Zeige das Dialogfenster "Spiel vorbei" an
+        }
     }
 }

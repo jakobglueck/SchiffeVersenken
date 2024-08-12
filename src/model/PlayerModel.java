@@ -4,7 +4,7 @@ import utils.CellState;
 
 
 public class PlayerModel {
-    private String playerName;
+    private final String playerName;
     private BoardModel board;
     private int nextShipIndex;
     private PlayerStatus playerStatus;
