@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 public class HomeScreenView extends JPanel {
     private JButton localGameButton;
+    private JButton computerGameButton;
     private JButton debugModeButton;
     private JButton exitButton;
 
@@ -20,6 +21,7 @@ public class HomeScreenView extends JPanel {
         JPanel buttonPanel = new JPanel();
 
         localGameButton = new JButton("Lokales Spiel starten");
+        computerGameButton = new JButton("Computer Spiel starten");
         debugModeButton = new JButton("Debug Modus starten");
         exitButton = new JButton("Spiel beenden");
 
@@ -27,6 +29,13 @@ public class HomeScreenView extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "Lokales Spiel wird gestartet...");
+            }
+        });
+
+        computerGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Computer Modus wird gestartet...");
             }
         });
 
@@ -45,6 +54,7 @@ public class HomeScreenView extends JPanel {
         });
 
         buttonPanel.add(localGameButton);
+        buttonPanel.add(computerGameButton);
         buttonPanel.add(debugModeButton);
         buttonPanel.add(exitButton);
 
@@ -53,6 +63,10 @@ public class HomeScreenView extends JPanel {
 
     public JButton getLocalGameButton() {
         return localGameButton;
+    }
+
+    public JButton getComputerGameButton() {
+        return computerGameButton;
     }
 
     public JButton getDebugModeButton() {
