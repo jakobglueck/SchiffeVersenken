@@ -32,7 +32,6 @@ public class BoardView extends JPanel {
 
         this.coverPanel = new JPanel();
         this.coverPanel.setBackground(Color.GRAY);
-        this.coverPanel.setOpaque(false);
         this.coverPanel.setVisible(false);
 
         setLayout(new OverlayLayout(this));
