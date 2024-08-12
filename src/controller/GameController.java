@@ -70,33 +70,50 @@ public class GameController {
         this.gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
         updateGameView();
 
-        // Aktivieren Sie nur das Board des Gegners und deaktivieren Sie das eigene Board
-        if (gameModel.getCurrentPlayer() == gameModel.getPlayerOne()) {
-            setBoardEnabled(gameView.getPlayerBoardTwo(), true);
-            setBoardEnabled(gameView.getPlayerBoardOne(), false);
-        } else {
+        if (gameModel.getGameState() == GameState.DEBUG) {
+            // Im Debug-Modus beide Boards aktivieren
             setBoardEnabled(gameView.getPlayerBoardOne(), true);
-            setBoardEnabled(gameView.getPlayerBoardTwo(), false);
+            setBoardEnabled(gameView.getPlayerBoardTwo(), true);
+        } else {
+            // Nur das Board des Gegners aktivieren und das eigene deaktivieren
+            if (gameModel.getCurrentPlayer() == gameModel.getPlayerOne()) {
+                setBoardEnabled(gameView.getPlayerBoardTwo(), true);
+                setBoardEnabled(gameView.getPlayerBoardOne(), false);
+            } else {
+                setBoardEnabled(gameView.getPlayerBoardOne(), true);
+                setBoardEnabled(gameView.getPlayerBoardTwo(), false);
+            }
         }
     }
 
     private void handleBoardClick(int row, int col, JLabel label) {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        PlayerModel opponent = (currentPlayer == gameModel.getPlayerOne()) ? gameModel.getPlayerTwo() : gameModel.getPlayerOne();
-        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
+        BoardView targetBoardView;
 
-        CellModel cell = opponent.getBoard().getCell(row, col); // Hier wird das Board des Gegners abgefragt
+        if (gameModel.getGameState() == GameState.DEBUG) {
+            // Im Debug-Modus kann der Spieler auch auf das eigene Board klicken
+            if (label.getParent().getParent().equals(gameView.getPlayerBoardOne())) {
+                targetBoardView = gameView.getPlayerBoardOne();
+            } else {
+                targetBoardView = gameView.getPlayerBoardTwo();
+            }
+        } else {
+            // Im normalen Modus klickt der Spieler auf das gegnerische Board
+            targetBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
+        }
+
+        CellModel cell = targetBoardView.getPlayerBoard().getCell(row, col);
 
         switch (cell.getCellState()) {
             case FREE:
-                opponentBoardView.markAsMiss(label);
-                opponent.getBoard().changeCellState(row, col, CellState.FREE);
+                targetBoardView.markAsMiss(label);
+                targetBoardView.getPlayerBoard().changeCellState(row, col, CellState.FREE);
                 break;
             case SET:
-                ShipModel ship = opponent.getBoard().registerHit(row, col);
+                ShipModel ship = targetBoardView.getPlayerBoard().registerHit(row, col);
                 if (ship != null && ship.isSunk()) {
-                    opponentBoardView.updateRevealedShip(ship);
-                    markSurroundingCellsAsMiss(ship, opponentBoardView, opponent);
+                    targetBoardView.updateRevealedShip(ship);
+                    markSurroundingCellsAsMiss(ship, targetBoardView);
                 }
                 break;
             default:
@@ -105,23 +122,25 @@ public class GameController {
 
         updateGameView();  // Aktualisierung der GUI nach jedem gültigen Zug
 
-        if (opponent.getBoard().allShipsAreHit()) {
+        if (targetBoardView.getPlayerBoard().allShipsAreHit()) {
             showGameOverDialog();
         } else {
-            gameModel.switchPlayer(); // Spielerwechsel nach jedem gültigen Zug
-            SwingUtilities.invokeLater(() -> {
-                runGameLoop();  // Stellen Sie sicher, dass nur das Board des nächsten Spielers aktiviert wird
-            });
+            if (gameModel.getGameState() != GameState.DEBUG) {
+                gameModel.switchPlayer(); // Spielerwechsel nur im Nicht-Debug-Modus
+                SwingUtilities.invokeLater(this::runGameLoop);
+            }
         }
     }
 
     private void setBoardEnabled(BoardView board, boolean enabled) {
         if (enabled) {
+            // MouseListener hinzufügen, falls nicht vorhanden
             for (MouseListener listener : board.getMouseListeners()) {
                 board.removeMouseListener(listener);
             }
             board.addMouseListener(board.getBoardClickListener());
         } else {
+            // Alle MouseListener entfernen
             for (MouseListener listener : board.getMouseListeners()) {
                 board.removeMouseListener(listener);
             }
@@ -173,7 +192,7 @@ public class GameController {
         });
     }
 
-    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponentBoardView, PlayerModel opponent) {
+    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponentBoardView) {
         for (CellModel cell : ship.getShipCells()) {
             int startX = Math.max(0, cell.getX() - 1);
             int endX = Math.min(9, cell.getX() + 1);
@@ -186,7 +205,6 @@ public class GameController {
                     if (surroundingCell.getCellState() == CellState.FREE) {
                         JLabel surroundingLabel = opponentBoardView.getLabelForCell(x, y);
                         opponentBoardView.markAsMiss(surroundingLabel);
-                        opponent.getBoard().changeCellState(x, y, CellState.FREE);
                     }
                 }
             }
