@@ -49,6 +49,7 @@ public class PlayerStatus {
     }
 
     public void reset() {
+        this.totalClicks = 0;
         this.hits = 0;
         this.shunkShips = 0;
     }
