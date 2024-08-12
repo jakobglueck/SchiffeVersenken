@@ -34,6 +34,14 @@ public class InfoPanelView extends JPanel {
         hitsLabel.setText("Davon Getroffen (Hits): " + playerModel.getPlayerStatus().getHits());
         missesLabel.setText("Verfehlt: " + playerModel.getPlayerStatus().getMisses());
         sunkShipsLabel.setText("Gegnerische Schiffe versunken: " + playerModel.getPlayerStatus().getShunkShips());
+        totalClicksLabel.revalidate();
+        totalClicksLabel.repaint();
+        hitsLabel.revalidate();
+        hitsLabel.repaint();
+        missesLabel.revalidate();
+        missesLabel.repaint();
+        sunkShipsLabel.revalidate();
+        sunkShipsLabel.repaint();
     }
     public JLabel getTotalClicksLabel() {
         return totalClicksLabel;

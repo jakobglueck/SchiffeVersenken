@@ -114,6 +114,8 @@ public class BoardView extends JPanel {
                 updateCell(row, col);
             }
         }
+        revalidate();
+        repaint();
     }
 
     private void updateCell(int row, int col) {
@@ -133,6 +135,8 @@ public class BoardView extends JPanel {
             default:
                 label.setBackground(Color.WHITE);
         }
+        label.revalidate();
+        label.repaint();
     }
 
     private void updateFreeCell(JLabel label) {

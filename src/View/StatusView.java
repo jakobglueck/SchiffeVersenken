@@ -21,5 +21,7 @@ public class StatusView extends JPanel {
 
     public void updateStatus(String status) {
         statusLabel.setText(status);
+        statusLabel.revalidate();
+        statusLabel.repaint();
     }
 }
