@@ -62,6 +62,7 @@ public class GameModel {
                 this.currentPlayer = this.randomPlayer();
                 break;
             case COMPUTER:
+                this.playerOne.getBoard().placeAllShips();
                 this.playerTwo = new ComputerPlayerModel("Computer");
                 this.playerTwo.getBoard().placeAllShips();
                 this.currentPlayer = this.playerOne;
