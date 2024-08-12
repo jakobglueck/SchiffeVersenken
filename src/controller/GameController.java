@@ -67,52 +67,65 @@ public class GameController {
     }
 
     public void runGameLoop() {
-        gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+        this.gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
         updateGameView();
 
-        MouseAdapter boardClickListener = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                BoardView opponentBoardView = (gameModel.getCurrentPlayer() == gameModel.getPlayerOne())
-                        ? gameView.getPlayerBoardTwo()
-                        : gameView.getPlayerBoardOne();
+        // Aktivieren Sie nur das Board des Gegners und deaktivieren Sie das eigene Board
+        if (gameModel.getCurrentPlayer() == gameModel.getPlayerOne()) {
+            setBoardEnabled(gameView.getPlayerBoardTwo(), true);
+            setBoardEnabled(gameView.getPlayerBoardOne(), false);
+        } else {
+            setBoardEnabled(gameView.getPlayerBoardOne(), true);
+            setBoardEnabled(gameView.getPlayerBoardTwo(), false);
+        }
+    }
 
-                int x = e.getX() / opponentBoardView.getCellSize();
-                int y = e.getY() / opponentBoardView.getCellSize();
+    private void handleBoardClick(int row, int col, JLabel label) {
+        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
+        PlayerModel opponent = (currentPlayer == gameModel.getPlayerOne()) ? gameModel.getPlayerTwo() : gameModel.getPlayerOne();
+        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
 
-                gameModel.playerTurn(x, y);
-                updateGameView();
+        CellModel cell = opponent.getBoard().getCell(row, col); // Hier wird das Board des Gegners abgefragt
 
-                if (gameModel.isGameOver()) {
-                    showGameOverDialog();
-                    return;
+        switch (cell.getCellState()) {
+            case FREE:
+                opponentBoardView.markAsMiss(label);
+                opponent.getBoard().changeCellState(row, col, CellState.FREE);
+                break;
+            case SET:
+                ShipModel ship = opponent.getBoard().registerHit(row, col);
+                if (ship != null && ship.isSunk()) {
+                    opponentBoardView.updateRevealedShip(ship);
+                    markSurroundingCellsAsMiss(ship, opponentBoardView, opponent);
                 }
+                break;
+            default:
+                System.out.println("Ungültiger Klick.");
+        }
 
-                gameModel.switchPlayer(); // Spielerwechsel nach jedem Zug
-                SwingUtilities.invokeLater(() -> {
-                    gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
-                    updateGameView();  // GUI-Aktualisierung sicherstellen
-                });
+        updateGameView();  // Aktualisierung der GUI nach jedem gültigen Zug
 
-                if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
-                    gameModel.computerPlayTurn();
-                    updateGameView();
+        if (opponent.getBoard().allShipsAreHit()) {
+            showGameOverDialog();
+        } else {
+            gameModel.switchPlayer(); // Spielerwechsel nach jedem gültigen Zug
+            SwingUtilities.invokeLater(() -> {
+                runGameLoop();  // Stellen Sie sicher, dass nur das Board des nächsten Spielers aktiviert wird
+            });
+        }
+    }
 
-                    if (gameModel.isGameOver()) {
-                        showGameOverDialog();
-                    } else {
-                        gameModel.switchPlayer(); // Nach Computerzug wieder zum menschlichen Spieler wechseln
-                        SwingUtilities.invokeLater(() -> {
-                            gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
-                            updateGameView();  // GUI-Aktualisierung sicherstellen
-                        });
-                    }
-                }
+    private void setBoardEnabled(BoardView board, boolean enabled) {
+        if (enabled) {
+            for (MouseListener listener : board.getMouseListeners()) {
+                board.removeMouseListener(listener);
             }
-        };
-
-        gameView.getPlayerBoardOne().addMouseListener(boardClickListener);
-        gameView.getPlayerBoardTwo().addMouseListener(boardClickListener);
+            board.addMouseListener(board.getBoardClickListener());
+        } else {
+            for (MouseListener listener : board.getMouseListeners()) {
+                board.removeMouseListener(listener);
+            }
+        }
     }
 
     private void handleManualShipPlacement() {
@@ -160,43 +173,6 @@ public class GameController {
         });
     }
 
-    private void handleBoardClick(int row, int col, JLabel label) {
-        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        PlayerModel opponent = (currentPlayer == gameModel.getPlayerOne()) ? gameModel.getPlayerTwo() : gameModel.getPlayerOne();
-        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
-
-        CellModel cell = opponent.getBoard().getCell(row, col); // Hier wird das Board des Gegners abgefragt
-
-        switch (cell.getCellState()) {
-            case FREE:
-                opponentBoardView.markAsMiss(label);
-                opponent.getBoard().changeCellState(row, col, CellState.FREE);
-                break;
-            case SET:
-                ShipModel ship = opponent.getBoard().registerHit(row, col);
-                if (ship != null && ship.isSunk()) {
-                    opponentBoardView.updateRevealedShip(ship);
-                    markSurroundingCellsAsMiss(ship, opponentBoardView, opponent);
-                }
-                break;
-            default:
-                System.out.println("Ungültiger Klick.");
-        }
-
-        updateGameView();  // Aktualisierung der GUI nach jedem gültigen Zug
-
-        if (opponent.getBoard().allShipsAreHit()) {
-            showGameOverDialog();
-        } else {
-            gameModel.switchPlayer(); // Spielerwechsel nach jedem gültigen Zug
-            SwingUtilities.invokeLater(() -> {
-                gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
-                updateGameView();  // Stellen Sie sicher, dass die GUI sofort aktualisiert wird
-            });
-        }
-    }
-
-
     private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponentBoardView, PlayerModel opponent) {
         for (CellModel cell : ship.getShipCells()) {
             int startX = Math.max(0, cell.getX() - 1);
@@ -206,7 +182,7 @@ public class GameController {
 
             for (int x = startX; x <= endX; x++) {
                 for (int y = startY; y <= endY; y++) {
-                    CellModel surroundingCell = opponentBoardView.getPlayerBoard().getCell(x, y);  // <-- Korrigiert
+                    CellModel surroundingCell = opponentBoardView.getPlayerBoard().getCell(x, y);
                     if (surroundingCell.getCellState() == CellState.FREE) {
                         JLabel surroundingLabel = opponentBoardView.getLabelForCell(x, y);
                         opponentBoardView.markAsMiss(surroundingLabel);
@@ -223,7 +199,7 @@ public class GameController {
         gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
         gameView.getStatusView().updateStatus("Aktueller Spieler: " + gameModel.getCurrentPlayer().getPlayerName());
 
-        // Panels revalidate und repaint
+        // Panels revalidate und repaint, um sicherzustellen, dass die Änderungen sichtbar werden
         gameView.getPlayerBoardOne().revalidate();
         gameView.getPlayerBoardOne().repaint();
         gameView.getPlayerBoardTwo().revalidate();
@@ -238,7 +214,7 @@ public class GameController {
         this.gameView.getInfoPanelViewOne().updateStats(this.gameModel.getPlayerOne());
         this.gameView.getInfoPanelViewTwo().updateStats(this.gameModel.getPlayerTwo());
 
-        // Panels revalidate und repaint
+        // Panels revalidate und repaint, um sicherzustellen, dass die Änderungen sichtbar werden
         gameView.getInfoPanelViewOne().revalidate();
         gameView.getInfoPanelViewOne().repaint();
         gameView.getInfoPanelViewTwo().revalidate();
