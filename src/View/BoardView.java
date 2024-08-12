@@ -187,4 +187,9 @@ public class BoardView extends JPanel {
     public BoardModel getPlayerBoard() {
         return playerBoard;
     }
+
+    public void reset() {
+        playerBoard.reset();  // Reset des Boards
+        updateBoard();        // Aktualisierung der Anzeige
+    }
 }

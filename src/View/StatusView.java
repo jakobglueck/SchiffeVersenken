@@ -24,4 +24,8 @@ public class StatusView extends JPanel {
         statusLabel.revalidate();
         statusLabel.repaint();
     }
+
+    public void reset() {
+        updateStatus("Warten auf Spielbeginn");
+    }
 }

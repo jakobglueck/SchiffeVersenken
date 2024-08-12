@@ -43,19 +43,14 @@ public class InfoPanelView extends JPanel {
         sunkShipsLabel.revalidate();
         sunkShipsLabel.repaint();
     }
-    public JLabel getTotalClicksLabel() {
-        return totalClicksLabel;
+
+    public void reset() {
+        totalClicksLabel.setText("Anzahl gesamter Klicks: 0");
+        hitsLabel.setText("Davon Getroffen (Hits): 0");
+        missesLabel.setText("Verfehlt: 0");
+        sunkShipsLabel.setText("Gegnerische Schiffe versunken: 0");
+        revalidate();
+        repaint();
     }
 
-    public JLabel getHitsLabel() {
-        return hitsLabel;
-    }
-
-    public JLabel getMissesLabel() {
-        return missesLabel;
-    }
-
-    public JLabel getSunkShipsLabel() {
-        return sunkShipsLabel;
-    }
 }

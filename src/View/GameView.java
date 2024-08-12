@@ -153,4 +153,12 @@ public class GameView extends JFrame {
     public StatusView getStatusView() {
         return this.statusView;
     }
+
+    public void resetView() {
+        playerBoardOne.reset();
+        playerBoardTwo.reset();
+        statusView.reset();
+        infoPanelViewOne.reset();
+        infoPanelViewTwo.reset();
+    }
 }
