@@ -37,8 +37,8 @@ public class GameModel {
      */
     public void createPlayerWithNames(String playerOneName, String playerTwoName) {
         this.playerOne = createPlayer(playerOneName != null ? playerOneName : DEFAULT_PLAYER_NAME);
-        this.playerTwo = playerTwoName != null && !playerTwoName.equals("Computer")
-                ? createPlayer(playerTwoName)
+
+        this.playerTwo = playerTwoName != null && !playerTwoName.equals("Computer") ? createPlayer(playerTwoName)
                 : new ComputerPlayerModel("Computer");
     }
 
@@ -50,21 +50,16 @@ public class GameModel {
             throw new IllegalStateException("Spieler müssen vor dem Start des Spiels initialisiert werden.");
         }
 
+        this.playerOne.getBoard().placeAllShips();
+        this.playerTwo.getBoard().placeAllShips();
+
         switch (this.gameState) {
             case NORMAL:
-                this.currentPlayer = this.randomPlayer();
-                this.playerOne.getBoard().placeAllShips();
-                this.playerTwo.getBoard().placeAllShips();
-                break;
             case DEBUG:
-                this.playerOne.getBoard().placeAllShips();
-                this.playerTwo.getBoard().placeAllShips();
                 this.currentPlayer = this.randomPlayer();
                 break;
             case COMPUTER:
-                this.playerTwo = new ComputerPlayerModel("Computer");
-                this.playerTwo.getBoard().placeAllShips();
-                this.currentPlayer = this.playerOne;
+                this.currentPlayer = this.playerOne;  // Der menschliche Spieler beginnt
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + this.gameState);
