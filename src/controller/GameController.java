@@ -29,6 +29,7 @@ public class GameController {
 
     private void initializeHomeScreenListeners() {
         homeScreenView.getLocalGameButton().addActionListener(e -> startGame(GameState.NORMAL));
+        homeScreenView.getComputerGameButton().addActionListener(e -> startGame(GameState.COMPUTER));
         homeScreenView.getDebugModeButton().addActionListener(e -> startGame(GameState.DEBUG));
         homeScreenView.getExitButton().addActionListener(e -> System.exit(0));
     }
