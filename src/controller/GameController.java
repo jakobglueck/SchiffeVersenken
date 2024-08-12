@@ -83,9 +83,16 @@ public class GameController {
         );
 
         if (result == JOptionPane.YES_OPTION) {
-            startGame(gameModel.getGameState());
+            resetGame();  // Neustart des Spiels mit denselben Spielern
         } else {
             showHomeScreen();
         }
+    }
+
+    private void resetGame() {
+        gameModel.resetGame();  // Zurücksetzen des GameModel
+        gameView.resetView();   // Zurücksetzen der Ansicht
+        gameModel.startGame();  // Spiel neu starten
+        runGameLoop();         // Spielschleife neu starten
     }
 }

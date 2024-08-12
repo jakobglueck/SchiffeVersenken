@@ -161,4 +161,10 @@ public class GameModel {
     public boolean allShipsPlaced() {
         return this.playerOne.allShipsPlaced() && this.playerTwo.allShipsPlaced();
     }
+
+    public void resetGame() {
+        playerOne.reset();  // Reset des ersten Spielers
+        playerTwo.reset();  // Reset des zweiten Spielers
+        currentPlayer = playerOne;  // Standardmäßig startet der erste Spieler
+    }
 }
