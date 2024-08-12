@@ -135,4 +135,13 @@ public class BoardModel {
     private boolean isValidCoordinate(int x, int y) {
         return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
     }
+
+    public void reset() {
+        for (int row = 0; row < WIDTH; row++) {
+            for (int col = 0; col < HEIGHT; col++) {
+                this.board[row][col] = new CellModel(row, col, CellState.FREE);
+            }
+        }
+        this.playerShips.clear();
+    }
 }

@@ -187,4 +187,22 @@ public class BoardView extends JPanel {
     public BoardModel getPlayerBoard() {
         return playerBoard;
     }
+
+    private void clearLabelGraphics(JLabel label) {
+        label.setIcon(null);  // Entfernt das Icon oder die Grafik
+        label.setBackground(Color.WHITE);  // Setzt den Hintergrund zurück
+        label.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));  // Setzt die Standard-Rand zurück
+        label.revalidate();
+        label.repaint();
+    }
+
+    public void resetBoard() {
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                clearLabelGraphics(labels[row][col]);
+            }
+        }
+        revalidate();
+        repaint();
+    }
 }

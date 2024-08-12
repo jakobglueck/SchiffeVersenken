@@ -71,4 +71,9 @@ public class PlayerModel {
     public PlayerStatus getPlayerStatus() {
         return playerStatus;
     }
+
+    public void reset() {
+        board.reset();  // Spielfeld zurücksetzen
+        playerStatus.reset(); // Spielerstatus zurücksetzen (z.B. Treffer, Verfehlt usw.)
+    }
 }
