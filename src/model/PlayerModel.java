@@ -45,9 +45,6 @@ public class PlayerModel {
             return false;
         }
         boolean hit = opponent.getBoard().registerHit(x, y) != null; // Trefferregistrierung auf dem Gegner-Board
-        this.playerStatus.updateTotalClicks();
-        this.playerStatus.calculateHits(opponent.getBoard()); // Korrekte Zuordnung zum Gegner-Board
-        this.playerStatus.calculateShunkShips(opponent.getBoard()); // Korrekte Zuordnung zum Gegner-Board
         return true;
     }
 
