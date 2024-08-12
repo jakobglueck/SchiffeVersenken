@@ -61,4 +61,9 @@ public class PlayerStatus {
         this.shunkShips = temp;
     }
 
+    public void reset() {
+        this.hits = 0;    // Zurücksetzen der Treffer
+        this.misses = 0;  // Zurücksetzen der Verfehlungen
+        this.shunkShips = 0; // Zurücksetzen der versenkten Schiffe
+    }
 }
