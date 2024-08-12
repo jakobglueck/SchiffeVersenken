@@ -69,7 +69,7 @@ public class GameController {
     public void runGameLoop() {
         gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
         updateGameView();
-        // Initialisiere den MouseListener einmalig
+
         MouseAdapter boardClickListener = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -80,7 +80,6 @@ public class GameController {
                 int x = e.getX() / opponentBoardView.getCellSize();
                 int y = e.getY() / opponentBoardView.getCellSize();
 
-                // Spieler macht einen Zug
                 gameModel.playerTurn(x, y);
                 updateGameView();
 
@@ -89,11 +88,12 @@ public class GameController {
                     return;
                 }
 
-                // Wechsel zum nächsten Spieler
-                gameModel.switchPlayer();
-                gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+                gameModel.switchPlayer(); // Spielerwechsel nach jedem Zug
+                SwingUtilities.invokeLater(() -> {
+                    gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+                    updateGameView();  // GUI-Aktualisierung sicherstellen
+                });
 
-                // Wenn der nächste Spieler ein Computer ist, führt der Computer seinen Zug durch
                 if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
                     gameModel.computerPlayTurn();
                     updateGameView();
@@ -101,30 +101,18 @@ public class GameController {
                     if (gameModel.isGameOver()) {
                         showGameOverDialog();
                     } else {
-                        // Nach dem Computerzug wieder zum menschlichen Spieler wechseln
-                        gameModel.switchPlayer();
-                        gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+                        gameModel.switchPlayer(); // Nach Computerzug wieder zum menschlichen Spieler wechseln
+                        SwingUtilities.invokeLater(() -> {
+                            gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+                            updateGameView();  // GUI-Aktualisierung sicherstellen
+                        });
                     }
                 }
             }
         };
 
-        // Füge den Listener für den menschlichen Spieler einmalig hinzu
         gameView.getPlayerBoardOne().addMouseListener(boardClickListener);
         gameView.getPlayerBoardTwo().addMouseListener(boardClickListener);
-
-        // Falls das Spiel mit einem Computer startet, kann der Computer sofort seinen Zug machen
-        if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
-            gameModel.computerPlayTurn();
-            updateGameView();
-
-            if (gameModel.isGameOver()) {
-                showGameOverDialog();
-            } else {
-                gameModel.switchPlayer();
-                gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
-            }
-        }
     }
 
     private void handleManualShipPlacement() {
@@ -177,7 +165,7 @@ public class GameController {
         PlayerModel opponent = (currentPlayer == gameModel.getPlayerOne()) ? gameModel.getPlayerTwo() : gameModel.getPlayerOne();
         BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
 
-        CellModel cell = opponent.getBoard().getCell(row, col);
+        CellModel cell = opponent.getBoard().getCell(row, col); // Hier wird das Board des Gegners abgefragt
 
         switch (cell.getCellState()) {
             case FREE:
@@ -188,19 +176,26 @@ public class GameController {
                 ShipModel ship = opponent.getBoard().registerHit(row, col);
                 if (ship != null && ship.isSunk()) {
                     opponentBoardView.updateRevealedShip(ship);
-                    markSurroundingCellsAsMiss(ship, opponentBoardView,opponent);
+                    markSurroundingCellsAsMiss(ship, opponentBoardView, opponent);
                 }
                 break;
             default:
                 System.out.println("Ungültiger Klick.");
         }
 
+        updateGameView();  // Aktualisierung der GUI nach jedem gültigen Zug
+
         if (opponent.getBoard().allShipsAreHit()) {
             showGameOverDialog();
         } else {
-            updateGameView();
+            gameModel.switchPlayer(); // Spielerwechsel nach jedem gültigen Zug
+            SwingUtilities.invokeLater(() -> {
+                gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+                updateGameView();  // Stellen Sie sicher, dass die GUI sofort aktualisiert wird
+            });
         }
     }
+
 
     private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponentBoardView, PlayerModel opponent) {
         for (CellModel cell : ship.getShipCells()) {
@@ -227,12 +222,27 @@ public class GameController {
         gameView.getPlayerBoardTwo().updateBoard();
         gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
         gameView.getStatusView().updateStatus("Aktueller Spieler: " + gameModel.getCurrentPlayer().getPlayerName());
+
+        // Panels revalidate und repaint
+        gameView.getPlayerBoardOne().revalidate();
+        gameView.getPlayerBoardOne().repaint();
+        gameView.getPlayerBoardTwo().revalidate();
+        gameView.getPlayerBoardTwo().repaint();
+        gameView.getStatusView().revalidate();
+        gameView.getStatusView().repaint();
+
         this.updateInfoPanel();
     }
 
     private void updateInfoPanel() {
         this.gameView.getInfoPanelViewOne().updateStats(this.gameModel.getPlayerOne());
         this.gameView.getInfoPanelViewTwo().updateStats(this.gameModel.getPlayerTwo());
+
+        // Panels revalidate und repaint
+        gameView.getInfoPanelViewOne().revalidate();
+        gameView.getInfoPanelViewOne().repaint();
+        gameView.getInfoPanelViewTwo().revalidate();
+        gameView.getInfoPanelViewTwo().repaint();
     }
 
     private void showGameOverDialog() {
