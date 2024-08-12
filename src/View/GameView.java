@@ -155,8 +155,8 @@ public class GameView extends JFrame {
     }
 
     public void resetView() {
-        playerBoardOne.reset();
-        playerBoardTwo.reset();
+        playerBoardOne.resetBoard();
+        playerBoardTwo.resetBoard();
         statusView.reset();
         infoPanelViewOne.reset();
         infoPanelViewTwo.reset();
