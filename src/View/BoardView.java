@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class BoardView extends JPanel {
     private BoardModel playerBoard;
@@ -108,6 +109,10 @@ public class BoardView extends JPanel {
         this.boardClickListener = listener;
     }
 
+    public MouseListener getBoardClickListener() {
+        return (MouseListener) this.boardClickListener;
+    }
+
     public void updateBoard() {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
@@ -178,6 +183,7 @@ public class BoardView extends JPanel {
     public interface BoardClickListener {
         void onCellClicked(int row, int col, JLabel label);
     }
+
 
     public BoardModel getPlayerBoard() {
         return playerBoard;
