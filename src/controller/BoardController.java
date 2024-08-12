@@ -103,13 +103,15 @@ public class BoardController {
         }
 
         CellModel cell = clickedBoardView.getPlayerBoard().getCell(row, col);
-
+        currentPlayer.getPlayerStatus().updateTotalClicks();
         switch (cell.getCellState()) {
             case FREE:
                 clickedBoardView.markAsMiss(label);
                 break;
             case SET:
                 ShipModel ship = clickedBoardView.getPlayerBoard().registerHit(row, col);
+                currentPlayer.getPlayerStatus().calculateHits(clickedBoardView.getPlayerBoard()); // Korrekte Zuordnung zum Gegner-Board
+                currentPlayer.getPlayerStatus().calculateShunkShips(clickedBoardView.getPlayerBoard());
                 if (ship != null && ship.isSunk()) {
                     clickedBoardView.updateRevealedShip(ship);
                     markSurroundingCellsAsMiss(ship, clickedBoardView);
