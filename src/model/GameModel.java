@@ -53,6 +53,8 @@ public class GameModel {
         switch (this.gameState) {
             case NORMAL:
                 this.currentPlayer = this.randomPlayer();
+                this.playerOne.getBoard().placeAllShips();
+                this.playerTwo.getBoard().placeAllShips();
                 break;
             case DEBUG:
                 this.playerOne.getBoard().placeAllShips();

@@ -44,20 +44,10 @@ public class PlayerModel {
         if (!this.isValidMove(x, y)) {
             return false;
         }
-        boolean hit = false;
-        for(ShipModel ship : this.board.getPlayerShips()){
-            if(ship.isHit(x, y)){
-                hit = true;
-            }
-        }
-        if (hit) {
-            System.out.println(playerName + " hit a target!");
-        } else {
-            System.out.println(playerName + " missed.");
-        }
+        boolean hit = opponent.getBoard().registerHit(x, y) != null; // Trefferregistrierung auf dem Gegner-Board
         this.playerStatus.updateTotalClicks();
-        this.playerStatus.calculateHits(this.board);
-        this.playerStatus.calculateShunkShips(this.board);
+        this.playerStatus.calculateHits(opponent.getBoard()); // Korrekte Zuordnung zum Gegner-Board
+        this.playerStatus.calculateShunkShips(opponent.getBoard()); // Korrekte Zuordnung zum Gegner-Board
         return true;
     }
 

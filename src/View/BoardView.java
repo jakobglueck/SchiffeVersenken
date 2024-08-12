@@ -31,15 +31,21 @@ public class BoardView extends JPanel {
 
         this.coverPanel = new JPanel();
         this.coverPanel.setBackground(Color.GRAY);
-        this.coverPanel.setOpaque(true);
+        this.coverPanel.setOpaque(false);
         this.coverPanel.setVisible(false);
 
         setLayout(new OverlayLayout(this));
-        add(coverPanel);
         add(mainPanel);
+        add(coverPanel);
 
         setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
         setVisible(true);
+    }
+
+    // Methode zum Steuern der Opazität des coverPanels
+    public void setOpaqueCover(boolean opaque) {
+        this.coverPanel.setOpaque(opaque);
+        this.repaint();
     }
 
     private JPanel createNumericLabelsPanel() {
@@ -167,5 +173,9 @@ public class BoardView extends JPanel {
 
     public interface BoardClickListener {
         void onCellClicked(int row, int col, JLabel label);
+    }
+
+    public BoardModel getPlayerBoard() {
+        return playerBoard;
     }
 }

@@ -27,7 +27,7 @@ public class GameView extends JFrame {
         setResizable(false);
     }
 
-    public void  createPlayerBase(){
+    public void createPlayerBase() {
         this.playerOne = game.getPlayerOne();
         this.playerTwo = game.getPlayerTwo();
 
@@ -91,12 +91,13 @@ public class GameView extends JFrame {
         statusView = new StatusView();
         infoPanelViewTwo = new InfoPanelView();
 
-        infoStatusPanel.add(infoPanelViewOne,BorderLayout.WEST);
+        infoStatusPanel.add(infoPanelViewOne, BorderLayout.WEST);
         infoStatusPanel.add(statusView, BorderLayout.CENTER);
         infoStatusPanel.add(infoPanelViewTwo, BorderLayout.EAST);
 
         return infoStatusPanel;
     }
+
     public BoardView getPlayerBoardOne() {
         return this.playerBoardOne;
     }
@@ -106,20 +107,36 @@ public class GameView extends JFrame {
     }
 
     public void updateBoardVisibility(PlayerModel currentPlayer) {
-        if (game.getGameState() == GameState.NORMAL) {
-            if (currentPlayer == playerOne) {
+        GameState gameState = game.getGameState();
+
+        switch (gameState) {
+            case NORMAL:
+                playerBoardOne.setCovered(currentPlayer == playerTwo);
+                playerBoardTwo.setCovered(currentPlayer == playerOne);
+                playerBoardOne.setOpaqueCover(false);
+                playerBoardTwo.setOpaqueCover(false);
+                break;
+            case DEBUG:
                 playerBoardOne.setCovered(false);
-                playerBoardTwo.setCovered(true);
-            } else {
-                playerBoardOne.setCovered(true);
                 playerBoardTwo.setCovered(false);
-            }
-        } else {
-            playerBoardOne.setCovered(false);
-            playerBoardTwo.setCovered(false);
+                playerBoardOne.setOpaqueCover(true);
+                playerBoardTwo.setOpaqueCover(true);
+                break;
+            case COMPUTER:
+                if (currentPlayer == playerOne) {
+                    playerBoardOne.setCovered(true);
+                    playerBoardTwo.setCovered(false);
+                    playerBoardOne.setOpaqueCover(false);
+                    playerBoardTwo.setOpaqueCover(true);
+                } else {
+                    playerBoardOne.setCovered(false);
+                    playerBoardTwo.setCovered(true);
+                    playerBoardOne.setOpaqueCover(true);
+                    playerBoardTwo.setOpaqueCover(false);
+                }
+                break;
         }
     }
-
 
     public InfoPanelView getInfoPanelViewOne() {
         return this.infoPanelViewOne;

@@ -24,70 +24,21 @@ public class GameController {
         this.gameView = gameView;
         this.homeScreenView = homeScreenView;
         this.homeFrame = homeFrame;
-        this.initializeListeners();
+        initializeHomeScreenListeners();
     }
 
-    private void initializeListeners() {
-        homeScreenView.getLocalGameButton().addActionListener(new LocalGameButtonListener());
-        homeScreenView.getDebugModeButton().addActionListener(new DebugModeButtonListener());
-        homeScreenView.getExitButton().addActionListener(new ExitButtonListener());
-        gameView.getControlView().getMainMenuButton().addActionListener(new MainMenuButtonListener());
-        gameView.getControlView().getPauseGameButton().addActionListener(new PauseGameButtonListener());
-        gameView.getControlView().getEndGameButton().addActionListener(new EndGameButtonListener());
+    private void initializeHomeScreenListeners() {
+        homeScreenView.getLocalGameButton().addActionListener(e -> startGame(GameState.NORMAL));
+        homeScreenView.getDebugModeButton().addActionListener(e -> startGame(GameState.DEBUG));
+        homeScreenView.getExitButton().addActionListener(e -> System.exit(0));
+    }
 
-        // Listener für die BoardViews
+    private void initializeGameListeners() {
+        gameView.getControlView().getMainMenuButton().addActionListener(e -> showHomeScreen());
+        gameView.getControlView().getPauseGameButton().addActionListener(e -> JOptionPane.showMessageDialog(gameView, "Spiel ist pausiert!"));
+        gameView.getControlView().getEndGameButton().addActionListener(e -> System.exit(0));
         gameView.getPlayerBoardOne().setBoardClickListener(this::handleBoardClick);
         gameView.getPlayerBoardTwo().setBoardClickListener(this::handleBoardClick);
-    }
-
-    private void handleBoardClick(int row, int col, JLabel label) {
-        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        BoardView currentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardOne() : gameView.getPlayerBoardTwo();
-        CellModel cell = currentPlayer.getBoard().getCell(row, col);
-
-        switch(cell.getCellState()) {
-            case FREE:
-                currentBoardView.markAsMiss(label);  // Call markAsMiss on the BoardView instance
-                currentPlayer.getBoard().changeCellState(row, col, CellState.FREE);
-                break;
-            case SET:
-                ShipModel ship = currentPlayer.getBoard().registerHit(row, col);
-                if (ship != null) {
-                    if (ship.isSunk()) {
-                        currentBoardView.updateRevealedShip(ship);  // Call updateRevealedShip on the BoardView instance
-                        markSurroundingCellsAsMiss(ship, currentBoardView);  // Pass the BoardView instance to mark surrounding cells
-                    }
-                }
-                break;
-            default:
-                System.out.println("Ungültiger Klick.");
-        }
-
-        if(currentPlayer.getBoard().allShipsAreHit()){
-            showGameOverDialog();
-        }
-
-        updateGameView();
-    }
-
-    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView currentBoardView) {
-        for (CellModel cell : ship.getShipCells()) {
-            int startX = Math.max(0, cell.getX() - 1);
-            int endX = Math.min(10 - 1, cell.getX() + 1);
-            int startY = Math.max(0, cell.getY() - 1);
-            int endY = Math.min(10 - 1, cell.getY() + 1);
-
-            for (int x = startX; x <= endX; x++) {
-                for (int y = startY; y <= endY; y++) {
-                    CellModel surroundingCell = gameModel.getCurrentPlayer().getBoard().getCell(x, y);
-                    if (surroundingCell.getCellState() == CellState.FREE) {
-                        JLabel surroundingLabel = gameView.getPlayerBoardOne().getLabelForCell(x, y);
-                        currentBoardView.markAsMiss(surroundingLabel);
-                        gameModel.getCurrentPlayer().getBoard().changeCellState(x, y, CellState.FREE);
-                    }
-                }
-            }
-        }
     }
 
     public void showHomeScreen() {
@@ -98,30 +49,86 @@ public class GameController {
     public void startGame(GameState gameState) {
         homeFrame.setVisible(false);
         String playerOneName = JOptionPane.showInputDialog("Bitte Namen für Spieler 1 eingeben:");
-        String playerTwoName = null;
-
-        if (gameState == GameState.NORMAL || gameState == GameState.DEBUG) {
-            playerTwoName = JOptionPane.showInputDialog("Bitte Namen für Spieler 2 eingeben:");
-        } else {
-            playerTwoName = "Computer";
-        }
+        String playerTwoName = (gameState == GameState.NORMAL || gameState == GameState.DEBUG)
+                ? JOptionPane.showInputDialog("Bitte Namen für Spieler 2 eingeben:")
+                : "Computer";
 
         gameModel.createPlayerWithNames(playerOneName, playerTwoName);
         gameModel.setGameState(gameState);
-
-        gameView.createPlayerBase();
-        gameModel.startGame();
         gameView.setVisible(true);
-        if(gameState == GameState.NORMAL || gameState == GameState.COMPUTER){
-            this.handleManualShipPlacement();
+        gameView.createPlayerBase();
+        initializeGameListeners();
+        gameModel.startGame();
+        if (gameState == GameState.NORMAL || gameState == GameState.COMPUTER) {
+            handleManualShipPlacement();
+        } else {
+            runGameLoop();
         }
-        else{
-            this.runGameLoop();
+    }
+
+    public void runGameLoop() {
+        gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+        updateGameView();
+        // Initialisiere den MouseListener einmalig
+        MouseAdapter boardClickListener = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                BoardView opponentBoardView = (gameModel.getCurrentPlayer() == gameModel.getPlayerOne())
+                        ? gameView.getPlayerBoardTwo()
+                        : gameView.getPlayerBoardOne();
+
+                int x = e.getX() / opponentBoardView.getCellSize();
+                int y = e.getY() / opponentBoardView.getCellSize();
+
+                // Spieler macht einen Zug
+                gameModel.playerTurn(x, y);
+                updateGameView();
+
+                if (gameModel.isGameOver()) {
+                    showGameOverDialog();
+                    return;
+                }
+
+                // Wechsel zum nächsten Spieler
+                gameModel.switchPlayer();
+                gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+
+                // Wenn der nächste Spieler ein Computer ist, führt der Computer seinen Zug durch
+                if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
+                    gameModel.computerPlayTurn();
+                    updateGameView();
+
+                    if (gameModel.isGameOver()) {
+                        showGameOverDialog();
+                    } else {
+                        // Nach dem Computerzug wieder zum menschlichen Spieler wechseln
+                        gameModel.switchPlayer();
+                        gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+                    }
+                }
+            }
+        };
+
+        // Füge den Listener für den menschlichen Spieler einmalig hinzu
+        gameView.getPlayerBoardOne().addMouseListener(boardClickListener);
+        gameView.getPlayerBoardTwo().addMouseListener(boardClickListener);
+
+        // Falls das Spiel mit einem Computer startet, kann der Computer sofort seinen Zug machen
+        if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
+            gameModel.computerPlayTurn();
+            updateGameView();
+
+            if (gameModel.isGameOver()) {
+                showGameOverDialog();
+            } else {
+                gameModel.switchPlayer();
+                gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+            }
         }
     }
 
     private void handleManualShipPlacement() {
-        int shipTurns = gameModel.getPlayerTwo() instanceof ComputerPlayerModel ? 1 : 2;
+        int shipTurns = (gameModel.getPlayerTwo() instanceof ComputerPlayerModel) ? 1 : 2;
 
         placeShipsForCurrentPlayer();
 
@@ -137,12 +144,6 @@ public class GameController {
 
     private void placeShipsForCurrentPlayer() {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-
-        if (currentPlayer == null) {
-            System.out.println("Current player is null");
-            return;
-        }
-
         gameView.getStatusView().updateStatus(currentPlayer.getPlayerName() + ", platziere deine Schiffe");
 
         for (MouseListener listener : gameView.getPlayerBoardOne().getMouseListeners()) {
@@ -152,10 +153,8 @@ public class GameController {
         gameView.getPlayerBoardOne().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                BoardView clickedBoard = (BoardView) e.getSource();
-                int cellSize = clickedBoard.getCellSize();
-                int x = e.getX() / cellSize;
-                int y = e.getY() / cellSize;
+                int x = e.getX() / gameView.getPlayerBoardOne().getCellSize();
+                int y = e.getY() / gameView.getPlayerBoardOne().getCellSize();
                 boolean horizontal = SwingUtilities.isLeftMouseButton(e);
 
                 if (gameModel.placeNextShip(x, y, horizontal)) {
@@ -173,34 +172,53 @@ public class GameController {
         });
     }
 
-    private void handlePlayerMove() {
-        gameView.getPlayerBoardOne().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                BoardView clickedBoard = (BoardView) e.getSource();
-                int cellSize = clickedBoard.getCellSize();
-                int x = e.getX() / cellSize;
-                int y = e.getY() / cellSize;
+    private void handleBoardClick(int row, int col, JLabel label) {
+        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
+        PlayerModel opponent = (currentPlayer == gameModel.getPlayerOne()) ? gameModel.getPlayerTwo() : gameModel.getPlayerOne();
+        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
 
-                gameModel.playerTurn(x, y);
-                updateGameView();
+        CellModel cell = opponent.getBoard().getCell(row, col);
 
-                if (gameModel.isGameOver()) {
-                    showGameOverDialog();
+        switch (cell.getCellState()) {
+            case FREE:
+                opponentBoardView.markAsMiss(label);
+                opponent.getBoard().changeCellState(row, col, CellState.FREE);
+                break;
+            case SET:
+                ShipModel ship = opponent.getBoard().registerHit(row, col);
+                if (ship != null && ship.isSunk()) {
+                    opponentBoardView.updateRevealedShip(ship);
+                    markSurroundingCellsAsMiss(ship, opponentBoardView,opponent);
                 }
-            }
-        });
+                break;
+            default:
+                System.out.println("Ungültiger Klick.");
+        }
+
+        if (opponent.getBoard().allShipsAreHit()) {
+            showGameOverDialog();
+        } else {
+            updateGameView();
+        }
     }
 
-    private void handleShipPlacement(int startX, int startY, boolean horizontal) {
-        if (gameModel.placeNextShip(startX, startY, horizontal)) {
-            updateGameView();
-            if (gameModel.allShipsPlaced()) {
-                JOptionPane.showMessageDialog(gameView, "Alle Schiffe platziert. Bereit zum Spielstart!");
-                gameView.getStatusView().updateStatus("Spiel beginnt!");
+    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponentBoardView, PlayerModel opponent) {
+        for (CellModel cell : ship.getShipCells()) {
+            int startX = Math.max(0, cell.getX() - 1);
+            int endX = Math.min(9, cell.getX() + 1);
+            int startY = Math.max(0, cell.getY() - 1);
+            int endY = Math.min(9, cell.getY() + 1);
+
+            for (int x = startX; x <= endX; x++) {
+                for (int y = startY; y <= endY; y++) {
+                    CellModel surroundingCell = opponentBoardView.getPlayerBoard().getCell(x, y);  // <-- Korrigiert
+                    if (surroundingCell.getCellState() == CellState.FREE) {
+                        JLabel surroundingLabel = opponentBoardView.getLabelForCell(x, y);
+                        opponentBoardView.markAsMiss(surroundingLabel);
+                        opponent.getBoard().changeCellState(x, y, CellState.FREE);
+                    }
+                }
             }
-        } else {
-            JOptionPane.showMessageDialog(gameView, "Ungültige Schiffsplatzierung. Versuche es erneut.");
         }
     }
 
@@ -213,110 +231,12 @@ public class GameController {
     }
 
     private void updateInfoPanel() {
-        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        InfoPanelView infoPanel;
-        if (currentPlayer == gameModel.getPlayerOne()) {
-            infoPanel = gameView.getInfoPanelViewOne();
-        } else {
-            infoPanel = gameView.getInfoPanelViewTwo();
-        }
-
-        infoPanel.getTotalClicksLabel().setText("Anzahl gesamter Klicks: " + currentPlayer.getPlayerStatus().getTotalClicks());
-        infoPanel.getHitsLabel().setText("Davon Getroffen (Hits): " + currentPlayer.getPlayerStatus().getHits());
-        infoPanel.getMissesLabel().setText("Verfehlt: " + currentPlayer.getPlayerStatus().getMisses());
-        infoPanel.getSunkShipsLabel().setText("Gegnerische Schiffe versunken: " + currentPlayer.getPlayerStatus().getShunkShips());
+        this.gameView.getInfoPanelViewOne().updateStats(this.gameModel.getPlayerOne());
+        this.gameView.getInfoPanelViewTwo().updateStats(this.gameModel.getPlayerTwo());
     }
 
     private void showGameOverDialog() {
         String winner = gameModel.getCurrentPlayer().getPlayerName();
         JOptionPane.showMessageDialog(gameView, "Spiel vorbei! " + winner + " gewinnt!");
-    }
-
-    private class LocalGameButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            startGame(GameState.NORMAL);
-        }
-    }
-
-    private class DebugModeButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            startGame(GameState.DEBUG);
-        }
-    }
-
-    private class ExitButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            System.exit(0);
-        }
-    }
-
-    private class MainMenuButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            showHomeScreen();
-        }
-    }
-
-    private class PauseGameButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(gameView, "Spiel ist pausiert!");
-        }
-    }
-
-    private class EndGameButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            System.exit(0);
-        }
-    }
-
-    public void runGameLoop() {
-        if (gameModel.getGameState() == GameState.NORMAL) {
-            gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
-        } else {
-            gameView.getPlayerBoardOne().setCovered(false);
-            gameView.getPlayerBoardTwo().setCovered(false);
-        }
-
-        while (!gameModel.isGameOver()) {
-            PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-            gameView.getStatusView().updateStatus(currentPlayer.getPlayerName() + " ist am Zug");
-
-            if (currentPlayer instanceof ComputerPlayerModel) {
-                gameModel.computerPlayTurn();
-            } else {
-                gameView.getPlayerBoardOne().addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        BoardView clickedBoard = (BoardView) e.getSource();
-                        int cellSize = clickedBoard.getCellSize();
-                        int x = e.getX() / cellSize;
-                        int y = e.getY() / cellSize;
-
-                        gameModel.playerTurn(x, y);
-                        updateGameView();
-
-                        if (gameModel.isGameOver()) {
-                            showGameOverDialog();
-                        }
-                    }
-                });
-            }
-
-            updateGameView();
-
-            if (!gameModel.isGameOver()) {
-                gameModel.switchPlayer();
-                if (gameModel.getGameState() == GameState.NORMAL) {
-                    gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
-                }
-            } else {
-                showGameOverDialog();
-            }
-        }
     }
 }
