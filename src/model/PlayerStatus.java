@@ -1,18 +1,14 @@
 package model;
 
-import View.BoardView;
-
 public class PlayerStatus {
 
     private int totalClicks;
     private int hits;
-    private int misses;
     private int shunkShips;
 
     PlayerStatus(){
         this.totalClicks = 0;
         this.hits = 0;
-        this.misses = 0;
         this.shunkShips = 0;
     }
     public int getTotalClicks() {
@@ -36,15 +32,6 @@ public class PlayerStatus {
             }
         }
         this.hits = temp;
-        this.misses = this.calculateMisses();
-    }
-
-    public int getMisses() {
-        return this.misses;
-    }
-
-    private int calculateMisses(){
-        return this.totalClicks - this.hits;
     }
 
     public int getShunkShips() {
@@ -62,8 +49,7 @@ public class PlayerStatus {
     }
 
     public void reset() {
-        this.hits = 0;    // Zurücksetzen der Treffer
-        this.misses = 0;  // Zurücksetzen der Verfehlungen
-        this.shunkShips = 0; // Zurücksetzen der versenkten Schiffe
+        this.hits = 0;
+        this.shunkShips = 0;
     }
 }
