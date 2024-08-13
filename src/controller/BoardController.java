@@ -104,14 +104,17 @@ public class BoardController {
 
         CellModel cell = clickedBoardView.getPlayerBoard().getCell(row, col);
         currentPlayer.getPlayerStatus().updateTotalClicks();
+        boolean hitShip = false;
+
         switch (cell.getCellState()) {
             case FREE:
                 clickedBoardView.markAsMiss(label);
                 break;
             case SET:
                 ShipModel ship = clickedBoardView.getPlayerBoard().registerHit(row, col);
-                currentPlayer.getPlayerStatus().calculateHits(clickedBoardView.getPlayerBoard()); // Korrekte Zuordnung zum Gegner-Board
+                currentPlayer.getPlayerStatus().calculateHits(clickedBoardView.getPlayerBoard());
                 currentPlayer.getPlayerStatus().calculateShunkShips(clickedBoardView.getPlayerBoard());
+                hitShip = true;
                 if (ship != null && ship.isSunk()) {
                     clickedBoardView.updateRevealedShip(ship);
                     markSurroundingCellsAsMiss(ship, clickedBoardView);
@@ -119,6 +122,7 @@ public class BoardController {
                 break;
             default:
                 System.out.println("Invalid click");
+                return;
         }
 
         updateGameView();
@@ -126,16 +130,26 @@ public class BoardController {
         if (clickedBoardView.getPlayerBoard().allShipsAreHit()) {
             gameController.showGameOverDialog();
         } else {
-            if (gameModel.getGameState() != GameState.DEBUG) {
+            if (gameModel.getGameState() == GameState.NORMAL) {
+                if (!hitShip) {
+                    gameModel.switchPlayer();
+                }
+                if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
+                    SwingUtilities.invokeLater(gameController::runGameLoop);
+                } else {
+                    gameController.performComputerMove();
+                }
+            } else if (gameModel.getGameState() != GameState.DEBUG) {
                 gameModel.switchPlayer();
                 if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
                     SwingUtilities.invokeLater(gameController::runGameLoop);
                 } else {
-                    gameController.performComputerMove(); // Wenn der nächste Spieler der Computer ist, führe automatisch den Zug aus
+                    gameController.performComputerMove();
                 }
             }
         }
     }
+
     private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponentBoardView) {
         for (CellModel cell : ship.getShipCells()) {
             int startX = Math.max(0, cell.getX() - 1);
