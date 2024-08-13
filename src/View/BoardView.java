@@ -42,12 +42,6 @@ public class BoardView extends JPanel {
         setVisible(true);
     }
 
-    // Methode zum Steuern der Opazität des coverPanels
-    public void setOpaqueCover(boolean opaque) {
-        this.coverPanel.setOpaque(opaque);
-        this.repaint();
-    }
-
     private JPanel createNumericLabelsPanel() {
         JPanel labelsPanel = new JPanel(new GridLayout(1, 10));
 
@@ -81,6 +75,15 @@ public class BoardView extends JPanel {
             }
         }
         return gridPanel;
+    }
+
+    public void setGridLabelsOpaque(boolean opaque) {
+        for (JLabel[] label : labels) {
+            for (JLabel jLabel : label) {
+                jLabel.setOpaque(opaque);
+                jLabel.repaint();
+            }
+        }
     }
 
     private JLabel createStyledLabel(int row, int col) {
@@ -165,10 +168,6 @@ public class BoardView extends JPanel {
             cellLabel.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
             cellLabel.setBackground(Color.RED);
         }
-    }
-
-    public void setCovered(boolean covered) {
-        this.coverPanel.setVisible(covered);
     }
 
     public int getCellSize() {

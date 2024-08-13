@@ -111,29 +111,22 @@ public class GameView extends JFrame {
 
         switch (gameState) {
             case NORMAL:
-                playerBoardOne.setCovered(currentPlayer == playerTwo);
-                playerBoardTwo.setCovered(currentPlayer == playerOne);
-                playerBoardOne.setOpaqueCover(false);
-                playerBoardTwo.setOpaqueCover(false);
-                break;
+                if (currentPlayer == playerOne) {
+                    playerBoardOne.setGridLabelsOpaque(true);
+                    playerBoardTwo.setGridLabelsOpaque(false);
+                    break;
+                } else if (currentPlayer == playerTwo) {
+                    playerBoardOne.setGridLabelsOpaque(false);
+                    playerBoardTwo.setGridLabelsOpaque(true);
+                    break;
+                }
             case DEBUG:
-                playerBoardOne.setCovered(false);
-                playerBoardTwo.setCovered(false);
-                playerBoardOne.setOpaqueCover(true);
-                playerBoardTwo.setOpaqueCover(true);
+                playerBoardOne.setGridLabelsOpaque(true);
+                playerBoardTwo.setGridLabelsOpaque(true);
                 break;
             case COMPUTER:
-                if (currentPlayer == playerOne) {
-                    playerBoardOne.setCovered(true);
-                    playerBoardTwo.setCovered(false);
-                    playerBoardOne.setOpaqueCover(false);
-                    playerBoardTwo.setOpaqueCover(true);
-                } else {
-                    playerBoardOne.setCovered(false);
-                    playerBoardTwo.setCovered(true);
-                    playerBoardOne.setOpaqueCover(true);
-                    playerBoardTwo.setOpaqueCover(false);
-                }
+                playerBoardOne.setGridLabelsOpaque(true);
+                playerBoardTwo.setGridLabelsOpaque(false);
                 break;
         }
     }
