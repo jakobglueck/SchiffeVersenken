@@ -50,7 +50,7 @@ public class ShipController {
             public void mouseClicked(MouseEvent e) {
                 int x = e.getX() / gameView.getPlayerBoardOne().getCellSize();
                 int y = e.getY() / gameView.getPlayerBoardOne().getCellSize();
-                boolean horizontal = SwingUtilities.isLeftMouseButton(e);
+                boolean horizontal = SwingUtilities.isRightMouseButton(e);
 
                 if (gameModel.placeNextShip(x, y, horizontal)) {
                     gameController.runGameLoop();
