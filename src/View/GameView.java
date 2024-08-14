@@ -18,6 +18,8 @@ public class GameView extends JFrame {
     private StatusView statusView;
     private ControlView controlView;
 
+    private JLabel gameModeLabel;
+
     public GameView(GameModel gm) {
         this.game = gm;
 
@@ -46,6 +48,9 @@ public class GameView extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+        gbc.weighty = 0.1;
+        add(createGameModePanel(), gbc);
 
         // Zeile 1: PlayerPanel (10% Höhe)
         gbc.weighty = 0.1;
@@ -85,6 +90,19 @@ public class GameView extends JFrame {
         return boardPanel;
     }
 
+
+    private JPanel createGameModePanel() {
+        JPanel gameModePanel = new JPanel(new GridLayout(1, 1));
+        gameModeLabel = new JLabel("", SwingConstants.CENTER); // Spielmodus dynamisch setzen
+        gameModeLabel.setFont(new Font("Arial", Font.BOLD, 16)); // Schriftart und Größe anpassen
+        gameModePanel.add(gameModeLabel);
+
+        return gameModePanel;
+    }
+
+    public void updateGameModePanel(String gameMode){
+        this.gameModeLabel.setText(gameMode);
+    }
     private JPanel createInfoStatusPanel() {
         JPanel infoStatusPanel = new JPanel(new BorderLayout());
         infoPanelViewOne = new InfoPanelView();
