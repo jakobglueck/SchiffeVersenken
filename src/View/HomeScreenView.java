@@ -15,13 +15,15 @@ public class HomeScreenView extends JFrame {
         setSize(400, 300);
         setLocationRelativeTo(null);
 
-        setLayout(new GridLayout(2, 1));
+        JPanel mainPanel = new JPanel(new GridLayout(2, 1));
+        setContentPane(mainPanel);
 
         JLabel titleLabel = new JLabel("Schiffe versenken", JLabel.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 24));
-        add(titleLabel);
+        mainPanel.add(titleLabel);
 
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         localGameButton = new JButton("Lokales Spiel starten");
         computerGameButton = new JButton("Computer Spiel starten");
@@ -33,7 +35,9 @@ public class HomeScreenView extends JFrame {
         buttonPanel.add(debugModeButton);
         buttonPanel.add(exitButton);
 
-        add(buttonPanel);
+        mainPanel.add(buttonPanel);
+
+        setVisible(true);
     }
 
     public JButton getLocalGameButton() {
