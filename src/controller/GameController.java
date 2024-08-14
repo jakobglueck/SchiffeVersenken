@@ -50,6 +50,7 @@ public class GameController {
         gameView.setVisible(true);
         gameView.createPlayerBase();
         boardController.initializeGameListeners();
+        this.gameView.updateGameModePanel(this.detectGameMode());
         gameModel.startGame();
         if (gameState == GameState.NORMAL || gameState == GameState.COMPUTER) {
             shipController.handleManualShipPlacement();
@@ -58,6 +59,18 @@ public class GameController {
         }
     }
 
+    private String detectGameMode(){
+        switch(this.gameModel.getGameState()){
+            case NORMAL:
+                return "Spielmodus: Normal";
+            case COMPUTER:
+                return "Spielmodus: Computer";
+            case DEBUG:
+                return "Spielmodus: Debug";
+            default:
+                return "";
+        }
+    }
     public void runGameLoop() {
         boardController.updateBoardVisibility();
         boardController.updateGameView();
