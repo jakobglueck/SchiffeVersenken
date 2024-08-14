@@ -13,7 +13,7 @@ public class StatusView extends JPanel {
 
         titleLabel = new JLabel("Status", SwingConstants.CENTER);
         playerNameLabel = new JLabel("", SwingConstants.CENTER);
-        additionalInfoLabel = new JLabel("", SwingConstants.CENTER);
+        additionalInfoLabel = new JLabel("Warte auf einen Spielzug", SwingConstants.CENTER);
 
         this.add(titleLabel);
         this.add(playerNameLabel);
