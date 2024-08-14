@@ -154,4 +154,17 @@ public class GameView extends JFrame {
         infoPanelViewOne.reset();
         infoPanelViewTwo.reset();
     }
+
+    public int showGameOverDialog(String winner) {
+        return JOptionPane.showOptionDialog(
+                this,
+                "Spiel vorbei! " + winner + " gewinnt!\nMöchtest du ein neues Spiel starten oder zum Hauptmenü zurückkehren?",
+                "Spiel beendet",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                new String[]{"Neues Spiel", "Hauptmenü"},
+                "Neues Spiel"
+        );
+    }
 }
