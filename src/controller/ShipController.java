@@ -33,13 +33,13 @@ public class ShipController {
         }
 
         JOptionPane.showMessageDialog(gameView, "Alle Schiffe platziert. Das Spiel beginnt jetzt!");
-        gameView.getStatusView().updateStatus("Spiel beginnt!");
+        gameView.getStatusView().updatePlayerName("Spiel beginnt!");
         gameController.runGameLoop();
     }
 
     private void placeShipsForCurrentPlayer() {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        gameView.getStatusView().updateStatus(currentPlayer.getPlayerName() + ", platziere deine Schiffe");
+        gameView.getStatusView().updatePlayerName(currentPlayer.getPlayerName() + ", platziere deine Schiffe");
 
         for (MouseListener listener : gameView.getPlayerBoardOne().getMouseListeners()) {
             gameView.getPlayerBoardOne().removeMouseListener(listener);
