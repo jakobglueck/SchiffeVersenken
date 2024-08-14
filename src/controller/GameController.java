@@ -74,18 +74,9 @@ public class GameController {
 
     public void showGameOverDialog() {
         String winner = gameModel.getCurrentPlayer().getPlayerName();
-        int result = JOptionPane.showOptionDialog(
-                gameView,
-                "Spiel vorbei! " + winner + " gewinnt!\nMöchtest du ein neues Spiel starten oder zum Hauptmenü zurückkehren?",
-                "Spiel beendet",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                new String[]{"Neues Spiel", "Hauptmenü"},
-                "Neues Spiel"
-        );
+        int result = this.gameView.showGameOverDialog(winner);
 
-        if (result == JOptionPane.YES_OPTION) {
+        if (result == 0) {
             resetGame();  // Neustart des Spiels mit denselben Spielern
         } else {
             showHomeScreen();
