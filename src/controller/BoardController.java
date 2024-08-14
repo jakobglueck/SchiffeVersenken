@@ -56,7 +56,6 @@ public class BoardController {
         gameView.getPlayerBoardTwo().updateBoard();
         gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
         gameView.getStatusView().updatePlayerName("Aktueller Spieler: " + gameModel.getCurrentPlayer().getPlayerName());
-
         gameView.getPlayerBoardOne().revalidate();
         gameView.getPlayerBoardOne().repaint();
         gameView.getPlayerBoardTwo().revalidate();
@@ -91,14 +90,14 @@ public class BoardController {
         }
 
         if (clickedBoardView == null) {
-            System.out.println("Invalid click source");
+            gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat ein bereits getroffenes Schiff nochmal angegriffen. Bitte mach einen anderen Zug");
             return;
         }
 
         BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
 
         if (gameModel.getGameState() == GameState.NORMAL && clickedBoardView != opponentBoardView) {
-            System.out.println("Click on own board ignored");
+            gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() +" hat sein eigenes Board angegriffen. Bitte greife das Board des Genger an!");
             return;
         }
 
@@ -109,19 +108,22 @@ public class BoardController {
         switch (cell.getCellState()) {
             case FREE:
                 clickedBoardView.markAsMiss(label);
+                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() +" hat nicht getroffen");
                 break;
             case SET:
                 ShipModel ship = clickedBoardView.getPlayerBoard().registerHit(row, col);
                 currentPlayer.getPlayerStatus().calculateHits(clickedBoardView.getPlayerBoard());
                 currentPlayer.getPlayerStatus().calculateShunkShips(clickedBoardView.getPlayerBoard());
                 hitShip = true;
+                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() +" hat getroffen");
                 if (ship != null && ship.isSunk()) {
                     clickedBoardView.updateRevealedShip(ship);
+                    gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat ein Schiff versenkt");
                     markSurroundingCellsAsMiss(ship, clickedBoardView);
                 }
                 break;
             default:
-                System.out.println("Invalid click");
+                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " kann ein bereits getroffenes Schiff nicht nochmal angreifen");
                 return;
         }
 
