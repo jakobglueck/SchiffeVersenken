@@ -155,7 +155,7 @@ public class BoardView extends JPanel {
     }
 
     private void updateHitCell(JLabel label) {
-        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
+        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 4));
     }
 
     public void markAsMiss(JLabel label) {
