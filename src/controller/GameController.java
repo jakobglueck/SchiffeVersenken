@@ -13,15 +13,13 @@ public class GameController {
     private GameModel gameModel;
     private GameView gameView;
     private HomeScreenView homeScreenView;
-    private JFrame homeFrame;
     private BoardController boardController;
     private ShipController shipController;
 
-    public GameController(GameModel gameModel, GameView gameView, HomeScreenView homeScreenView, JFrame homeFrame) {
+    public GameController(GameModel gameModel, GameView gameView, HomeScreenView homeScreenView) {
         this.gameModel = gameModel;
         this.gameView = gameView;
         this.homeScreenView = homeScreenView;
-        this.homeFrame = homeFrame;
         this.boardController = new BoardController(gameModel, gameView, this);
         this.shipController = new ShipController(gameModel, gameView, this);
 
@@ -41,7 +39,7 @@ public class GameController {
     }
 
     public void startGame(GameState gameState) {
-        homeFrame.setVisible(false);
+        homeScreenView.setVisible(false);
         String playerOneName = JOptionPane.showInputDialog("Bitte Namen für Spieler 1 eingeben:");
         String playerTwoName = (gameState == GameState.NORMAL || gameState == GameState.DEBUG)
                 ? JOptionPane.showInputDialog("Bitte Namen für Spieler 2 eingeben:")
