@@ -2,16 +2,19 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class HomeScreenView extends JPanel {
+public class HomeScreenView extends JFrame {
     private JButton localGameButton;
     private JButton computerGameButton;
     private JButton debugModeButton;
     private JButton exitButton;
 
     public HomeScreenView() {
+        setTitle("Schiffe versenken");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 300);
+        setLocationRelativeTo(null);
+
         setLayout(new GridLayout(2, 1));
 
         JLabel titleLabel = new JLabel("Schiffe versenken", JLabel.CENTER);
@@ -24,34 +27,6 @@ public class HomeScreenView extends JPanel {
         computerGameButton = new JButton("Computer Spiel starten");
         debugModeButton = new JButton("Debug Modus starten");
         exitButton = new JButton("Spiel beenden");
-
-        localGameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Lokales Spiel wird gestartet...");
-            }
-        });
-
-        computerGameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Computer Modus wird gestartet...");
-            }
-        });
-
-        debugModeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Debug Modus wird gestartet...");
-            }
-        });
-
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
 
         buttonPanel.add(localGameButton);
         buttonPanel.add(computerGameButton);
