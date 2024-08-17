@@ -6,7 +6,7 @@ import java.util.*;
 
 public class ComputerPlayerModel extends PlayerModel {
 
-    private List<int[]> availableMoves;
+    private List<int[]> computerMove;
     private int lastMoveX;
     private int lastMoveY;
 
@@ -19,7 +19,7 @@ public class ComputerPlayerModel extends PlayerModel {
         availableMoves = new ArrayList<>();
         for (int i = 0; i < BoardModel.WIDTH; i++) {
             for (int j = 0; j < BoardModel.HEIGHT; j++) {
-                availableMoves.add(new int[]{i, j});
+                computerMove.add(new int[]{i, j});
             }
         }
     }
@@ -41,10 +41,10 @@ public class ComputerPlayerModel extends PlayerModel {
 
     public boolean makeMove(PlayerModel opponent) {
         boolean result = false;
-        if (!availableMoves.isEmpty()) {
+        if (!computerMove.isEmpty()) {
             Random random = new Random();
-            int index = random.nextInt(availableMoves.size());
-            int[] move = availableMoves.remove(index);
+            int index = random.nextInt(computerMove.size());
+            int[] move = computerMove.remove(index);
             lastMoveX = move[0];
             lastMoveY = move[1];
 

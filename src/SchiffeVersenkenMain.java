@@ -3,8 +3,6 @@ import controller.GameController;
 import model.GameModel;
 import View.HomeScreenView;
 import View.GameView;
-import javax.swing.*;
-import java.awt.*;
 
 public class SchiffeVersenkenMain {
     public static void main(String[] args) {
@@ -12,6 +10,6 @@ public class SchiffeVersenkenMain {
         HomeScreenView hw = new HomeScreenView();
 
         GameView gw = new GameView(gm);
-        GameController controller = new GameController(gm, gw, hw);// Übergabe des homeFrame
+        GameController controller = new GameController(gm, gw, hw);
     }
 }

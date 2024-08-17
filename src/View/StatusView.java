@@ -29,13 +29,13 @@ public class StatusView extends JPanel {
     }
 
     public void updateAdditionalInfo(String info) {
-        additionalInfoLabel.setText(info); // Text des neuen Labels aktualisieren
+        additionalInfoLabel.setText(info);
         additionalInfoLabel.revalidate();
         additionalInfoLabel.repaint();
     }
 
     public void reset() {
         updatePlayerName("Warten auf Spielbeginn");
-        updateAdditionalInfo(""); // Zusätzliche Infos zurücksetzen
+        updateAdditionalInfo("");
     }
 }

@@ -18,10 +18,10 @@ public class BoardModel {
     public BoardModel() {
         this.board = new CellModel[HEIGHT][WIDTH];
         this.playerShips = new ArrayList<>();
-        this.initializeBoard();
+        this.createBoard();
     }
 
-    private void initializeBoard() {
+    private void createBoard() {
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
                 this.board[x][y] = new CellModel(x, y, CellState.FREE);
@@ -29,7 +29,7 @@ public class BoardModel {
         }
     }
 
-    public void changeCellState(int x, int y, CellState cellState) {
+    public void changeCellInBoard(int x, int y, CellState cellState) {
         if (isValidCoordinate(x, y)) {
             this.board[x][y].updateCellState(cellState);
         }
@@ -55,7 +55,7 @@ public class BoardModel {
         for (int i = 0; i < length; i++) {
             int x = horizontal ? startX + i : startX;
             int y = horizontal ? startY : startY + i;
-            this.changeCellState(x, y, CellState.SET);
+            this.changeCellInBoard(x, y, CellState.SET);
         }
         this.playerShips.add(ship);
         return true;

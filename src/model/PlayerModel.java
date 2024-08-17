@@ -26,7 +26,7 @@ public class PlayerModel {
         if (!this.isValidMove(x, y)) {
             return false;
         }
-        boolean hit = opponent.getBoard().registerHit(x, y) != null; // Trefferregistrierung auf dem Gegner-Board
+        boolean hit = opponent.getBoard().registerHit(x, y) != null;
         return true;
     }
 
@@ -52,7 +52,7 @@ public class PlayerModel {
     }
 
     public void reset() {
-        board.reset();  // Spielfeld zurücksetzen
-        playerStatus.reset(); // Spielerstatus zurücksetzen (z.B. Treffer, Verfehlt usw.)
+        board.reset();
+        playerStatus.reset();
     }
 }

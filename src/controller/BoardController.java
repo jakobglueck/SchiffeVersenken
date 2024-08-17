@@ -20,11 +20,11 @@ public class BoardController {
         this.gameController = gameController;
     }
 
-    public void initializeGameListeners() {
+    public void startGameListeners() {
         gameView.getControlView().getMainMenuButton().addActionListener(e -> {
             this.gameModel.resetGame();
             gameController.showHomeScreen();
-            gameController.initializeHomeScreenListeners();
+            gameController.startHomeScreenListeners();
         });
         gameView.getControlView().getPauseGameButton().addActionListener(e -> JOptionPane.showMessageDialog(gameView, "Spiel ist pausiert!"));
         gameView.getControlView().getEndGameButton().addActionListener(e -> System.exit(0));
@@ -105,7 +105,7 @@ public class BoardController {
     }
     private void changeClickRow(BoardView clickedBoardView, boolean hitShip){
         if (clickedBoardView.getPlayerBoard().allShipsAreHit()) {
-            gameController.showGameOverDialog();
+            gameController.showGameOverScreen();
         } else {
             if (gameModel.getGameState() == GameState.NORMAL || gameModel.getGameState() == GameState.COMPUTER) {
                 if (!hitShip) {

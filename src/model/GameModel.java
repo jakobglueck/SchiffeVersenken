@@ -17,7 +17,7 @@ public class GameModel {
     private static final int[] SHIP_SIZES = {5, 4, 4, 3, 3, 3, 2, 2, 2, 2};
 
     public GameModel() {
-        // Leerer Konstruktor
+
     }
 
     public PlayerModel createPlayer(String playerName) {
@@ -36,10 +36,6 @@ public class GameModel {
     }
 
     public void startGame() {
-        if (this.playerOne == null || this.playerTwo == null) {
-            throw new IllegalStateException("Spieler müssen vor dem Start des Spiels initialisiert werden.");
-        }
-
         switch (this.gameState) {
             case NORMAL:
                 this.currentPlayer = this.randomPlayer();
@@ -51,7 +47,7 @@ public class GameModel {
                 break;
             case COMPUTER:
                 this.playerTwo.getBoard().placeAllShips();
-                this.currentPlayer = this.playerOne;  // Der menschliche Spieler beginnt
+                this.currentPlayer = this.playerOne;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + this.gameState);

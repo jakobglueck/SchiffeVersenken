@@ -80,7 +80,6 @@ public class GameView extends JFrame {
         controlView = new ControlView();
         mainPanel.add(controlView, gbc);
 
-        // Ensure the correct layering
         layeredPane.setLayer(mainPanel, JLayeredPane.DEFAULT_LAYER);
         layeredPane.setLayer(playerBoardOne, JLayeredPane.DEFAULT_LAYER);
         layeredPane.setLayer(playerBoardTwo, JLayeredPane.DEFAULT_LAYER);

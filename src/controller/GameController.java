@@ -21,10 +21,10 @@ public class GameController {
         this.boardController = new BoardController(gameModel, gameView, this);
         this.shipController = new ShipController(gameModel, gameView);
 
-        initializeHomeScreenListeners();
+        startHomeScreenListeners();
     }
 
-    public void initializeHomeScreenListeners() {
+    public void startHomeScreenListeners() {
         homeScreenView.getLocalGameButton().addActionListener(e -> startGame(GameState.NORMAL));
         homeScreenView.getComputerGameButton().addActionListener(e -> startGame(GameState.COMPUTER));
         homeScreenView.getDebugModeButton().addActionListener(e -> startGame(GameState.DEBUG));
@@ -49,7 +49,7 @@ public class GameController {
         gameView.createPlayerBase();
         this.gameView.updateGameModePanel(this.detectGameMode());
         gameModel.startGame();
-        boardController.initializeGameListeners();
+        boardController.startGameListeners();
 
         if (gameState == GameState.NORMAL || gameState == GameState.COMPUTER) {
             SwingUtilities.invokeLater(() -> {
@@ -57,7 +57,7 @@ public class GameController {
                 gameView.getPlayerBoardTwo().createPanelForShipPlacement();
                 shipController.handleManualShipPlacement(() -> {
                     gameView.getPlayerBoardOne().removePanelForShipPlacement();
-                    onShipPlacementComplete();
+                    removePanelForShipPlacement();
                 });
             });
         } else {
@@ -65,7 +65,7 @@ public class GameController {
         }
     }
 
-    private void onShipPlacementComplete() {
+    private void removePanelForShipPlacement() {
         this.gameView.getPlayerBoardOne().removePanelForShipPlacement();
         this.gameView.getPlayerBoardTwo().removePanelForShipPlacement();
         SwingUtilities.invokeLater(this::runGameLoop);
@@ -95,12 +95,12 @@ public class GameController {
             if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
                 return;
             }
-            performComputerMove();  // Perform computer's move if it's their turn
+            performComputerMove();
         }
     }
 
 
-    public void showGameOverDialog() {
+    public void showGameOverScreen() {
         String winner = gameModel.getCurrentPlayer().getPlayerName();
         int result = this.gameView.showGameOverDialog(winner);
 
@@ -140,14 +140,14 @@ public class GameController {
                 this.gameView.getPlayerBoardTwo().updateBoard();
 
                 if (gameModel.isGameOver()) {
-                    showGameOverDialog();
+                    showGameOverScreen();
                     return;
                 }
             } else {
                 break;
             }
-        } while (hit);  // Continue as long as the computer hits
-        gameModel.switchPlayer();  // Switch to the human player if the computer misses
-        runGameLoop();  // Continue the game loop
-    }// Continue the game loop
+        } while (hit);
+        gameModel.switchPlayer();
+        runGameLoop();
+    }
 }

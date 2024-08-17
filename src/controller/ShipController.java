@@ -29,7 +29,7 @@ public class ShipController {
     private void placeShipsForPlayer(int currentTurn, int totalTurns, Runnable onComplete) {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
         BoardView currentBoard = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardOne() : gameView.getPlayerBoardTwo();
-        this.currentShipIndex = 0; // Ensure currentShipIndex is reset at the start of placing ships for a player
+        this.currentShipIndex = 0;
         currentBoard.setVisible(true);
         currentBoard.toggleGridVisibility(true);
 
@@ -49,7 +49,7 @@ public class ShipController {
     }
 
     private void placeShipsForCurrentPlayer(BoardView board, Runnable onComplete) {
-        currentShipIndex = 0; // Ensure the index is reset when starting placement for the current player
+        currentShipIndex = 0;
         isHorizontal = false;
 
         MouseAdapter mouseAdapter = new MouseAdapter() {
@@ -105,7 +105,6 @@ public class ShipController {
     }
 
     private void updateShipPreview(int mouseX, int mouseY, BoardView board) {
-        // Berechnung der korrekten Position für das Vorschau-Schiff
         int shipLength = gameModel.getShipSizes()[currentShipIndex];
         int width = isHorizontal ? shipLength * board.getCellSize() : board.getCellSize();
         int height = isHorizontal ? board.getCellSize() : shipLength * board.getCellSize();
@@ -115,7 +114,6 @@ public class ShipController {
 
         board.updateShipPreview(x, y, width, height);
     }
-
 
     private void updateStatusLabel(String message) {
         SwingUtilities.invokeLater(() -> gameView.getStatusView().updatePlayerName(message));
