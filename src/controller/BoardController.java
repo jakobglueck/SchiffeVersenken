@@ -78,17 +78,12 @@ public class BoardController {
     }
 
     private void handleBoardClick(int row, int col, JLabel label) {
-        Component parent = label.getParent();
+        Component parent = label.getParent().getParent().getParent();
 
-        while (parent != null) {
-            if (parent instanceof BoardView) {
-                BoardView clickedBoardView = (BoardView) parent;
+        BoardView clickedBoardView = (BoardView) parent;
 
-                processBoardClick(row, col, clickedBoardView, label);
-                return;
-            }
-            parent = parent.getParent();
-        }
+        this.processBoardClick(row, col, clickedBoardView, label);
+
     }
 
     private void processBoardClick(int row, int col, BoardView clickedBoardView, JLabel label) {
