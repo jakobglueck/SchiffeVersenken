@@ -34,7 +34,7 @@ public class PlayerStatus {
         this.hits = temp;
     }
 
-    public int getShunkShips() {
+    public int getSunkShips() {
         return this.shunkShips;
     }
 

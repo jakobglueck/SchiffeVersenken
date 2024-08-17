@@ -1,10 +1,8 @@
 package controller;
 
-import model.ComputerPlayerModel;
-import model.GameModel;
-import View.GameView;
-import View.HomeScreenView;
-import utils.GameState;
+import model.*;
+import View.*;
+import utils.*;
 
 import javax.swing.*;
 
@@ -67,7 +65,6 @@ public class GameController {
         }
     }
 
-
     private void onShipPlacementComplete() {
         this.gameView.getPlayerBoardOne().removePanelForShipPlacement();
         this.gameView.getPlayerBoardTwo().removePanelForShipPlacement();
@@ -95,11 +92,13 @@ public class GameController {
             boardController.enableBothBoards();
         } else {
             boardController.toggleBoardsForCurrentPlayer();
-            if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
-                performComputerMove();
+            if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
+                return;
             }
+            performComputerMove();  // Perform computer's move if it's their turn
         }
     }
+
 
     public void showGameOverDialog() {
         String winner = gameModel.getCurrentPlayer().getPlayerName();
@@ -120,12 +119,35 @@ public class GameController {
     }
 
     public void performComputerMove() {
-        gameModel.computerPlayTurn();
-        if (!gameModel.isGameOver()) {
-            gameModel.switchPlayer();
-            runGameLoop();
-        } else {
-            showGameOverDialog();
-        }
-    }
+        boolean hit;
+        do {
+            if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
+                hit = ((ComputerPlayerModel) gameModel.getCurrentPlayer()).makeMove(gameModel.getPlayerOne());
+
+                int lastX = ((ComputerPlayerModel) gameModel.getCurrentPlayer()).getLastMoveX();
+                int lastY = ((ComputerPlayerModel) gameModel.getCurrentPlayer()).getLastMoveY();
+
+                BoardView playerBoardView = gameView.getPlayerBoardOne();
+                CellModel targetCell = gameModel.getPlayerOne().getBoard().getCell(lastX, lastY);
+
+                if (targetCell.getCellState() == CellState.FREE) {
+                    playerBoardView.markAsMiss(playerBoardView.getLabelForCell(lastX, lastY));
+                } else if (targetCell.getCellState() == CellState.SET){
+                    playerBoardView.updateBoard();
+                }
+
+                this.gameView.getPlayerBoardOne().updateBoard();
+                this.gameView.getPlayerBoardTwo().updateBoard();
+
+                if (gameModel.isGameOver()) {
+                    showGameOverDialog();
+                    return;
+                }
+            } else {
+                break;
+            }
+        } while (hit);  // Continue as long as the computer hits
+        gameModel.switchPlayer();  // Switch to the human player if the computer misses
+        runGameLoop();  // Continue the game loop
+    }// Continue the game loop
 }

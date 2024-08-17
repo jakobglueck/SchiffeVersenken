@@ -81,10 +81,6 @@ public class GameModel {
         return this.gameState;
     }
 
-    public void playerGameMove(int x, int y) {
-        this.currentPlayer.takeTurn(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne, x, y);
-    }
-
     public void switchPlayer() {
         this.currentPlayer = (this.currentPlayer == this.playerOne) ? this.playerTwo : this.playerOne;
     }
@@ -93,25 +89,6 @@ public class GameModel {
         return this.playerOne.getBoard().allShipsAreHit() || this.playerTwo.getBoard().allShipsAreHit();
     }
 
-    public void playerTurn(int x, int y) {
-        playerGameMove(x, y);
-        if (!this.isGameOver()) {
-            this.switchPlayer();
-        } else {
-            System.out.println(this.currentPlayer.getPlayerName() + " wins!");
-        }
-    }
-
-    public void computerPlayTurn() {
-        if (this.currentPlayer instanceof ComputerPlayerModel) {
-            ((ComputerPlayerModel) this.currentPlayer).makeMove(this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
-            if (!isGameOver()) {
-                this.switchPlayer();
-            } else {
-                System.out.println(this.currentPlayer.getPlayerName() + " wins!");
-            }
-        }
-    }
 
     public int[] getShipSizes() {
         return SHIP_SIZES;
@@ -132,16 +109,8 @@ public class GameModel {
         return placed;
     }
 
-    public int getCurrentShipLength() {
-        return BoardModel.BOAT_SIZES[currentShipIndex];
-    }
-
     public void resetShipPlacement() {
         currentShipIndex = 0;
-    }
-
-    public boolean allShipsPlaced() {
-        return this.playerOne.allShipsPlaced() && this.playerTwo.allShipsPlaced();
     }
 
     public void resetGame() {

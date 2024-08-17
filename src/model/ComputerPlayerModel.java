@@ -1,12 +1,14 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import utils.CellState;
+
+import java.util.*;
 
 public class ComputerPlayerModel extends PlayerModel {
 
     private List<int[]> availableMoves;
+    private int lastMoveX;
+    private int lastMoveY;
 
     public ComputerPlayerModel(String playerName) {
         super(playerName);
@@ -22,12 +24,40 @@ public class ComputerPlayerModel extends PlayerModel {
         }
     }
 
-    public void makeMove(PlayerModel opponent) {
+    @Override
+    public void takeTurn(PlayerModel opponent, int x, int y) {
+        lastMoveX = x;
+        lastMoveY = y;
+        super.takeTurn(opponent, x, y);
+    }
+
+    public int getLastMoveX() {
+        return lastMoveX;
+    }
+
+    public int getLastMoveY() {
+        return lastMoveY;
+    }
+
+    public boolean makeMove(PlayerModel opponent) {
+        boolean result = false;
         if (!availableMoves.isEmpty()) {
             Random random = new Random();
             int index = random.nextInt(availableMoves.size());
             int[] move = availableMoves.remove(index);
-            takeTurn(opponent, move[0], move[1]);
+            lastMoveX = move[0];
+            lastMoveY = move[1];
+
+            BoardModel opponentBoard = opponent.getBoard();
+            CellModel targetCell = opponentBoard.getCell(move[0], move[1]);
+
+            if (targetCell.getCellState() == CellState.FREE) {
+                result = false;
+            } else {
+                result =  targetCell.getCellState() == CellState.SET;
+                targetCell.updateCellState(CellState.HIT);
+            }
         }
+        return result;
     }
 }

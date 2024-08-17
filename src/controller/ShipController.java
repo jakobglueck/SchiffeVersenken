@@ -1,10 +1,7 @@
 package controller;
 
-import model.ComputerPlayerModel;
-import model.GameModel;
-import model.PlayerModel;
-import View.GameView;
-import View.BoardView;
+import model.*;
+import View.*;
 
 import javax.swing.*;
 import java.awt.*;
