@@ -107,18 +107,10 @@ public class BoardController {
         if (clickedBoardView.getPlayerBoard().allShipsAreHit()) {
             gameController.showGameOverDialog();
         } else {
-            if (gameModel.getGameState() == GameState.NORMAL) {
+            if (gameModel.getGameState() == GameState.NORMAL || gameModel.getGameState() == GameState.COMPUTER) {
                 if (!hitShip) {
                     gameModel.switchPlayer();
                 }
-                if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
-                    SwingUtilities.invokeLater(gameController::runGameLoop);
-                } else {
-                    gameController.performComputerMove();
-                    updateGameView();
-                }
-            } else if (gameModel.getGameState() != GameState.DEBUG) {
-                gameModel.switchPlayer();
                 if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
                     SwingUtilities.invokeLater(gameController::runGameLoop);
                 } else {
