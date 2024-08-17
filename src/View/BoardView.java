@@ -6,18 +6,19 @@ import model.ShipModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public class BoardView extends JPanel {
     private BoardModel playerBoard;
     private JLabel[][] labels;
-    private JPanel coverPanel;
+    private JLabel shipPreviewLabel;
     private BoardClickListener boardClickListener;
 
-    private static final int CELL_SIZE = 50;
-    private static final int BOARD_SIZE = 10;
+    private static final int CELL_SIZE = 40;
+    public static final int BOARD_SIZE = 10;
+
+    private JPanel gridPanel;
+    private JPanel mainPanel;
 
     public BoardView(BoardModel playerBoard) {
         this.playerBoard = playerBoard;
@@ -25,28 +26,58 @@ public class BoardView extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        this.mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(createNumericLabelsPanel(), BorderLayout.NORTH);
         mainPanel.add(createAlphabeticLabelsPanel(), BorderLayout.WEST);
-        mainPanel.add(createGridPanel(), BorderLayout.CENTER);
 
-        this.coverPanel = new JPanel();
-        this.coverPanel.setBackground(Color.GRAY);
-        this.coverPanel.setVisible(false);
+        this.gridPanel = createGridPanel();
+        mainPanel.add(gridPanel, BorderLayout.CENTER);
 
-        setLayout(new OverlayLayout(this));
-        add(mainPanel);
-        add(coverPanel);
-
+        add(mainPanel, BorderLayout.CENTER);
         setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
         setVisible(true);
     }
 
-    private JPanel createNumericLabelsPanel() {
-        JPanel labelsPanel = new JPanel(new GridLayout(1, 10));
+    public void createPanelForShipPlacement(){
+        this.gridPanel.removeAll(); // Entferne vorhandene Komponenten, falls nötig
+        this.gridPanel.setLayout(null); // Enable absolute positioning
 
+        shipPreviewLabel = new JLabel();
+        shipPreviewLabel.setOpaque(true);
+        shipPreviewLabel.setBackground(new Color(0, 0, 255, 128)); // Halbtransparentes Blau
+        shipPreviewLabel.setVisible(false); // Initially hidden
+        gridPanel.add(shipPreviewLabel);
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                JLabel label = createStyledLabel(i, j);
+                labels[i][j] = label;
+                gridPanel.add(label);
+            }
+        }
+
+        revalidate();
+        repaint();
+    }
+
+    public void removePanelForShipPlacement(){
+        gridPanel.removeAll();
+        this.mainPanel.remove(gridPanel);
+        this.mainPanel.add(createGridPanel());
+        this.updateBoard();
+        revalidate();
+        repaint();
+
+    }
+
+    private JPanel createNumericLabelsPanel() {
+        JPanel labelsPanel = new JPanel(new GridLayout(1, 10)); // 1 Zeile, 10 Spalten
+        JLabel tempLabel = new JLabel(String.valueOf(""), SwingConstants.CENTER);
+        tempLabel.setPreferredSize(new Dimension(10, 10));
+        labelsPanel.add(tempLabel);
         for (int i = 1; i <= 10; i++) {
-            JLabel label = new JLabel(String.valueOf(i), SwingConstants.CENTER);
+            JLabel label = new JLabel(String.valueOf(i), SwingConstants.CENTER); // Zentrierte Ausrichtung
+            label.setPreferredSize(new Dimension(20, 20)); // Feste Größe für jedes Label
             labelsPanel.add(label);
         }
 
@@ -54,11 +85,12 @@ public class BoardView extends JPanel {
     }
 
     private JPanel createAlphabeticLabelsPanel() {
-        JPanel labelsPanel = new JPanel(new GridLayout(10, 1));
+        JPanel labelsPanel = new JPanel(new GridLayout(10, 1)); // 10 Zeilen, 1 Spalte
 
         char[] labels = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
         for (char labelChar : labels) {
-            JLabel label = new JLabel(String.valueOf(labelChar), SwingConstants.CENTER);
+            JLabel label = new JLabel(String.valueOf(labelChar), SwingConstants.CENTER); // Zentrierte Ausrichtung
+            label.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE)); // Feste Größe für jedes Label
             labelsPanel.add(label);
         }
 
@@ -66,24 +98,17 @@ public class BoardView extends JPanel {
     }
 
     private JPanel createGridPanel() {
-        JPanel gridPanel = new JPanel(new GridLayout(10, 10));
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                JLabel label = createStyledLabel(i, j);
-                labels[i][j] = label;
-                gridPanel.add(label);
-            }
-        }
-        return gridPanel;
-    }
+        JPanel gridPanel = new JPanel(new GridLayout(BOARD_SIZE, BOARD_SIZE)); // GridLayout für das Spielfeld
 
-    public void setGridLabelsOpaque(boolean opaque) {
-        for (JLabel[] label : labels) {
-            for (JLabel jLabel : label) {
-                jLabel.setOpaque(opaque);
-                jLabel.repaint();
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                JLabel label = createStyledLabel(i, j);  // Erzeugt ein Label für jede Zelle
+                labels[i][j] = label;  // Speichert das Label im Array
+                gridPanel.add(label);  // Fügt das Label dem Grid-Panel hinzu
             }
         }
+
+        return gridPanel;
     }
 
     private JLabel createStyledLabel(int row, int col) {
@@ -107,6 +132,40 @@ public class BoardView extends JPanel {
         return label;
     }
 
+    public void setGridLabelsOpaque(boolean opaque) {
+        for (JLabel[] labelRow : labels) {
+            for (JLabel jLabel : labelRow) {
+                jLabel.setOpaque(opaque);
+                jLabel.repaint();
+            }
+        }
+    }
+
+    public void toggleGridVisibility(boolean visible) {
+        gridPanel.setVisible(visible);
+
+        // Setze die Sichtbarkeit der Labels
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                labels[i][j].setVisible(!visible); // Labels sollten sichtbar sein, wenn das Grid eingeblendet ist
+            }
+        }
+        revalidate();
+        repaint();
+    }
+
+    public void updateShipPreview(int x, int y, int width, int height) {
+        // Set the bounds of the ship preview label relative to the gridPanel
+        shipPreviewLabel.setBounds(x, y, width, height);
+        shipPreviewLabel.setVisible(true);
+        gridPanel.repaint(); // Repaint the gridPanel, not the entire BoardView
+    }
+
+    public void hideShipPreview() {
+        shipPreviewLabel.setVisible(false);
+        gridPanel.repaint(); // Repaint the gridPanel, not the entire BoardView
+    }
+
     public void setBoardClickListener(BoardClickListener listener) {
         this.boardClickListener = listener;
     }
@@ -116,13 +175,14 @@ public class BoardView extends JPanel {
     }
 
     public void updateBoard() {
-        for (int row = 0; row < 10; row++) {
-            for (int col = 0; col < 10; col++) {
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
                 updateCell(row, col);
             }
         }
-        revalidate();
-        repaint();
+
+        gridPanel.revalidate();
+        gridPanel.repaint();
     }
 
     private void updateCell(int row, int col) {
@@ -151,7 +211,7 @@ public class BoardView extends JPanel {
     }
 
     private void updateSetCell(JLabel label) {
-        label.setBackground(Color.GRAY);
+        label.setBackground(Color.BLUE);  // Set the cell to blue when a ship is placed
     }
 
     private void updateHitCell(JLabel label) {
@@ -170,10 +230,6 @@ public class BoardView extends JPanel {
         }
     }
 
-    public int getCellSize() {
-        return CELL_SIZE;
-    }
-
     public JLabel getLabelForCell(int row, int col) {
         return labels[row][col];
     }
@@ -182,15 +238,14 @@ public class BoardView extends JPanel {
         void onCellClicked(int row, int col, JLabel label);
     }
 
-
     public BoardModel getPlayerBoard() {
         return playerBoard;
     }
 
     private void clearLabelGraphics(JLabel label) {
-        label.setIcon(null);  // Entfernt das Icon oder die Grafik
-        label.setBackground(Color.WHITE);  // Setzt den Hintergrund zurück
-        label.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));  // Setzt die Standard-Rand zurück
+        label.setIcon(null);
+        label.setBackground(Color.WHITE);
+        label.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));
         label.revalidate();
         label.repaint();
     }
@@ -203,5 +258,44 @@ public class BoardView extends JPanel {
         }
         revalidate();
         repaint();
+    }
+
+    public void addBoardMouseListener(MouseListener listener) {
+        addMouseListener(listener);
+    }
+
+    public void removeBoardMouseListener(MouseListener listener) {
+        removeMouseListener(listener);
+    }
+
+    public void addBoardMouseMotionListener(MouseMotionListener listener) {
+        addMouseMotionListener(listener);
+    }
+
+    public void removeBoardMouseMotionListener(MouseMotionListener listener) {
+        removeMouseMotionListener(listener);
+    }
+
+    public void addBoardKeyListener(KeyListener listener) {
+        addKeyListener(listener);
+    }
+
+    public void removeBoardKeyListener(KeyListener listener) {
+        removeKeyListener(listener);
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        setFocusable(true);
+        requestFocus();
+    }
+
+    public int getCellSize() {
+        return CELL_SIZE;
+    }
+
+    public JLabel getShipPreviewLabel() {
+        return shipPreviewLabel;
     }
 }

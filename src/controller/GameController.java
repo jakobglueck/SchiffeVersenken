@@ -21,7 +21,7 @@ public class GameController {
         this.gameView = gameView;
         this.homeScreenView = homeScreenView;
         this.boardController = new BoardController(gameModel, gameView, this);
-        this.shipController = new ShipController(gameModel, gameView, this);
+        this.shipController = new ShipController(gameModel, gameView);
 
         initializeHomeScreenListeners();
     }
@@ -49,14 +49,29 @@ public class GameController {
         gameModel.setGameState(gameState);
         gameView.setVisible(true);
         gameView.createPlayerBase();
-        boardController.initializeGameListeners();
         this.gameView.updateGameModePanel(this.detectGameMode());
         gameModel.startGame();
+        boardController.initializeGameListeners();
+
         if (gameState == GameState.NORMAL || gameState == GameState.COMPUTER) {
-            shipController.handleManualShipPlacement();
+            SwingUtilities.invokeLater(() -> {
+                gameView.getPlayerBoardOne().createPanelForShipPlacement();
+                gameView.getPlayerBoardTwo().createPanelForShipPlacement();
+                shipController.handleManualShipPlacement(() -> {
+                    gameView.getPlayerBoardOne().removePanelForShipPlacement();
+                    onShipPlacementComplete();
+                });
+            });
         } else {
             runGameLoop();
         }
+    }
+
+
+    private void onShipPlacementComplete() {
+        this.gameView.getPlayerBoardOne().removePanelForShipPlacement();
+        this.gameView.getPlayerBoardTwo().removePanelForShipPlacement();
+        SwingUtilities.invokeLater(this::runGameLoop);
     }
 
     private String detectGameMode(){
@@ -71,6 +86,7 @@ public class GameController {
                 return "";
         }
     }
+
     public void runGameLoop() {
         boardController.updateBoardVisibility();
         boardController.updateGameView();
@@ -80,7 +96,7 @@ public class GameController {
         } else {
             boardController.toggleBoardsForCurrentPlayer();
             if (gameModel.getCurrentPlayer() instanceof ComputerPlayerModel) {
-                performComputerMove(); // Wenn der aktuelle Spieler der Computer ist, führe automatisch den Zug aus
+                performComputerMove();
             }
         }
     }
@@ -90,26 +106,26 @@ public class GameController {
         int result = this.gameView.showGameOverDialog(winner);
 
         if (result == 0) {
-            resetGame();  // Neustart des Spiels mit denselben Spielern
+            resetGame();
         } else {
             showHomeScreen();
         }
     }
 
-    private void resetGame() {
-        gameModel.resetGame();  // Zurücksetzen des GameModel
-        gameView.resetView();   // Zurücksetzen der Ansicht
-        gameModel.startGame();  // Spiel neu starten
-        runGameLoop();         // Spielschleife neu starten
+    public void resetGame() {
+        gameModel.resetGame();
+        gameView.resetView();
+        gameModel.startGame();
+        runGameLoop();
     }
 
     public void performComputerMove() {
-        gameModel.computerPlayTurn();  // Führt den Zug des Computers aus
+        gameModel.computerPlayTurn();
         if (!gameModel.isGameOver()) {
-            gameModel.switchPlayer();  // Wenn das Spiel nicht vorbei ist, wechsle den Spieler
-            runGameLoop();  // Starte die nächste Runde
+            gameModel.switchPlayer();
+            runGameLoop();
         } else {
-            showGameOverDialog();  // Zeige das Dialogfenster "Spiel vorbei" an
+            showGameOverDialog();
         }
     }
 }
