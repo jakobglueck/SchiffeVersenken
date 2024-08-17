@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import model.PlayerModel;
-import model.PlayerStatus;
+
 
 public class InfoPanelView extends JPanel {
 
@@ -29,7 +29,7 @@ public class InfoPanelView extends JPanel {
     public void updateStats(PlayerModel playerModel) {
         totalClicksLabel.setText("Anzahl gesamter Klicks: " + playerModel.getPlayerStatus().getTotalClicks());
         hitsLabel.setText("Davon Getroffen (Hits): " + playerModel.getPlayerStatus().getHits());
-        sunkShipsLabel.setText("Gegnerische Schiffe versunken: " + playerModel.getPlayerStatus().getShunkShips());
+        sunkShipsLabel.setText("Gegnerische Schiffe versunken: " + playerModel.getPlayerStatus().getSunkShips());
         totalClicksLabel.revalidate();
         totalClicksLabel.repaint();
         hitsLabel.revalidate();

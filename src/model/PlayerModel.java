@@ -6,13 +6,11 @@ import utils.CellState;
 public class PlayerModel {
     private final String playerName;
     private BoardModel board;
-    private int nextShipIndex;
     private PlayerStatus playerStatus;
 
     public PlayerModel(String playerName) {
         this.playerName = playerName;
         this.board = new BoardModel();
-        this.nextShipIndex = 0;
         this.playerStatus = new PlayerStatus();
     }
 
@@ -22,18 +20,6 @@ public class PlayerModel {
 
     public BoardModel getBoard() {
         return board;
-    }
-
-    public boolean placeNextShip(int startX, int startY, boolean horizontal) {
-        if (nextShipIndex > BoardModel.BOAT_SIZES.length) {
-            return false;
-        }
-        int length = BoardModel.BOAT_SIZES[nextShipIndex];
-        boolean placed = board.placeShip(startX, startY, horizontal, length);
-        if (placed) {
-            nextShipIndex++;
-        }
-        return placed;
     }
 
     public boolean makeMove(PlayerModel opponent, int x, int y) {

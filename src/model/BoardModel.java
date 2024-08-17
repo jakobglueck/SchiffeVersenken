@@ -2,8 +2,7 @@ package model;
 
 import utils.CellState;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 public class BoardModel {
     public static final int[] BOAT_SIZES = {5, 4, 4, 3, 3, 3, 2, 2, 2, 2};

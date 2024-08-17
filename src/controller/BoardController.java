@@ -1,15 +1,12 @@
 package controller;
 
 import model.*;
-import View.BoardView;
-import View.GameView;
+import View.*;
 import utils.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public class BoardController {
 

@@ -2,9 +2,7 @@ package model;
 
 import utils.CellState;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class ComputerPlayerModel extends PlayerModel {
 
@@ -42,6 +40,7 @@ public class ComputerPlayerModel extends PlayerModel {
     }
 
     public boolean makeMove(PlayerModel opponent) {
+        boolean result = false;
         if (!availableMoves.isEmpty()) {
             Random random = new Random();
             int index = random.nextInt(availableMoves.size());
@@ -53,11 +52,12 @@ public class ComputerPlayerModel extends PlayerModel {
             CellModel targetCell = opponentBoard.getCell(move[0], move[1]);
 
             if (targetCell.getCellState() == CellState.FREE) {
-                return false;
-            } else
-                return targetCell.getCellState() == CellState.SET;
+                result = false;
+            } else {
+                result =  targetCell.getCellState() == CellState.SET;
+                targetCell.updateCellState(CellState.HIT);
+            }
         }
-        return false;
+        return result;
     }
-
 }

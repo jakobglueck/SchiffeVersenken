@@ -1,8 +1,6 @@
 package View;
 
-import model.BoardModel;
-import model.CellModel;
-import model.ShipModel;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
