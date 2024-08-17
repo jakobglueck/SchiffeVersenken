@@ -27,6 +27,7 @@ public class BoardController {
         gameView.getControlView().getMainMenuButton().addActionListener(e -> {
             this.gameModel.resetGame();
             gameController.showHomeScreen();
+            gameController.initializeHomeScreenListeners();
         });
         gameView.getControlView().getPauseGameButton().addActionListener(e -> JOptionPane.showMessageDialog(gameView, "Spiel ist pausiert!"));
         gameView.getControlView().getEndGameButton().addActionListener(e -> System.exit(0));
@@ -82,7 +83,6 @@ public class BoardController {
     private void handleBoardClick(int row, int col, JLabel label) {
         Component parent = label.getParent();
 
-        // Durchlaufe die Eltern-Komponenten, bis das BoardView gefunden wird
         while (parent != null) {
             if (parent instanceof BoardView) {
                 BoardView clickedBoardView = (BoardView) parent;
@@ -92,9 +92,6 @@ public class BoardController {
             }
             parent = parent.getParent();
         }
-
-        // Wenn kein BoardView gefunden wurde
-        System.err.println("Error: Parent component is not of type BoardView.");
     }
 
     private void processBoardClick(int row, int col, BoardView clickedBoardView, JLabel label) {
@@ -163,7 +160,7 @@ public class BoardController {
 
 
 
-    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponentBoardView) {
+    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponent) {
         for (CellModel cell : ship.getShipCells()) {
             int startX = Math.max(0, cell.getX() - 1);
             int endX = Math.min(9, cell.getX() + 1);
@@ -172,10 +169,10 @@ public class BoardController {
 
             for (int x = startX; x <= endX; x++) {
                 for (int y = startY; y <= endY; y++) {
-                    CellModel surroundingCell = opponentBoardView.getPlayerBoard().getCell(x, y);
+                    CellModel surroundingCell = opponent.getPlayerBoard().getCell(x, y);
                     if (surroundingCell.getCellState() == CellState.FREE) {
-                        JLabel surroundingLabel = opponentBoardView.getLabelForCell(x, y);
-                        opponentBoardView.markAsMiss(surroundingLabel);
+                        JLabel surroundingLabel = opponent.getLabelForCell(x, y);
+                        opponent.markAsMiss(surroundingLabel);
                     }
                 }
             }

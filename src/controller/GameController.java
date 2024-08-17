@@ -26,7 +26,7 @@ public class GameController {
         initializeHomeScreenListeners();
     }
 
-    private void initializeHomeScreenListeners() {
+    public void initializeHomeScreenListeners() {
         homeScreenView.getLocalGameButton().addActionListener(e -> startGame(GameState.NORMAL));
         homeScreenView.getComputerGameButton().addActionListener(e -> startGame(GameState.COMPUTER));
         homeScreenView.getDebugModeButton().addActionListener(e -> startGame(GameState.DEBUG));
@@ -40,13 +40,13 @@ public class GameController {
 
     public void startGame(GameState gameState) {
         homeScreenView.setVisible(false);
+        gameModel.setGameState(gameState);
         String playerOneName = JOptionPane.showInputDialog("Bitte Namen für Spieler 1 eingeben:");
         String playerTwoName = (gameState == GameState.NORMAL || gameState == GameState.DEBUG)
                 ? JOptionPane.showInputDialog("Bitte Namen für Spieler 2 eingeben:")
                 : "Computer";
 
         gameModel.createPlayerWithNames(playerOneName, playerTwoName);
-        gameModel.setGameState(gameState);
         gameView.setVisible(true);
         gameView.createPlayerBase();
         this.gameView.updateGameModePanel(this.detectGameMode());
