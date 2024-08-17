@@ -36,10 +36,6 @@ public class PlayerModel {
         return placed;
     }
 
-    public boolean allShipsPlaced() {
-        return nextShipIndex == BoardModel.BOAT_SIZES.length;
-    }
-
     public boolean makeMove(PlayerModel opponent, int x, int y) {
         if (!this.isValidMove(x, y)) {
             return false;
@@ -62,7 +58,7 @@ public class PlayerModel {
         }
 
         CellState currentCellState = board.getCell(x, y).getCellState();
-        return currentCellState != CellState.HIT && currentCellState != CellState.FREE;
+        return currentCellState != CellState.HIT;
     }
 
     public PlayerStatus getPlayerStatus() {

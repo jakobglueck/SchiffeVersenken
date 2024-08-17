@@ -14,8 +14,4 @@ public class PlayerView extends JPanel {
         this.setBorder(BorderFactory.createEmptyBorder(25, 10, 0, 10));
         setVisible(true);
     }
-
-    public void setPlayerName(String playerName) {
-        playerNameLabel.setText(playerName);
-    }
 }

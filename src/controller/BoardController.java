@@ -86,7 +86,7 @@ public class BoardController {
         while (parent != null) {
             if (parent instanceof BoardView) {
                 BoardView clickedBoardView = (BoardView) parent;
-                // Weitere Verarbeitung mit clickedBoardView...
+
                 processBoardClick(row, col, clickedBoardView, label);
                 return;
             }
@@ -97,15 +97,45 @@ public class BoardController {
     private void processBoardClick(int row, int col, BoardView clickedBoardView, JLabel label) {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
 
-        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne())
-                ? gameView.getPlayerBoardTwo()
-                : gameView.getPlayerBoardOne();
+        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo()  : gameView.getPlayerBoardOne();
 
         if (gameModel.getGameState() == GameState.NORMAL && clickedBoardView != opponentBoardView) {
-            gameView.getStatusView().updateAdditionalInfo(
-                    currentPlayer.getPlayerName() + " hat sein eigenes Board angegriffen. Bitte greife das Board des Gegners an!");
+            gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat sein eigenes Board angegriffen. Bitte greife das Board des Gegners an!");
             return;
         }
+
+        boolean hitShip = this.checkStatusOfClick(row, col, clickedBoardView, label);
+
+        updateGameView();
+
+        if (clickedBoardView.getPlayerBoard().allShipsAreHit()) {
+            gameController.showGameOverDialog();
+        } else {
+            if (gameModel.getGameState() == GameState.NORMAL) {
+                if (!hitShip) {
+                    gameModel.switchPlayer();
+                }
+                if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
+                    SwingUtilities.invokeLater(gameController::runGameLoop);
+                } else {
+                    gameController.performComputerMove();
+                    updateGameView();
+                }
+            } else if (gameModel.getGameState() != GameState.DEBUG) {
+                gameModel.switchPlayer();
+                if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
+                    SwingUtilities.invokeLater(gameController::runGameLoop);
+                } else {
+                    gameController.performComputerMove();
+                    updateGameView();
+                }
+            }
+        }
+    }
+
+
+    private boolean checkStatusOfClick(int row, int col, BoardView clickedBoardView, JLabel label ){
+        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
 
         CellModel cell = clickedBoardView.getPlayerBoard().getCell(row, col);
         currentPlayer.getPlayerStatus().updateTotalClicks();
@@ -130,35 +160,10 @@ public class BoardController {
                 break;
             default:
                 gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " kann ein bereits getroffenes Schiff nicht nochmal angreifen");
-                return;
+                return false;
         }
-
-        updateGameView();
-
-        if (clickedBoardView.getPlayerBoard().allShipsAreHit()) {
-            gameController.showGameOverDialog();
-        } else {
-            if (gameModel.getGameState() == GameState.NORMAL) {
-                if (!hitShip) {
-                    gameModel.switchPlayer();
-                }
-                if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
-                    SwingUtilities.invokeLater(gameController::runGameLoop);
-                } else {
-                    gameController.performComputerMove();
-                }
-            } else if (gameModel.getGameState() != GameState.DEBUG) {
-                gameModel.switchPlayer();
-                if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
-                    SwingUtilities.invokeLater(gameController::runGameLoop);
-                } else {
-                    gameController.performComputerMove();
-                }
-            }
-        }
+        return hitShip;
     }
-
-
 
     private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponent) {
         for (CellModel cell : ship.getShipCells()) {

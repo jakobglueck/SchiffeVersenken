@@ -200,33 +200,4 @@ public class GameView extends JFrame {
                 "Neues Spiel"
         );
     }
-
-    public void showShipPreview(boolean show) {
-        SwingUtilities.invokeLater(() -> {
-            shipPreviewLabel.setVisible(show);
-            layeredPane.revalidate();
-            layeredPane.repaint();
-        });
-    }
-
-    public void updateShipPreview(int x, int y, int width, int height, Color color) {
-        SwingUtilities.invokeLater(() -> {
-            shipPreviewLabel.setBounds(x, y, width, height);
-            shipPreviewLabel.setBackground(color);
-            shipPreviewLabel.repaint();
-            layeredPane.revalidate();
-            layeredPane.repaint();
-        });
-    }
-
-    public void prepareForShipPlacement() {
-        playerBoardOne.setVisible(true);
-        playerBoardTwo.setVisible(true);
-        playerBoardOne.setEnabled(true);
-        playerBoardTwo.setEnabled(true);
-        playerBoardOne.setFocusable(true);
-        playerBoardTwo.setFocusable(true);
-        revalidate();
-        repaint();
-    }
 }

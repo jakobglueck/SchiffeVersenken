@@ -47,14 +47,6 @@ public class ShipModel {
         return this.sunk;
     }
 
-    public int getLength() {
-        return this.length;
-    }
-
-    public boolean isHorizontal() {
-        return this.horizontal;
-    }
-
     public List<CellModel> getShipCells() {
         return this.shipCells;
     }

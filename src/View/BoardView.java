@@ -170,10 +170,6 @@ public class BoardView extends JPanel {
         this.boardClickListener = listener;
     }
 
-    public MouseListener getBoardClickListener() {
-        return (MouseListener) this.boardClickListener;
-    }
-
     public void updateBoard() {
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
@@ -260,30 +256,6 @@ public class BoardView extends JPanel {
         repaint();
     }
 
-    public void addBoardMouseListener(MouseListener listener) {
-        addMouseListener(listener);
-    }
-
-    public void removeBoardMouseListener(MouseListener listener) {
-        removeMouseListener(listener);
-    }
-
-    public void addBoardMouseMotionListener(MouseMotionListener listener) {
-        addMouseMotionListener(listener);
-    }
-
-    public void removeBoardMouseMotionListener(MouseMotionListener listener) {
-        removeMouseMotionListener(listener);
-    }
-
-    public void addBoardKeyListener(KeyListener listener) {
-        addKeyListener(listener);
-    }
-
-    public void removeBoardKeyListener(KeyListener listener) {
-        removeKeyListener(listener);
-    }
-
     @Override
     public void addNotify() {
         super.addNotify();
@@ -293,9 +265,5 @@ public class BoardView extends JPanel {
 
     public int getCellSize() {
         return CELL_SIZE;
-    }
-
-    public JLabel getShipPreviewLabel() {
-        return shipPreviewLabel;
     }
 }

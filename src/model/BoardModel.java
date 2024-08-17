@@ -36,10 +36,6 @@ public class BoardModel {
         }
     }
 
-    public CellModel[][] getCompleteBoard() {
-        return this.board;
-    }
-
     public CellModel getCell(int x, int y) {
         if (isValidCoordinate(x, y)) {
             return this.board[x][y];
