@@ -14,7 +14,7 @@ public class ControlView extends JPanel {
         setLayout(new FlowLayout());
 
         mainMenuButton = new JButton("Zurück zum Hauptmenü");
-        pauseGameButton = new JButton("Spiel neu starten");
+        pauseGameButton = new JButton("Spiel pausieren");
         endGameButton = new JButton("Spiel verlassen");
 
         endGameButton.addActionListener(new ActionListener() {
