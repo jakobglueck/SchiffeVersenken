@@ -98,8 +98,12 @@ public class BoardController {
 
         boolean hitShip = this.checkStatusOfClick(row, col, clickedBoardView, label);
 
+        this.changeClickRow(clickedBoardView, hitShip);
+
         updateGameView();
 
+    }
+    private void changeClickRow(BoardView clickedBoardView, boolean hitShip){
         if (clickedBoardView.getPlayerBoard().allShipsAreHit()) {
             gameController.showGameOverDialog();
         } else {
@@ -124,7 +128,6 @@ public class BoardController {
             }
         }
     }
-
 
     private boolean checkStatusOfClick(int row, int col, BoardView clickedBoardView, JLabel label ){
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
