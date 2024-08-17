@@ -17,8 +17,11 @@ public class GameView extends JFrame {
     private InfoPanelView infoPanelViewTwo;
     private StatusView statusView;
     private ControlView controlView;
-
     private JLabel gameModeLabel;
+    private JLabel shipPreviewLabel;
+    private JLayeredPane layeredPane;
+
+    public static final int CELL_SIZE = 50;
 
     public GameView(GameModel gm) {
         this.game = gm;
@@ -28,6 +31,14 @@ public class GameView extends JFrame {
         setSize(1000, 800);
         setLocationRelativeTo(null);
         setResizable(false);
+
+        layeredPane = new JLayeredPane();
+        setContentPane(layeredPane);
+
+        shipPreviewLabel = new JLabel();
+        shipPreviewLabel.setOpaque(true);
+        shipPreviewLabel.setVisible(false);
+        layeredPane.add(shipPreviewLabel, JLayeredPane.DRAG_LAYER);
     }
 
     public void createPlayerBase() {
@@ -44,31 +55,35 @@ public class GameView extends JFrame {
         playerBoardOne.updateBoard();
         playerBoardTwo.updateBoard();
 
-        setLayout(new GridBagLayout());
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        layeredPane.add(mainPanel, JLayeredPane.DEFAULT_LAYER);
+        mainPanel.setBounds(0, 0, getWidth(), getHeight());
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
 
-        gbc.weighty = 0.1;
-        add(createGameModePanel(), gbc);
+        gbc.weighty = 0.05;
+        mainPanel.add(createGameModePanel(), gbc);
 
-        // Zeile 1: PlayerPanel (10% Höhe)
-        gbc.weighty = 0.1;
-        add(createPlayerPanel(), gbc);
+        gbc.weighty = 0.05;
+        mainPanel.add(createPlayerPanel(), gbc);
 
-        // Zeile 2: BoardPanel (60% Höhe)
-        gbc.weighty = 0.6;
-        add(createBoardPanel(), gbc);
+        gbc.weighty = 0.55;
+        mainPanel.add(createBoardPanel(), gbc);
 
-        // Zeile 3: InfoPanel/StatusPanel (20% Höhe)
-        gbc.weighty = 0.2;
-        add(createInfoStatusPanel(), gbc);
+        gbc.weighty = 0.3;
+        mainPanel.add(createInfoStatusPanel(), gbc);
 
-        // Zeile 4: ControlPanel (10% Höhe)
         gbc.weighty = 0.1;
         controlView = new ControlView();
-        add(controlView, gbc);
+        mainPanel.add(controlView, gbc);
+
+        // Ensure the correct layering
+        layeredPane.setLayer(mainPanel, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.setLayer(playerBoardOne, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.setLayer(playerBoardTwo, JLayeredPane.DEFAULT_LAYER);
 
         setVisible(true);
     }
@@ -91,11 +106,10 @@ public class GameView extends JFrame {
         return boardPanel;
     }
 
-
     private JPanel createGameModePanel() {
         JPanel gameModePanel = new JPanel(new GridLayout(1, 1));
-        gameModeLabel = new JLabel("", SwingConstants.CENTER); // Spielmodus dynamisch setzen
-        gameModeLabel.setFont(new Font("Arial", Font.BOLD, 16)); // Schriftart und Größe anpassen
+        gameModeLabel = new JLabel("", SwingConstants.CENTER);
+        gameModeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         gameModePanel.add(gameModeLabel);
 
         return gameModePanel;
@@ -104,6 +118,7 @@ public class GameView extends JFrame {
     public void updateGameModePanel(String gameMode){
         this.gameModeLabel.setText(gameMode);
     }
+
     private JPanel createInfoStatusPanel() {
         JPanel infoStatusPanel = new JPanel(new BorderLayout());
         infoPanelViewOne = new InfoPanelView();
@@ -133,12 +148,11 @@ public class GameView extends JFrame {
                 if (currentPlayer == playerOne) {
                     playerBoardOne.setGridLabelsOpaque(true);
                     playerBoardTwo.setGridLabelsOpaque(false);
-                    break;
                 } else if (currentPlayer == playerTwo) {
                     playerBoardOne.setGridLabelsOpaque(false);
                     playerBoardTwo.setGridLabelsOpaque(true);
-                    break;
                 }
+                break;
             case DEBUG:
                 playerBoardOne.setGridLabelsOpaque(true);
                 playerBoardTwo.setGridLabelsOpaque(true);
@@ -185,5 +199,34 @@ public class GameView extends JFrame {
                 new String[]{"Neues Spiel", "Hauptmenü"},
                 "Neues Spiel"
         );
+    }
+
+    public void showShipPreview(boolean show) {
+        SwingUtilities.invokeLater(() -> {
+            shipPreviewLabel.setVisible(show);
+            layeredPane.revalidate();
+            layeredPane.repaint();
+        });
+    }
+
+    public void updateShipPreview(int x, int y, int width, int height, Color color) {
+        SwingUtilities.invokeLater(() -> {
+            shipPreviewLabel.setBounds(x, y, width, height);
+            shipPreviewLabel.setBackground(color);
+            shipPreviewLabel.repaint();
+            layeredPane.revalidate();
+            layeredPane.repaint();
+        });
+    }
+
+    public void prepareForShipPlacement() {
+        playerBoardOne.setVisible(true);
+        playerBoardTwo.setVisible(true);
+        playerBoardOne.setEnabled(true);
+        playerBoardTwo.setEnabled(true);
+        playerBoardOne.setFocusable(true);
+        playerBoardTwo.setFocusable(true);
+        revalidate();
+        repaint();
     }
 }

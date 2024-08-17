@@ -24,7 +24,10 @@ public class BoardController {
     }
 
     public void initializeGameListeners() {
-        gameView.getControlView().getMainMenuButton().addActionListener(e -> gameController.showHomeScreen());
+        gameView.getControlView().getMainMenuButton().addActionListener(e -> {
+            this.gameModel.resetGame();
+            gameController.showHomeScreen();
+        });
         gameView.getControlView().getPauseGameButton().addActionListener(e -> JOptionPane.showMessageDialog(gameView, "Spiel ist pausiert!"));
         gameView.getControlView().getEndGameButton().addActionListener(e -> System.exit(0));
         gameView.getPlayerBoardOne().setBoardClickListener(this::handleBoardClick);
@@ -77,27 +80,33 @@ public class BoardController {
     }
 
     private void handleBoardClick(int row, int col, JLabel label) {
-        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        BoardView clickedBoardView = null;
+        Component parent = label.getParent();
 
-        Container parent = label.getParent();
+        // Durchlaufe die Eltern-Komponenten, bis das BoardView gefunden wird
         while (parent != null) {
             if (parent instanceof BoardView) {
-                clickedBoardView = (BoardView) parent;
-                break;
+                BoardView clickedBoardView = (BoardView) parent;
+                // Weitere Verarbeitung mit clickedBoardView...
+                processBoardClick(row, col, clickedBoardView, label);
+                return;
             }
             parent = parent.getParent();
         }
 
-        if (clickedBoardView == null) {
-            gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat ein bereits getroffenes Schiff nochmal angegriffen. Bitte mach einen anderen Zug");
-            return;
-        }
+        // Wenn kein BoardView gefunden wurde
+        System.err.println("Error: Parent component is not of type BoardView.");
+    }
 
-        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
+    private void processBoardClick(int row, int col, BoardView clickedBoardView, JLabel label) {
+        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
+
+        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne())
+                ? gameView.getPlayerBoardTwo()
+                : gameView.getPlayerBoardOne();
 
         if (gameModel.getGameState() == GameState.NORMAL && clickedBoardView != opponentBoardView) {
-            gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() +" hat sein eigenes Board angegriffen. Bitte greife das Board des Genger an!");
+            gameView.getStatusView().updateAdditionalInfo(
+                    currentPlayer.getPlayerName() + " hat sein eigenes Board angegriffen. Bitte greife das Board des Gegners an!");
             return;
         }
 
@@ -108,14 +117,14 @@ public class BoardController {
         switch (cell.getCellState()) {
             case FREE:
                 clickedBoardView.markAsMiss(label);
-                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() +" hat nicht getroffen");
+                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat nicht getroffen");
                 break;
             case SET:
                 ShipModel ship = clickedBoardView.getPlayerBoard().registerHit(row, col);
                 currentPlayer.getPlayerStatus().calculateHits(clickedBoardView.getPlayerBoard());
                 currentPlayer.getPlayerStatus().calculateShunkShips(clickedBoardView.getPlayerBoard());
                 hitShip = true;
-                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() +" hat getroffen");
+                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat getroffen");
                 if (ship != null && ship.isSunk()) {
                     clickedBoardView.updateRevealedShip(ship);
                     gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat ein Schiff versenkt");
@@ -151,6 +160,8 @@ public class BoardController {
             }
         }
     }
+
+
 
     private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponentBoardView) {
         for (CellModel cell : ship.getShipCells()) {
