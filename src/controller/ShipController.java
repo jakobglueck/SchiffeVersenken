@@ -32,7 +32,7 @@ public class ShipController {
         this.currentShipIndex = 0;
         currentBoard.setVisible(true);
         currentBoard.toggleGridVisibility(true);
-        this.gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " muss seine Schiffe platzieren");
+        this.gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " muss seine Schiffe platzieren");
 
         placeShipsForCurrentPlayer(currentBoard, () -> {
             if (currentTurn < totalTurns - 1) {

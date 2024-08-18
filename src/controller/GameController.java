@@ -72,8 +72,8 @@ public class GameController {
 
         gameModel.createPlayerWithNames(playerOneName, playerTwoName);
         gameView.setVisible(true);
-        gameView.createPlayerBase(gameModel.getPlayerOne(), gameModel.getPlayerTwo());
-        gameView.updateGameModePanel(detectGameMode());
+        gameView.setupGameInterface(gameModel.getPlayerOne(), gameModel.getPlayerTwo());
+        this.gameView.updateGameModePanel(this.detectGameMode());
         gameModel.startGame();
         boardController.startGameListeners();
 
@@ -95,11 +95,10 @@ public class GameController {
      * @brief Entfernt die Panels zur Schiffsplatzierung und startet den Spielablauf.
      */
     private void removePanelForShipPlacement() {
-        gameView.getPlayerBoardOne().removePanelForShipPlacement(gameModel.getPlayerOne().getBoard());
-        gameView.getPlayerBoardTwo().removePanelForShipPlacement(gameModel.getPlayerTwo().getBoard());
-        gameView.getPlayerBoardOne().createLabelForBoard();
-        gameView.getPlayerBoardTwo().createLabelForBoard();
-        gameView.getStatusView().updateAdditionalInfo("");
+        this.gameView.getPlayerBoardOne().removePanelForShipPlacement(gameModel.getPlayerOne().getBoard());
+        this.gameView.getPlayerBoardTwo().removePanelForShipPlacement(gameModel.getPlayerTwo().getBoard());
+        this.gameView.getPlayerBoardOne().createLabelForBoard();
+        this.gameView.getPlayerBoardTwo().createLabelForBoard();
         SwingUtilities.invokeLater(this::runGameLoop);
     }
 
