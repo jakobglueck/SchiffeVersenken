@@ -6,13 +6,6 @@ import view.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +54,7 @@ public class ShipController {
             if (currentTurn < totalTurns - 1) {
                 currentBoard.updateBoard(currentPlayer.getBoard());
                 currentBoard.removeGraphics();
+                this.gameModel.resetShipPlacement();
                 gameModel.switchPlayer();
                 placeShipsForPlayer(currentTurn + 1, totalTurns, onComplete);
             } else {

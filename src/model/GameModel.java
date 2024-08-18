@@ -158,7 +158,7 @@ public class GameModel {
      * @return true, wenn das Schiff erfolgreich platziert wurde.
      */
     public boolean placeNextShip(int startX, int startY,int shipSize, boolean horizontal) {
-        if (currentShipIndex >= SHIP_SIZES.length) {
+        if (this.currentShipIndex >= SHIP_SIZES.length) {
             return false;
         }
 
