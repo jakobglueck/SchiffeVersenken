@@ -65,7 +65,7 @@ public class GameView extends JFrame {
         gbc.weighty = 0.55;
         mainPanel.add(createBoardPanel(), gbc);
 
-        gbc.weighty = 0.3;
+        gbc.weighty = 0.15;
         mainPanel.add(createInfoStatusPanel(), gbc);
 
         gbc.weighty = 0.1;
