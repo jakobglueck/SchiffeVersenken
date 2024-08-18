@@ -1,7 +1,7 @@
 package controller;
 
 import model.*;
-import View.*;
+import view.*;
 
 import javax.swing.*;
 import java.awt.*;

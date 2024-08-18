@@ -1,8 +1,8 @@
 
 import controller.GameController;
 import model.GameModel;
-import View.HomeScreenView;
-import View.GameView;
+import view.HomeScreenView;
+import view.GameView;
 
 public class SchiffeVersenkenMain {
     public static void main(String[] args) {

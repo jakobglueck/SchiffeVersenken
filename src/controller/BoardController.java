@@ -6,7 +6,7 @@
 package controller;
 
 import model.*;
-import View.*;
+import view.*;
 import utils.*;
 
 import javax.swing.*;
