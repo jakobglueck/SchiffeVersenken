@@ -58,7 +58,7 @@ public class GameModel {
     public void createPlayerWithNames(String playerOneName, String playerTwoName) {
         this.playerOne = createPlayer(!Objects.equals(playerOneName, "") ? playerOneName : DEFAULT_PLAYER_NAME);
         if(this.gameState.equals(GameState.COMPUTER)){
-            this.playerTwo = createPlayer("Computer");
+            this.playerTwo =new ComputerPlayerModel("Computer");
         }else{
             this.playerTwo = createPlayer(!Objects.equals(playerTwoName, "")  ? playerTwoName : DEFAULT_PLAYER_NAME);
         }
