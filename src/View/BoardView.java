@@ -43,7 +43,7 @@ public class BoardView extends JPanel {
     public void createPanelForShipPlacement() {
         this.gridPanel.removeAll();
         this.gridPanel.setLayout(new BorderLayout());
-
+        this.gridPanel.setPreferredSize((new Dimension(50, 150)));
         // Erstelle ein benutzerdefiniertes JPanel mit einem überschriebenen paintComponent
         JPanel customGridPanel = new JPanel(null) {
             @Override
@@ -53,9 +53,7 @@ public class BoardView extends JPanel {
             }
         };
 
-        // Stelle sicher, dass das Panel durchsichtig ist, um das Raster im Hintergrund anzuzeigen
         customGridPanel.setOpaque(false);
-
         shipPreviewLabel = new JLabel();
         shipPreviewLabel.setOpaque(true);
         shipPreviewLabel.setBackground(new Color(0, 0, 255, 128));
