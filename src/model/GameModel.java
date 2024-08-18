@@ -34,33 +34,33 @@ public class GameModel {
     }
 
     /**
-     * @brief Erstellt einen neuen Spieler mit dem gegebenen Namen.
      * @param playerName Der Name des Spielers.
      * @return Ein neues PlayerModel-Objekt.
+     * @brief Erstellt einen neuen Spieler mit dem gegebenen Namen.
      */
     public PlayerModel createPlayer(String playerName) {
         return new PlayerModel(playerName);
     }
 
     /**
-     * @brief Setzt den aktuellen Spielzustand.
      * @param gameState Der neue Spielzustand.
+     * @brief Setzt den aktuellen Spielzustand.
      */
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
 
     /**
-     * @brief Erstellt zwei Spieler und setzt deren Namen.
      * @param playerOneName Der Name des ersten Spielers.
      * @param playerTwoName Der Name des zweiten Spielers oder "Computer" für den Computergegner.
+     * @brief Erstellt zwei Spieler und setzt deren Namen.
      */
     public void createPlayerWithNames(String playerOneName, String playerTwoName) {
         this.playerOne = createPlayer(!Objects.equals(playerOneName, "") ? playerOneName : DEFAULT_PLAYER_NAME);
-        if(this.gameState.equals(GameState.COMPUTER)){
-            this.playerTwo =new ComputerPlayerModel("Computer");
-        }else{
-            this.playerTwo = createPlayer(!Objects.equals(playerTwoName, "")  ? playerTwoName : DEFAULT_PLAYER_NAME);
+        if (this.gameState.equals(GameState.COMPUTER)) {
+            this.playerTwo = new ComputerPlayerModel("Computer");
+        } else {
+            this.playerTwo = createPlayer(!Objects.equals(playerTwoName, "") ? playerTwoName : DEFAULT_PLAYER_NAME);
         }
     }
 
@@ -89,8 +89,8 @@ public class GameModel {
     }
 
     /**
-     * @brief Wählt zufällig einen Spieler aus, der das Spiel beginnt.
      * @return Der zufällig ausgewählte Spieler.
+     * @brief Wählt zufällig einen Spieler aus, der das Spiel beginnt.
      */
     private PlayerModel randomPlayer() {
         Random ra = new Random();
@@ -98,32 +98,32 @@ public class GameModel {
     }
 
     /**
-     * @brief Gibt das Modell des ersten Spielers zurück.
      * @return Das PlayerModel für Spieler 1.
+     * @brief Gibt das Modell des ersten Spielers zurück.
      */
     public PlayerModel getPlayerOne() {
         return this.playerOne;
     }
 
     /**
-     * @brief Gibt das Modell des zweiten Spielers zurück.
      * @return Das PlayerModel für Spieler 2 oder den Computergegner.
+     * @brief Gibt das Modell des zweiten Spielers zurück.
      */
     public PlayerModel getPlayerTwo() {
         return this.playerTwo;
     }
 
     /**
-     * @brief Gibt das Modell des aktuell am Zug befindlichen Spielers zurück.
      * @return Das PlayerModel des aktuellen Spielers.
+     * @brief Gibt das Modell des aktuell am Zug befindlichen Spielers zurück.
      */
     public PlayerModel getCurrentPlayer() {
         return this.currentPlayer;
     }
 
     /**
-     * @brief Gibt den aktuellen Zustand des Spiels zurück.
      * @return Der aktuelle GameState des Spiels.
+     * @brief Gibt den aktuellen Zustand des Spiels zurück.
      */
     public GameState getGameState() {
         return this.gameState;
@@ -137,27 +137,27 @@ public class GameModel {
     }
 
     /**
-     * @brief Überprüft, ob das Spiel beendet ist, basierend darauf, ob alle Schiffe eines Spielers getroffen wurden.
      * @return true, wenn das Spiel vorbei ist; false sonst.
+     * @brief Überprüft, ob das Spiel beendet ist, basierend darauf, ob alle Schiffe eines Spielers getroffen wurden.
      */
     public boolean isGameOver() {
         return this.playerOne.getBoard().allShipsAreHit() || this.playerTwo.getBoard().allShipsAreHit();
     }
 
     /**
-     * @brief Gibt die Größen der Schiffe zurück, die im Spiel verwendet werden.
      * @return Ein Array der Schiffgrößen.
+     * @brief Gibt die Größen der Schiffe zurück, die im Spiel verwendet werden.
      */
     public int[] getShipSizes() {
         return SHIP_SIZES;
     }
 
     /**
-     * @brief Platziert das nächste Schiff auf dem Spielfeld des aktuellen Spielers.
-     * @param startX Die X-Position, an der das Schiff platziert werden soll.
-     * @param startY Die Y-Position, an der das Schiff platziert werden soll.
+     * @param startX     Die X-Position, an der das Schiff platziert werden soll.
+     * @param startY     Die Y-Position, an der das Schiff platziert werden soll.
      * @param horizontal Gibt an, ob das Schiff horizontal platziert wird.
      * @return true, wenn das Schiff erfolgreich platziert wurde; false sonst.
+     * @brief Platziert das nächste Schiff auf dem Spielfeld des aktuellen Spielers.
      */
     public boolean placeNextShip(int startX, int startY, boolean horizontal) {
         if (currentShipIndex >= SHIP_SIZES.length) {
@@ -185,9 +185,10 @@ public class GameModel {
      * @brief Setzt das Spiel zurück und initialisiert die Spieler und die Schiffsplatzierung neu.
      */
     public void resetGame() {
-        playerOne.reset();
-        playerTwo.reset();
-        currentPlayer = playerOne;
-        resetShipPlacement();
+        playerOne = null;
+        playerTwo = null;
+        currentPlayer = null;
+        gameState = null;
+        currentShipIndex = 0;
     }
 }

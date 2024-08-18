@@ -32,6 +32,7 @@ public class ShipController {
         this.currentShipIndex = 0;
         currentBoard.setVisible(true);
         currentBoard.toggleGridVisibility(true);
+        this.gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " muss seine Schiffe platzieren");
 
         placeShipsForCurrentPlayer(currentBoard, () -> {
             if (currentTurn < totalTurns - 1) {
@@ -43,7 +44,7 @@ public class ShipController {
                 placeShipsForPlayer(currentTurn + 1, totalTurns, onComplete);
             } else {
                 currentBoard.removeGraphics();
-                JOptionPane.showMessageDialog(gameView, "Alle Schiffe platziert. Das Spiel beginnt jetzt!");
+                JOptionPane.showMessageDialog(gameView, "Alle Schiffe wurden platziert. Das Spiel beginnt!");
                 currentBoard.toggleGridVisibility(false);
                 onComplete.run();
             }

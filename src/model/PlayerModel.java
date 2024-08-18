@@ -100,6 +100,5 @@ public class PlayerModel {
     public void reset() {
         board.reset();
         playerStatus.reset();
-        this.playerName = null;
     }
 }
