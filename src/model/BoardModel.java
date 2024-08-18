@@ -101,7 +101,7 @@ public class BoardModel {
     }
 
     /**
-     * @brief Überprüft, ob eine Schiffplatzierung gültig ist.
+     * @brief Überprüft, ob eine Schiffsplatzierung gültig ist.
      * @param startX Die X-Koordinate des Startpunktes des Schiffs.
      * @param startY Die Y-Koordinate des Startpunktes des Schiffs.
      * @param horizontal Gibt an, ob das Schiff horizontal oder vertikal platziert wird.
