@@ -41,6 +41,7 @@ public class BoardController {
     public void startGameListeners() {
         gameView.getControlView().getMainMenuButton().addActionListener(e -> {
             this.gameModel.resetGame();
+            this.gameView.resetView();
             gameController.showHomeScreen();
             gameController.startHomeScreenListeners();
         });

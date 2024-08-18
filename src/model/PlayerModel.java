@@ -12,7 +12,7 @@ import utils.CellState;
  * @brief Verantwortlich für die Verwaltung der Spielfeldaktionen und des Status eines Spielers.
  */
 public class PlayerModel {
-    private final String playerName; ///< Der Name des Spielers.
+    private String playerName; ///< Der Name des Spielers.
     private BoardModel board; ///< Das Spielfeldmodell des Spielers.
     private PlayerStatus playerStatus; ///< Der Status des Spielers, einschließlich der Statistiken.
 
@@ -100,5 +100,6 @@ public class PlayerModel {
     public void reset() {
         board.reset();
         playerStatus.reset();
+        this.playerName = null;
     }
 }

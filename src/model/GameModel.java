@@ -7,6 +7,7 @@ package model;
 
 import utils.GameState;
 
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -55,10 +56,12 @@ public class GameModel {
      * @param playerTwoName Der Name des zweiten Spielers oder "Computer" für den Computergegner.
      */
     public void createPlayerWithNames(String playerOneName, String playerTwoName) {
-        this.playerOne = createPlayer(playerOneName != null ? playerOneName : DEFAULT_PLAYER_NAME);
-
-        this.playerTwo = playerTwoName != null && !playerTwoName.equals("Computer") ? createPlayer(playerTwoName)
-                : new ComputerPlayerModel("Computer");
+        this.playerOne = createPlayer(!Objects.equals(playerOneName, "") ? playerOneName : DEFAULT_PLAYER_NAME);
+        if(this.gameState.equals(GameState.COMPUTER)){
+            this.playerTwo = createPlayer("Computer");
+        }else{
+            this.playerTwo = createPlayer(!Objects.equals(playerTwoName, "")  ? playerTwoName : DEFAULT_PLAYER_NAME);
+        }
     }
 
     /**
