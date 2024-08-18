@@ -7,18 +7,39 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ShipController {
 
     private GameModel gameModel;
     private GameView gameView;
     private int currentShipIndex;
     private boolean isHorizontal;
+    private List<Integer> playerOneShips;
+    private List<Integer> playerTwoShips;
 
     public ShipController(GameModel gameModel, GameView gameView) {
         this.gameModel = gameModel;
         this.gameView = gameView;
         this.currentShipIndex = 0;
         this.isHorizontal = true;
+
+        // Initialisiere die Schiffe für beide Spieler
+        this.playerOneShips = new ArrayList<>();
+        this.playerTwoShips = new ArrayList<>();
+
+        // Lade die Schiffsgrößen einmalig aus dem GameModel
+        for (int size : gameModel.getShipSizes()) {
+            playerOneShips.add(size);
+            playerTwoShips.add(size);
+        }
     }
 
     public void handleManualShipPlacement(Runnable onComplete) {
@@ -29,18 +50,18 @@ public class ShipController {
     private void placeShipsForPlayer(int currentTurn, int totalTurns, Runnable onComplete) {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
         BoardView currentBoard = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardOne() : gameView.getPlayerBoardTwo();
+        List<Integer> remainingShips = (currentPlayer == gameModel.getPlayerOne()) ? playerOneShips : playerTwoShips;
+
         this.currentShipIndex = 0;
         currentBoard.setVisible(true);
         currentBoard.toggleGridVisibility(true);
         this.gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " muss seine Schiffe platzieren");
 
-        placeShipsForCurrentPlayer(currentBoard, () -> {
+        placeShipsForCurrentPlayer(currentBoard, remainingShips, () -> {
             if (currentTurn < totalTurns - 1) {
                 currentBoard.updateBoard(currentPlayer.getBoard());
                 currentBoard.removeGraphics();
                 gameModel.switchPlayer();
-                this.gameModel.currentShipIndex = 0;
-                currentShipIndex = 0;
                 placeShipsForPlayer(currentTurn + 1, totalTurns, onComplete);
             } else {
                 currentBoard.removeGraphics();
@@ -51,7 +72,7 @@ public class ShipController {
         });
     }
 
-    private void placeShipsForCurrentPlayer(BoardView board, Runnable onComplete) {
+    private void placeShipsForCurrentPlayer(BoardView board, List<Integer> remainingShips, Runnable onComplete) {
         currentShipIndex = 0;
         isHorizontal = false;
 
@@ -64,16 +85,18 @@ public class ShipController {
                     int x = e.getY() / board.getCellSize();
                     int y = e.getX() / board.getCellSize();
 
-                    if (gameModel.placeNextShip(x, y, !isHorizontal)) {
-                        board.addGraphicsToCells(x , y, gameModel.getShipSizes()[currentShipIndex], isHorizontal);
-                        System.out.println(x +" und " +y);
-                        System.out.println(isHorizontal);
-                        currentShipIndex++;
-                        if (currentShipIndex >= gameModel.getShipSizes().length) {
+                    int shipSize = remainingShips.get(currentShipIndex); // Richtiges Schiff holen
+
+                    if (currentShipIndex < remainingShips.size() && gameModel.placeNextShip(x, y, shipSize, !isHorizontal)) {
+                        board.addGraphicsToCells(x, y, shipSize, isHorizontal); // Setze das Schiff mit der richtigen Größe
+                        remainingShips.remove(currentShipIndex); // Entfernt das platzierte Schiff aus der Liste
+                        if (remainingShips.isEmpty()) {
                             board.removeMouseListener(this);
                             board.removeMouseMotionListener(this);
                             board.hideShipPreview();
                             onComplete.run();
+                        } else {
+                            currentShipIndex = Math.min(currentShipIndex, remainingShips.size() - 1); // Index anpassen
                         }
                     } else {
                         JOptionPane.showMessageDialog(gameView, "Ungültige Schiffsplatzierung. Versuche es erneut.");
@@ -83,7 +106,7 @@ public class ShipController {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                updateShipPreview(e.getX(), e.getY(), board);
+                updateShipPreview(e.getX(), e.getY(), board, remainingShips);
             }
         };
 
@@ -92,21 +115,21 @@ public class ShipController {
             if (rotation < 0) {
                 currentShipIndex = Math.max(0, currentShipIndex - 1);
             } else {
-                currentShipIndex = Math.min(gameModel.getShipSizes().length - 1, currentShipIndex + 1);
+                currentShipIndex = Math.min(remainingShips.size() - 1, currentShipIndex + 1);
             }
             Point mousePosition = board.getMousePosition();
             if (mousePosition != null) {
-                updateShipPreview(mousePosition.x, mousePosition.y, board);
+                updateShipPreview(mousePosition.x, mousePosition.y, board, remainingShips);
             }
         });
 
         board.addMouseListener(mouseAdapter);
-        board.addMouseWheelListener(mouseAdapter);
         board.addMouseMotionListener(mouseAdapter);
     }
 
-    private void updateShipPreview(int mouseX, int mouseY, BoardView board) {
-        int shipLength = gameModel.getShipSizes()[currentShipIndex];
+    private void updateShipPreview(int mouseX, int mouseY, BoardView board, List<Integer> remainingShips) {
+        if (remainingShips.isEmpty()) return;
+        int shipLength = remainingShips.get(currentShipIndex);
         int width = isHorizontal ? shipLength * board.getCellSize() : board.getCellSize();
         int height = isHorizontal ? board.getCellSize() : shipLength * board.getCellSize();
 
