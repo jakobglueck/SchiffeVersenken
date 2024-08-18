@@ -137,7 +137,7 @@ public class BoardView extends JPanel {
         customGridPanel.setOpaque(false);
         shipPreviewLabel = new JLabel();
         shipPreviewLabel.setOpaque(true);
-        shipPreviewLabel.setBackground(new Color(0, 0, 255, 128));
+        shipPreviewLabel.setBackground(new Color(110, 110, 255, 255));
         shipPreviewLabel.setVisible(false);
         customGridPanel.add(shipPreviewLabel);
 
