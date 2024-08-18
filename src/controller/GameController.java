@@ -71,7 +71,7 @@ public class GameController {
 
         gameModel.createPlayerWithNames(playerOneName, playerTwoName);
         gameView.setVisible(true);
-        gameView.createPlayerBase();
+        gameView.createPlayerBase(gameModel.getPlayerOne(), gameModel.getPlayerTwo());
         this.gameView.updateGameModePanel(this.detectGameMode());
         gameModel.startGame();
         boardController.startGameListeners();

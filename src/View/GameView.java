@@ -10,7 +10,6 @@ public class GameView extends JFrame {
 
     private PlayerModel playerOne;
     private PlayerModel playerTwo;
-    private GameModel game;
     private BoardView playerBoardOne;
     private BoardView playerBoardTwo;
     private InfoPanelView infoPanelViewOne;
@@ -23,8 +22,7 @@ public class GameView extends JFrame {
 
     public static final int CELL_SIZE = 50;
 
-    public GameView(GameModel gm) {
-        this.game = gm;
+    public GameView() {
 
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,9 +39,9 @@ public class GameView extends JFrame {
         layeredPane.add(shipPreviewLabel, JLayeredPane.DRAG_LAYER);
     }
 
-    public void createPlayerBase() {
-        this.playerOne = game.getPlayerOne();
-        this.playerTwo = game.getPlayerTwo();
+    public void createPlayerBase(PlayerModel playerOne, PlayerModel playerTwo) {
+        this.playerOne = playerOne;
+        this.playerTwo = playerTwo;
 
         if (playerOne == null || playerTwo == null) {
             throw new IllegalStateException("Spieler müssen vor dem Aufruf dieser Methode initialisiert werden.");
@@ -139,9 +137,7 @@ public class GameView extends JFrame {
         return this.playerBoardTwo;
     }
 
-    public void updateBoardVisibility(PlayerModel currentPlayer) {
-        GameState gameState = game.getGameState();
-
+    public void updateBoardVisibility(PlayerModel currentPlayer, GameState gameState) {
         switch (gameState) {
             case NORMAL:
                 if (currentPlayer == playerOne) {

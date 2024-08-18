@@ -56,7 +56,7 @@ public class BoardController {
      */
     public void updateBoardVisibility() {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        gameView.updateBoardVisibility(currentPlayer);
+        gameView.updateBoardVisibility(currentPlayer, gameModel.getGameState());
     }
 
     /**
@@ -86,7 +86,7 @@ public class BoardController {
     public void updateGameView() {
         gameView.getPlayerBoardOne().updateBoard();
         gameView.getPlayerBoardTwo().updateBoard();
-        gameView.updateBoardVisibility(gameModel.getCurrentPlayer());
+        gameView.updateBoardVisibility(gameModel.getCurrentPlayer(), gameModel.getGameState());
         gameView.getStatusView().updatePlayerName("Aktueller Spieler: " + gameModel.getCurrentPlayer().getPlayerName());
         gameView.getPlayerBoardOne().revalidate();
         gameView.getPlayerBoardOne().repaint();
