@@ -1,6 +1,5 @@
 /**
  * @file ComputerPlayerModel.java
- * @brief Diese Klasse repräsentiert einen Computergegner im Spiel und enthält die Logik für dessen Züge und Entscheidungen.
  */
 
 package model;
@@ -11,46 +10,23 @@ import java.util.*;
 
 /**
  * @class ComputerPlayerModel
- * @brief Ein spezielles PlayerModel, das die Logik für einen Computergegner implementiert.
+ * @brief Ein spezieller Spieler der PlayerModel-Klasse, die Logik für einen Computergegner implementiert.
  */
 public class ComputerPlayerModel extends PlayerModel {
-
-    private List<int[]> computerMove; ///< Eine Liste der verfügbaren Züge, die der Computer machen kann.
-    private int lastMoveX; ///< Die X-Koordinate des letzten Zuges des Computers.
-    private int lastMoveY; ///< Die Y-Koordinate des letzten Zuges des Computers.
+    // alle erlaubte Spielzüge des Computers
+    private List<int[]> computerMove;
+    // X-Koordinate des letzten Zuges des Computers
+    private int lastMoveX;
+    // Y-Koordinate des letzten Zuges des Computers
+    private int lastMoveY;
 
     /**
-     * @brief Konstruktor, der einen Computergegner mit einem bestimmten Namen erstellt.
+     * @brief Konstruktor, der einen Computergegner mit einem festen Namen erstellt und alle möglichen Spielzüge erstellt.
      * @param playerName Der Name des Computergegners.
      */
     public ComputerPlayerModel(String playerName) {
         super(playerName);
         this.initializeAvailableMoves();
-    }
-
-    /**
-     * @brief Initialisiert die Liste der verfügbaren Züge, die der Computer machen kann.
-     */
-    private void initializeAvailableMoves() {
-        computerMove = new ArrayList<>();
-        for (int i = 0; i < BoardModel.WIDTH; i++) {
-            for (int j = 0; j < BoardModel.HEIGHT; j++) {
-                computerMove.add(new int[]{i, j});
-            }
-        }
-    }
-
-    /**
-     * @brief Führt einen Zug des Computers aus und speichert die Koordinaten des letzten Zuges.
-     * @param opponent Der gegnerische Spieler.
-     * @param x Die X-Koordinate des Zuges.
-     * @param y Die Y-Koordinate des Zuges.
-     */
-    @Override
-    public void takeTurn(PlayerModel opponent, int x, int y) {
-        lastMoveX = x;
-        lastMoveY = y;
-        super.takeTurn(opponent, x, y);
     }
 
     /**
@@ -70,15 +46,28 @@ public class ComputerPlayerModel extends PlayerModel {
     }
 
     /**
+     * @brief Erstellt eine Liste der verfügbaren Züge, die der Computer machen kann.
+     */
+    private void initializeAvailableMoves() {
+        computerMove = new ArrayList<>();
+        for (int i = 0; i < BoardModel.WIDTH; i++) {
+            for (int j = 0; j < BoardModel.HEIGHT; j++) {
+                computerMove.add(new int[]{i, j});
+            }
+        }
+    }
+
+    /**
      * @brief Führt einen Zug des Computers gegen den gegnerischen Spieler aus.
      * @param opponent Der gegnerische Spieler.
-     * @return true, wenn der Computer ein Schiff getroffen hat; false, wenn er verfehlt hat.
+     * @return true, wenn der Computer ein Schiff getroffen hat.
      */
     public boolean makeMove(PlayerModel opponent) {
         boolean result = false;
         if (!computerMove.isEmpty()) {
             Random random = new Random();
             int index = random.nextInt(computerMove.size());
+            // Auswahl eines zufälligen Index um aus der Klassenvariable computerMove einen Zug zu bekommen.
             int[] move = computerMove.remove(index);
             lastMoveX = move[0];
             lastMoveY = move[1];

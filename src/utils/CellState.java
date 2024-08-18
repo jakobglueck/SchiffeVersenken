@@ -1,16 +1,18 @@
 /**
  * @file CellState.java
- * @brief Dieses Enum definiert die verschiedenen Zustände, die eine Zelle auf dem Spielfeld haben kann.
  */
 
 package utils;
 
 /**
  * @enum CellState
- * @brief Repräsentiert die verschiedenen Zustände, in denen sich eine Zelle auf dem Spielfeld befinden kann.
+ * @brief Zeigt die verschiedenen Zustände einer Zelle auf dem Board.
  */
 public enum CellState {
-    FREE,   ///< Die Zelle ist frei und enthält kein Schiff.
-    SET,    ///< Die Zelle enthält ein platziertes Schiff.
-    HIT,    ///< Die Zelle wurde angegriffen und enthält ein getroffenes Schiff.
+    // Zelle enthält kein Schiff und ist somit nicht besetzt.
+    FREE,
+    // Die Zelle besitzt ein Teil eines Schiffes.
+    SET,
+    // Die Zelle besitzt ein Teil eines Schiffes, welches durch einen Spieler getroffen wurde
+    HIT,
 }

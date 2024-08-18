@@ -1,6 +1,5 @@
 /**
  * @file CellModel.java
- * @brief Diese Klasse repräsentiert eine Zelle auf dem Spielfeld und enthält Informationen über deren Zustand und Position.
  */
 
 package model;
@@ -9,60 +8,64 @@ import utils.CellState;
 
 /**
  * @class CellModel
- * @brief Verantwortlich für die Verwaltung des Zustands und der Position einer einzelnen Zelle auf dem Spielfeld.
+ * @brief Diese Klasse stellt eine einzelne Zelle auf einem Spielfeld dar. Sie enthält Informationen über den Zustand der Zelle,
+ *        sowie deren Position auf dem Spielfeld, welche durch X- und Y-Koordinaten angegeben werden.
+ *        Diese Klasse ermöglicht es, die einzelnen Zellkomponenten zu erhalten, zu aktualisieren und zu überprüfen, ob die Zelle getroffen wurde.
  */
 public class CellModel {
-    private CellState cellState; ///< Der aktuelle Zustand der Zelle (frei, belegt, getroffen, etc.).
-    private final int x; ///< Die X-Koordinate der Zelle auf dem Spielfeld.
-    private final int y; ///< Die Y-Koordinate der Zelle auf dem Spielfeld.
+    private CellState cellState;
+    private final int cordX;
+    private final int cordY;
 
     /**
-     * @brief Konstruktor, der eine Zelle mit einer bestimmten Position und einem Zustand erstellt.
-     * @param x Die X-Koordinate der Zelle.
-     * @param y Die Y-Koordinate der Zelle.
-     * @param cellState Der anfängliche Zustand der Zelle.
+     * @brief Konstruktor, legt die Variablen der Klasse fest.
+     * @param cordX Die X-Koordinate der Zelle auf dem Spielfeld, die ihre horizontale Position bestimmt.
+     * @param cordY Die Y-Koordinate der Zelle auf dem Spielfeld, die ihre vertikale Position bestimmt.
+     * @param cellState Der anfängliche Zustand der Zelle, der bestimmt, ob die Zelle frei, belegt, getroffen usw. ist.
      */
-    public CellModel(int x, int y, CellState cellState) {
+    public CellModel(int cordX, int cordY, CellState cellState) {
         this.cellState = cellState;
-        this.x = x;
-        this.y = y;
-    }
-
-    /**
-     * @brief Aktualisiert den Zustand der Zelle.
-     * @param cellState Der neue Zustand der Zelle.
-     */
-    public void updateCellState(CellState cellState) {
-        this.cellState = cellState;
+        this.cordX = cordX;
+        this.cordY = cordY;
     }
 
     /**
      * @brief Gibt die X-Koordinate der Zelle zurück.
-     * @return Die X-Koordinate der Zelle.
+     * @return Die X-Koordinate der Zelle als Ganzzahl.
      */
     public int getX() {
-        return this.x;
+        return this.cordX;
     }
 
     /**
      * @brief Gibt die Y-Koordinate der Zelle zurück.
-     * @return Die Y-Koordinate der Zelle.
+     * @return Die Y-Koordinate der Zelle als Ganzzahl.
      */
     public int getY() {
-        return this.y;
+        return this.cordY;
     }
 
     /**
      * @brief Gibt den aktuellen Zustand der Zelle zurück.
-     * @return Der aktuelle Zustand der Zelle.
+     * @return Gibt den aktuellen Zustand der Zelle als Enum-Wert des CellState-Enums wieder.
      */
     public CellState getCellState() {
         return this.cellState;
     }
 
     /**
-     * @brief Überprüft, ob die Zelle getroffen wurde.
-     * @return true, wenn die Zelle getroffen wurde; false sonst.
+     * @brief Aktualisiert den Zustand der Zelle.
+     *        Diese Methode ändert den Zustand der Zelle.
+     * @param cellState Der neue Zustand der Zelle, der ein Wert des CellState-Enums ist.
+     */
+    public void updateCellState(CellState cellState) {
+        this.cellState = cellState;
+    }
+
+    /**
+     * @brief Diese Methode überprüft, den Zustand der Zelle mit den CellState.HIT, um zu überprüfen, ob eine Zelle durch einen
+     *        Spieler
+     * @return Wenn die Zelle getroffen wurde, erfolgt als Ausgabe true;
      */
     public boolean isHit() {
         return this.cellState == CellState.HIT;

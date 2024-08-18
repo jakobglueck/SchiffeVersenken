@@ -1,32 +1,33 @@
 /**
  * @file ShipModel.java
- * @brief Diese Klasse repräsentiert ein Schiff auf dem Spielfeld und enthält die Logik für dessen Platzierung und Zustand.
  */
 
 package model;
 
 import utils.CellState;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @class ShipModel
- * @brief Verantwortlich für die Verwaltung der Zellen, die ein Schiff auf dem Spielfeld bilden, und den Zustand des Schiffs (z.B. ob es versenkt wurde).
+ * @brief Verantwortlich für die Verwaltung der Zellen, die ein Schiff auf dem Spielfeld bilden.
+ *        Weiterhin wird der den Zustand des Schiffes geprüft.
  */
 public class ShipModel {
-    private final List<CellModel> shipCells; ///< Eine Liste der Zellen, die das Schiff bilden.
-    private final int length; ///< Die Länge des Schiffs.
-    private final boolean horizontal; ///< Gibt an, ob das Schiff horizontal oder vertikal platziert ist.
-    private boolean sunk; ///< Gibt an, ob das Schiff versenkt wurde.
+    private final List<CellModel> shipCells;
+    private final int length;
+    private final boolean horizontal;
+    private boolean sunk;
 
     /**
-     * @brief Konstruktor, der ein Schiff auf dem Spielfeld platziert und seine Zellen initialisiert.
-     * @param boardModel Das Spielfeldmodell, auf dem das Schiff platziert wird.
-     * @param startX Die X-Koordinate des Startpunktes des Schiffs.
-     * @param startY Die Y-Koordinate des Startpunktes des Schiffs.
+     * @brief Der Konstruktor belegt alle Klassenvariablen mit Werten.
+     *        Mittels der Koordinaten der ersten Zelle, sowie die Länge und Ausrichtung dieser, werden die restlichen
+     *        Zellen des Schiffes berechnet und auf das Board gesetzt.
+     * @param boardModel Das Board, auf dem das Schiff platziert wird.
+     * @param startX Die X-Koordinate der ersten Schiffzelle.
+     * @param startY Die Y-Koordinate der ersten Schiffzelle.
      * @param length Die Länge des Schiffs.
-     * @param horizontal Gibt an, ob das Schiff horizontal oder vertikal platziert wird.
+     * @param horizontal Gibt die Ausrichtung (horizontal (true) oder vertikal(false)) des Schiffes an.
      */
     public ShipModel(BoardModel boardModel, int startX, int startY, int length, boolean horizontal) {
         this.length = length;
@@ -34,23 +35,42 @@ public class ShipModel {
         this.sunk = false;
         this.shipCells = new ArrayList<>();
 
-        for (int i = 0; i < length; i++) {
-            int currentX = horizontal ? boardModel.getCell(startX, startY).getX() + i : boardModel.getCell(startX, startY).getX();
-            int currentY = horizontal ? boardModel.getCell(startX, startY).getY() : boardModel.getCell(startX, startY).getY() + i;
+        for (int i = 0; i < this.length; i++) {
+            // Ermittlung der X-Koordinate abhängig von der Ausrichtung des Schiffes.
+            int currentX = this.horizontal ? boardModel.getCell(startX, startY).getX() + i : boardModel.getCell(startX, startY).getX();
+            // Ermittlung der Y-Koordinate abhängig von der Ausrichtung des Schiffes.
+            int currentY = this.horizontal ? boardModel.getCell(startX, startY).getY() : boardModel.getCell(startX, startY).getY() + i;
+            // Der Zellstatus wird auf SET gestellt.
             boardModel.getCell(currentX, currentY).updateCellState(CellState.SET);
             this.shipCells.add(boardModel.getCell(currentX, currentY));
         }
     }
 
     /**
-     * @brief Überprüft, ob das Schiff an der angegebenen Position getroffen wurde.
-     * @param x Die X-Koordinate des Treffers.
-     * @param y Die Y-Koordinate des Treffers.
-     * @return true, wenn das Schiff an dieser Position getroffen wurde; false sonst.
+     * @brief Gibt alle Zellen des Schiffes zurück.
+     * @return Liste der Zellen des Schiffs
      */
-    public boolean isHit(int x, int y) {
+    public List<CellModel> getShipCells() {
+        return this.shipCells;
+    }
+
+    /**
+     * @brief Gibt den Wert der Klassenvariable sunk zurück.
+     * @return den boolean Wert der Klassenvariable sunk
+     */
+    public boolean isSunk() {
+        return this.sunk;
+    }
+
+    /**
+     * @brief Überprüft, ob ein Angriff ein Teil des Schiffes getroffen hat.
+     * @param cordX Die X-Koordinate des Angriffs.
+     * @param cordY Die Y-Koordinate des Angriffs.
+     * @return true, wenn das Schiff an dieser Position getroffen wurde.
+     */
+    public boolean isHit(int cordX, int cordY) {
         for (CellModel cell : this.shipCells) {
-            if (cell.getX() == x && cell.getY() == y) {
+            if (cell.getX() == cordX && cell.getY() == cordY) {
                 return true;
             }
         }
@@ -58,7 +78,8 @@ public class ShipModel {
     }
 
     /**
-     * @brief Überprüft, ob alle Zellen des Schiffs getroffen wurden und setzt den Status des Schiffs entsprechend.
+     * @brief Überprüft, ob alle Zellen des Schiffs getroffen wurden und setzt, wenn alle Zellen des Schiffes getroffen worden,
+     * die Klassenvariable sunk auf true.
      */
     public void checkShipStatus() {
         for (CellModel cell : this.shipCells) {
@@ -67,21 +88,5 @@ public class ShipModel {
             }
         }
         this.sunk = true;
-    }
-
-    /**
-     * @brief Gibt an, ob das Schiff versenkt wurde.
-     * @return true, wenn das Schiff versenkt wurde; false sonst.
-     */
-    public boolean isSunk() {
-        return this.sunk;
-    }
-
-    /**
-     * @brief Gibt die Liste der Zellen zurück, die das Schiff bilden.
-     * @return Eine Liste der Zellen des Schiffs.
-     */
-    public List<CellModel> getShipCells() {
-        return this.shipCells;
     }
 }
