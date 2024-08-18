@@ -135,8 +135,8 @@ public class BoardController {
         BoardModel currentBoardModel = currentPlayer.getBoard();
         BoardModel clickedBoard = this.getBoardModelForView(clickedBoardView);
 
-        if (gameModel.getGameState() == GameState.NORMAL && clickedBord == currentBoardModel) {
-            gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat sein eigenes Board angegriffen. Bitte greife das Board des Gegners an!");
+        if (gameModel.getGameState() == GameState.NORMAL && clickedBoard == currentBoardModel) {
+            gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " greife das Board des Gegners an!");
             return;
         }
 
