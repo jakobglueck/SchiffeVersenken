@@ -24,17 +24,23 @@ public class GameInfoView extends JPanel {
      * Initialisiert die Komponenten und das Layout.
      */
     public GameInfoView() {
-        this.setLayout(new GridLayout(3, 1, 0, -75));
-
+        this.setLayout(new GridLayout(3, 1, 0, -25));
         this.statusTitleLabel = new JLabel("Status", JLabel.CENTER);
         this.playerNameLabel = new JLabel("", JLabel.CENTER);
-        this.statusMessageLabel = new JLabel("Warte auf Spielbeginn", JLabel.CENTER);
+
+        // Verwende HTML, um den Text im statusMessageLabel zu umbrechen
+        this.statusMessageLabel = new JLabel("<html><div style='text-align: center;'>Warte auf Spielbeginn</div></html>", JLabel.CENTER);
+
+        // Optional: zusätzliche Ränder um die Labels für noch mehr Abstand
+        this.statusTitleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        this.playerNameLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        this.statusMessageLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         this.add(this.statusTitleLabel);
         this.add(this.playerNameLabel);
         this.add(this.statusMessageLabel);
 
-        this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        this.setBorder(BorderFactory.createEmptyBorder(25, 10, 10, 10));
     }
 
     /**
@@ -50,7 +56,8 @@ public class GameInfoView extends JPanel {
      * @param info Die neuen, zusätzlichen Informationen, die angezeigt werden sollen.
      */
     public void updateStatusMessageLabel(String info) {
-        this.statusMessageLabel.setText(info);
+        // Verwende HTML, um den Text automatisch umzubrechen
+        this.statusMessageLabel.setText("<html><div style='text-align: center;'>" + info + "</div></html>");
     }
 
     /**
