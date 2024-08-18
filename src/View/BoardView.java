@@ -116,12 +116,12 @@ public class BoardView extends JPanel {
         gridPanel.repaint();
     }
 
-    public void removePanelForShipPlacement(){
+    public void removePanelForShipPlacement( BoardModel boardModel){
         removeGraphics();  // Entferne die Grafiken, wenn das Panel entfernt wird
         gridPanel.removeAll();
         this.mainPanel.remove(gridPanel);
         this.mainPanel.add(createGridPanel());
-        this.updateBoard();
+        this.updateBoard(boardModel);
         revalidate();
         repaint();
     }
@@ -219,17 +219,17 @@ public class BoardView extends JPanel {
         this.boardClickListener = listener;
     }
 
-    public void updateBoard() {
+    public void updateBoard(BoardModel playerBoard) {
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
-                updateCell(row, col);
+                updateCell(row, col, playerBoard);
             }
         }
         gridPanel.revalidate();
         gridPanel.repaint();
     }
 
-    private void updateCell(int row, int col) {
+    private void updateCell(int row, int col, BoardModel playerBoard) {
         CellModel cell = playerBoard.getCell(row, col);
         JLabel label = labels[row][col];
 

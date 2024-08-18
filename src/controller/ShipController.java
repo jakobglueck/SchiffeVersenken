@@ -35,7 +35,7 @@ public class ShipController {
 
         placeShipsForCurrentPlayer(currentBoard, () -> {
             if (currentTurn < totalTurns - 1) {
-                currentBoard.updateBoard();
+                currentBoard.updateBoard(currentPlayer.getBoard());
                 currentBoard.removeGraphics();
                 gameModel.switchPlayer();
                 this.gameModel.currentShipIndex = 0;

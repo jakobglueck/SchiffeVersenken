@@ -8,9 +8,6 @@ import java.awt.*;
 
 public class GameView extends JFrame {
 
-    private PlayerModel playerOne;
-    private PlayerModel playerTwo;
-    private GameModel game;
     private BoardView playerBoardOne;
     private BoardView playerBoardTwo;
     private StatsView statsViewOne;
@@ -21,10 +18,7 @@ public class GameView extends JFrame {
     private JLabel shipPreviewLabel;
     private JLayeredPane layeredPane;
 
-    public static final int CELL_SIZE = 50;
-
-    public GameView(GameModel gm) {
-        this.game = gm;
+    public GameView() {
 
         setTitle("Schiffe versenken");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,9 +35,7 @@ public class GameView extends JFrame {
         layeredPane.add(shipPreviewLabel, JLayeredPane.DRAG_LAYER);
     }
 
-    public void createPlayerBase() {
-        this.playerOne = game.getPlayerOne();
-        this.playerTwo = game.getPlayerTwo();
+    public void createPlayerBase(PlayerModel playerOne, PlayerModel playerTwo) {
 
         if (playerOne == null || playerTwo == null) {
             throw new IllegalStateException("Spieler müssen vor dem Aufruf dieser Methode initialisiert werden.");
@@ -52,8 +44,8 @@ public class GameView extends JFrame {
         this.playerBoardOne = new BoardView(playerOne.getBoard());
         this.playerBoardTwo = new BoardView(playerTwo.getBoard());
 
-        playerBoardOne.updateBoard();
-        playerBoardTwo.updateBoard();
+        playerBoardOne.updateBoard(playerOne.getBoard());
+        playerBoardTwo.updateBoard(playerTwo.getBoard());
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
         layeredPane.add(mainPanel, JLayeredPane.DEFAULT_LAYER);
@@ -68,7 +60,7 @@ public class GameView extends JFrame {
         mainPanel.add(createGameModePanel(), gbc);
 
         gbc.weighty = 0.05;
-        mainPanel.add(createPlayerPanel(), gbc);
+        mainPanel.add(createPlayerPanel(playerOne, playerTwo), gbc);
 
         gbc.weighty = 0.55;
         mainPanel.add(createBoardPanel(), gbc);
@@ -87,10 +79,10 @@ public class GameView extends JFrame {
         setVisible(true);
     }
 
-    private JPanel createPlayerPanel() {
+    private JPanel createPlayerPanel(PlayerModel playerOne, PlayerModel playerTwo) {
         JPanel playerPanel = new JPanel(new GridLayout(1, 2));
-        PlayerNameView playerNameViewOne = new PlayerNameView(this.playerOne.getPlayerName());
-        PlayerNameView playerNameViewTwo = new PlayerNameView(this.playerTwo.getPlayerName());
+        PlayerView playerViewOne = new PlayerView(playerOne.getPlayerName());
+        PlayerView playerViewTwo = new PlayerView(playerTwo.getPlayerName());
 
         playerPanel.add(playerNameViewOne);
         playerPanel.add(playerNameViewTwo);
@@ -139,15 +131,13 @@ public class GameView extends JFrame {
         return this.playerBoardTwo;
     }
 
-    public void updateBoardVisibility(PlayerModel currentPlayer) {
-        GameState gameState = game.getGameState();
-
+    public void updateBoardVisibility(GameModel gameModel, GameState gameState) {
         switch (gameState) {
             case NORMAL:
-                if (currentPlayer == playerOne) {
+                if (gameModel.getCurrentPlayer() == gameModel.getPlayerOne()) {
                     playerBoardOne.setGridLabelsOpaque(true);
                     playerBoardTwo.setGridLabelsOpaque(false);
-                } else if (currentPlayer == playerTwo) {
+                } else if (gameModel.getCurrentPlayer() == gameModel.getPlayerTwo()) {
                     playerBoardOne.setGridLabelsOpaque(false);
                     playerBoardTwo.setGridLabelsOpaque(true);
                 }

@@ -9,7 +9,7 @@ public class SchiffeVersenkenMain {
         GameModel gm = new GameModel();
         HomeScreenView hw = new HomeScreenView();
 
-        GameView gw = new GameView(gm);
+        GameView gw = new GameView();
         GameController controller = new GameController(gm, gw, hw);
     }
 }

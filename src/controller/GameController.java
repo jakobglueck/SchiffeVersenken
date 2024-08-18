@@ -71,7 +71,7 @@ public class GameController {
 
         gameModel.createPlayerWithNames(playerOneName, playerTwoName);
         gameView.setVisible(true);
-        gameView.createPlayerBase();
+        gameView.createPlayerBase(gameModel.getPlayerOne(), gameModel.getPlayerTwo());
         this.gameView.updateGameModePanel(this.detectGameMode());
         gameModel.startGame();
         boardController.startGameListeners();
@@ -81,7 +81,7 @@ public class GameController {
                 gameView.getPlayerBoardOne().createPanelForShipPlacement();
                 gameView.getPlayerBoardTwo().createPanelForShipPlacement();
                 shipController.handleManualShipPlacement(() -> {
-                    gameView.getPlayerBoardOne().removePanelForShipPlacement();
+                    gameView.getPlayerBoardOne().removePanelForShipPlacement(gameModel.getPlayerOne().getBoard());
                     removePanelForShipPlacement();
                 });
             });
@@ -94,8 +94,8 @@ public class GameController {
      * @brief Entfernt die Panels zur Schiffsplatzierung und startet den Spielablauf.
      */
     private void removePanelForShipPlacement() {
-        this.gameView.getPlayerBoardOne().removePanelForShipPlacement();
-        this.gameView.getPlayerBoardTwo().removePanelForShipPlacement();
+        this.gameView.getPlayerBoardOne().removePanelForShipPlacement(gameModel.getPlayerOne().getBoard());
+        this.gameView.getPlayerBoardTwo().removePanelForShipPlacement(gameModel.getPlayerTwo().getBoard());
         this.gameView.getPlayerBoardOne().createLabelForBoard();
         this.gameView.getPlayerBoardTwo().createLabelForBoard();
         SwingUtilities.invokeLater(this::runGameLoop);
@@ -178,11 +178,11 @@ public class GameController {
                 if (targetCell.getCellState() == CellState.FREE) {
                     playerBoardView.markAsMiss(playerBoardView.getLabelForCell(lastX, lastY));
                 } else if (targetCell.getCellState() == CellState.SET){
-                    playerBoardView.updateBoard();
+                    playerBoardView.updateBoard(gameModel.getPlayerOne().getBoard());
                 }
 
-                this.gameView.getPlayerBoardOne().updateBoard();
-                this.gameView.getPlayerBoardTwo().updateBoard();
+                this.gameView.getPlayerBoardOne().updateBoard(gameModel.getPlayerOne().getBoard());
+                this.gameView.getPlayerBoardTwo().updateBoard(gameModel.getPlayerTwo().getBoard());
 
                 if (gameModel.isGameOver()) {
                     showGameOverScreen();
