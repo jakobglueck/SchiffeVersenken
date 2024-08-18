@@ -1,22 +1,23 @@
 /**
  * @file PlayerStatus.java
- * @brief Diese Klasse verwaltet den Status eines Spielers, einschließlich der Gesamtanzahl von Klicks, Treffern und versenkten Schiffen.
  */
 
 package model;
 
 /**
  * @class PlayerStatus
- * @brief Verantwortlich für die Aufzeichnung und Berechnung von Spielerstatistiken wie Klicks, Treffer und versenkte Schiffe.
+ * @brief Verantwortlich für die Aufzeichnung und Berechnung von Spielerstatistiken.
  */
 public class PlayerStatus {
-
-    private int totalClicks; ///< Die Gesamtzahl der Klicks, die der Spieler gemacht hat.
-    private int hits; ///< Die Anzahl der Treffer, die der Spieler gelandet hat.
-    private int shunkShips; ///< Die Anzahl der versenkten Schiffe des Spielers.
+    // Gesamtzahl der Klicks
+    private int totalClicks;
+    // Anzahl der Treffer
+    private int hits;
+    //Anzahl der versenkten Schiffe
+    private int shunkShips;
 
     /**
-     * @brief Konstruktor, der den Spielerstatus initialisiert.
+     * @brief Konstruktor, der den Spielerstatus initialisiert und die Klassenvariablen auf ihre Standardwerte setzt.
      */
     PlayerStatus() {
         this.totalClicks = 0;
@@ -25,11 +26,27 @@ public class PlayerStatus {
     }
 
     /**
-     * @brief Gibt die Gesamtzahl der Klicks zurück, die der Spieler gemacht hat.
+     * @brief Gibt die Gesamtzahl der Klicks zurück, die ein Spieler gemacht hat.
      * @return Die Gesamtzahl der Klicks.
      */
     public int getTotalClicks() {
         return this.totalClicks;
+    }
+
+    /**
+     * @brief Gibt die Anzahl der Treffer zurück, die ein Spieler gemacht hat.
+     * @return Die Anzahl der Treffer.
+     */
+    public int getHits() {
+        return this.hits;
+    }
+
+    /**
+     * @brief Gibt die Anzahl der Schiffe an, die ein Spieler versenkt hat.
+     * @return Die Anzahl der versenkten Schiffe.
+     */
+    public int getSunkShips() {
+        return this.shunkShips;
     }
 
     /**
@@ -40,16 +57,8 @@ public class PlayerStatus {
     }
 
     /**
-     * @brief Gibt die Anzahl der Treffer zurück, die der Spieler gemacht hat.
-     * @return Die Anzahl der Treffer.
-     */
-    public int getHits() {
-        return this.hits;
-    }
-
-    /**
-     * @brief Berechnet die Anzahl der Treffer basierend auf dem aktuellen Zustand des Spielfelds.
-     * @param boardModel Das Spielfeldmodell, das die aktuellen Schiffe und Zellen enthält.
+     * @brief Berechnet die Anzahl der Treffer.
+     * @param boardModel Das Board, das die aktuellen Schiffe und Zellen enthält.
      */
     public void calculateHits(BoardModel boardModel) {
         int temp = 0;
@@ -64,16 +73,8 @@ public class PlayerStatus {
     }
 
     /**
-     * @brief Gibt die Anzahl der versenkten Schiffe zurück.
-     * @return Die Anzahl der versenkten Schiffe.
-     */
-    public int getSunkShips() {
-        return this.shunkShips;
-    }
-
-    /**
-     * @brief Berechnet die Anzahl der versenkten Schiffe basierend auf dem aktuellen Zustand des Spielfelds.
-     * @param boardModel Das Spielfeldmodell, das die aktuellen Schiffe und Zellen enthält.
+     * @brief Berechnet die Anzahl der versenkten Schiffe.
+     * @param boardModel Das Board, das die aktuellen Schiffe und Zellen enthält.
      */
     public void calculateShunkShips(BoardModel boardModel) {
         int temp = 0;
