@@ -35,11 +35,11 @@ public class ShipModel {
         this.sunk = false;
         this.shipCells = new ArrayList<>();
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < this.length; i++) {
             // Ermittlung der X-Koordinate abhängig von der Ausrichtung des Schiffes.
-            int currentX = horizontal ? boardModel.getCell(startX, startY).getX() + i : boardModel.getCell(startX, startY).getX();
+            int currentX = this.horizontal ? boardModel.getCell(startX, startY).getX() + i : boardModel.getCell(startX, startY).getX();
             // Ermittlung der Y-Koordinate abhängig von der Ausrichtung des Schiffes.
-            int currentY = horizontal ? boardModel.getCell(startX, startY).getY() : boardModel.getCell(startX, startY).getY() + i;
+            int currentY = this.horizontal ? boardModel.getCell(startX, startY).getY() : boardModel.getCell(startX, startY).getY() + i;
             // Der Zellstatus wird auf SET gestellt.
             boardModel.getCell(currentX, currentY).updateCellState(CellState.SET);
             this.shipCells.add(boardModel.getCell(currentX, currentY));
