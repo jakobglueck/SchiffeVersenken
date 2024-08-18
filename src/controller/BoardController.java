@@ -140,7 +140,7 @@ public class BoardController {
         BoardModel clickedBord  = this.getBoardModelForView(clickedBoardView);
 
         if (gameModel.getGameState() == GameState.NORMAL && clickedBord == currentBoardModel) {
-            gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat sein eigenes Board angegriffen. Bitte greife das Board des Gegners an!");
+            gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat sein eigenes Board angegriffen. Bitte greife das Board des Gegners an!");
             return;
         }
 
@@ -190,22 +190,22 @@ public class BoardController {
         switch (cell.getCellState()) {
             case FREE:
                 clickedBoardView.markAsMiss(label);
-                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat nicht getroffen");
+                gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat nicht getroffen");
                 break;
             case SET:
                 ShipModel ship = opponentBoardModel.registerHit(row, col);
                 currentPlayer.getPlayerStatus().calculateHits(opponentBoardModel);
                 currentPlayer.getPlayerStatus().calculateShunkShips(opponentBoardModel);
                 hitShip = true;
-                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat getroffen");
+                gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat getroffen");
                 if (ship != null && ship.isSunk()) {
                     clickedBoardView.updateRevealedShip(ship);
-                    gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat ein Schiff versenkt");
+                    gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat ein Schiff versenkt");
                     markSurroundingCellsAsMiss(ship, clickedBoardView, opponentBoardModel);
                 }
                 break;
             default:
-                gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " kann ein bereits getroffenes Schiff nicht nochmal angreifen");
+                gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " kann ein bereits getroffenes Schiff nicht nochmal angreifen");
                 return false;
         }
         return hitShip;

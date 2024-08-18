@@ -12,7 +12,7 @@ public class BoardView extends JPanel {
     private JLabel[][] labels;
     private JLabel shipPreviewLabel;
     private BoardClickListener boardClickListener;
-    private List<JLabel> graphicsLabels;  // Liste der Labels für die Grafiken
+    private List<JLabel> graphicsLabels;
 
     private static final int CELL_SIZE = 40;
     public static final int BOARD_SIZE = 10;

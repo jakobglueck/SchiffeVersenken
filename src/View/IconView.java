@@ -6,16 +6,19 @@ import java.awt.image.BufferedImage;
 
 /**
  * @class IconView
- * @brief Diese Klasse stellt statische Methoden zur Verfügung, um Icons zu erzeugen, die für die Darstellung von Punkten und Kreuzen verwendet werden.
+ * @brief Diese Klasse stellt Methoden zur Verfügung, um spezielle Icons zu generieren,
+ * die zur Visualisierung von Spielereignissen genutzt werden, wie z.B. Punkte für verfehlte Schüsse
+ * und Kreuze für Treffer.
  */
+
 public class IconView {
 
     /**
-     * @brief Erzeugt ein Icon, das einen gefüllten Punkt (Dot) darstellt.
+     * @brief Erzeugt ein Icon, das einen Punkt darstellt.
      *
      * @param color Die Farbe des Punktes.
-     * @param size  Die Größe des Icons (Breite und Höhe).
-     * @return Ein Icon, das einen gefüllten Punkt darstellt.
+     * @param size  Die Größe des Icons, mit Breite und Höhe.
+     * @return Ein Icon, das einen Punkt darstellt.
      */
     public static Icon createPointIcon(Color color, int size) {
         BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
@@ -30,7 +33,7 @@ public class IconView {
      * @brief Erzeugt ein Icon, das ein Kreuz darstellt.
      *
      * @param color Die Farbe des Kreuzes.
-     * @param size  Die Größe des Icons (Breite und Höhe).
+     * @param size  Die Größe des Icons mit Breite und Höhe.
      * @return Ein Icon, das ein Kreuz darstellt.
      */
     public static Icon createCrossIcon(Color color, int size) {

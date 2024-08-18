@@ -6,22 +6,22 @@ import java.awt.*;
 /**
  * @class GameControlView
  * @brief Diese Klasse stellt eine Benutzeroberfläche zur Steuerung des Spiels bereit.
- * Sie enthält Schaltflächen, um zum Hauptmenü zurückzukehren, das Spiel zu pausieren oder das Spiel zu verlassen.
+ * Sie enthält Buttons, um zum Hauptmenü zurückzukehren, das Spiel zu pausieren oder das Spiel zu verlassen.
  */
 public class GameControlView extends JPanel {
 
     /**
-     * @brief Schaltfläche zum Zurückkehren zum Hauptmenü.
+     * @brief Button zum Zurückkehren zum Hauptmenü.
      */
     private JButton mainMenuButton;
 
     /**
-     * @brief Schaltfläche zum Pausieren des Spiels.
+     * @brief Button zum Pausieren des Spiels.
      */
     private JButton pauseGameButton;
 
     /**
-     * @brief Schaltfläche zum Verlassen des Spiels.
+     * @brief Button zum Verlassen des Spiels.
      */
     private JButton endGameButton;
 
@@ -43,27 +43,27 @@ public class GameControlView extends JPanel {
     }
 
     /**
-     * @brief Gibt die Schaltfläche zum Zurückkehren zum Hauptmenü zurück.
+     * @brief Gibt den Button zum Zurückkehren zum Hauptmenü zurück.
      *
-     * @return Die Schaltfläche zum Zurückkehren zum Hauptmenü.
+     * @return Der Button zum Zurückkehren zum Hauptmenü.
      */
     public JButton getMainMenuButton() {
         return this.mainMenuButton;
     }
 
     /**
-     * @brief Gibt die Schaltfläche zum Pausieren des Spiels zurück.
+     * @brief Gibt den Button zum Pausieren des Spiels zurück.
      *
-     * @return Die Schaltfläche zum Pausieren des Spiels.
+     * @return Der Button zum Pausieren des Spiels.
      */
     public JButton getPauseGameButton() {
         return this.pauseGameButton;
     }
 
     /**
-     * @brief Gibt die Schaltfläche zum Verlassen des Spiels zurück.
+     * @brief Gibt den Button zum Verlassen des Spiels zurück.
      *
-     * @return Die Schaltfläche zum Verlassen des Spiels.
+     * @return Der Button zum Verlassen des Spiels.
      */
     public JButton getEndGameButton() {
         return this.endGameButton;

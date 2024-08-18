@@ -7,7 +7,9 @@ import model.PlayerModel;
 
 /**
  * @class StatsView
- * @brief Diese Klasse stellt eine Ansicht zur Anzeige der Statistiken eines Spielers bereit, einschließlich der Anzahl der Klicks, Treffer und versenkten Schiffe.
+ * @brief Diese Klasse stellt eine Ansicht zur Anzeige bestimmter Statistiken eines Spielers bereit.
+ * Darunter zählen: die Anzahl der Klicks, die Treffer(Hits) und die Anzahl der versenkten Schiffe.
+ *
  */
 public class StatsView extends JPanel {
 
@@ -27,10 +29,10 @@ public class StatsView extends JPanel {
     private JLabel sunkShipsLabel;
 
     /**
-     * @brief Konstruktor, der die Statistikanzeige initialisiert und die Layouts setzt.
+     * @brief Konstruktor, der alle Statistikanzeigen initialisiert und die Layouts setzt.
      */
     public StatsView() {
-        this.setLayout(new GridLayout(4, 1));
+        this.setLayout(new GridLayout(3, 1));
 
         this.totalClicksLabel = new JLabel();
         this.hitsLabel = new JLabel();
@@ -44,32 +46,22 @@ public class StatsView extends JPanel {
     }
 
     /**
-     * @brief Aktualisiert die angezeigten Statistiken basierend auf dem übergebenen PlayerModel.
+     * @brief aktualisiert die angezeigten Statistiken basierend auf dem übergebenen PlayerModel, welcher die Daten enthält.
      *
-     * @param playerModel Das PlayerModel, das die aktuellen Statistiken des Spielers enthält.
+     * @param playerModel Das PlayerModel, das die Daten, also die aktuellen Statistiken des Spielers enthält.
      */
     public void updateStats(PlayerModel playerModel) {
         this.totalClicksLabel.setText("Anzahl gesamter Klicks: " + playerModel.getPlayerStatus().getTotalClicks());
         this.hitsLabel.setText("Davon Getroffen (Hits): " + playerModel.getPlayerStatus().getHits());
         this.sunkShipsLabel.setText("Gegnerische Schiffe versunken: " + playerModel.getPlayerStatus().getSunkShips());
-
-        this.totalClicksLabel.revalidate();
-        this.totalClicksLabel.repaint();
-        this.hitsLabel.revalidate();
-        this.hitsLabel.repaint();
-        this.sunkShipsLabel.revalidate();
-        this.sunkShipsLabel.repaint();
     }
 
     /**
-     * @brief Setzt die angezeigten Statistiken auf die Anfangswerte zurück.
+     * @brief setzt alle Statistiken auf die Anfangswerte zurück.
      */
     public void reset() {
         this.totalClicksLabel.setText("Anzahl gesamter Klicks: 0");
         this.hitsLabel.setText("Davon Getroffen (Hits): 0");
         this.sunkShipsLabel.setText("Gegnerische Schiffe versunken: 0");
-
-        this.revalidate();
-        this.repaint();
     }
 }
