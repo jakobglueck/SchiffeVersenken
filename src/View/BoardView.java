@@ -29,8 +29,11 @@ public class BoardView extends JPanel {
         setLayout(new BorderLayout());
 
         this.mainPanel = new JPanel(new BorderLayout());
+        this.mainPanel.setPreferredSize((new Dimension(50, 189)));
         this.gridPanel = createGridPanel();
         mainPanel.add(gridPanel, BorderLayout.CENTER);
+        this.mainPanel.add(createNumericLabelsPanel(), BorderLayout.NORTH);
+        this.mainPanel.add(createAlphabeticLabelsPanel(), BorderLayout.WEST);
 
         add(mainPanel, BorderLayout.CENTER);
         setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
@@ -45,13 +48,12 @@ public class BoardView extends JPanel {
     public void createPanelForShipPlacement() {
         this.gridPanel.removeAll();
         this.gridPanel.setLayout(new BorderLayout());
-        this.gridPanel.setPreferredSize((new Dimension(50, 150)));
-
+        this.gridPanel.setPreferredSize((new Dimension(60, 170)));
         JPanel customGridPanel = new JPanel(null) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                drawGridLines(g); // Raster nur in diesem speziellen Panel zeichnen
+                drawGridLines(g);
             }
         };
 
