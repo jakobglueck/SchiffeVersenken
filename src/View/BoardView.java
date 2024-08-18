@@ -259,17 +259,17 @@ public class BoardView extends JPanel {
     }
 
     private void updateHitCell(JLabel label) {
-        label.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 4));
+        label.setIcon(IconView.createCrossIcon(Color.RED, CELL_SIZE / 4));
     }
 
     public void markAsMiss(JLabel label) {
-        label.setIcon(IconFactoryView.createPointIcon(Color.BLACK, CELL_SIZE / 4));
+        label.setIcon(IconView.createPointIcon(Color.BLACK, CELL_SIZE / 4));
     }
 
     public void updateRevealedShip(ShipModel ship) {
         for (CellModel cell : ship.getShipCells()) {
             JLabel cellLabel = getLabelForCell(cell.getX(), cell.getY());
-            cellLabel.setIcon(IconFactoryView.createCrossIcon(Color.RED, CELL_SIZE / 2));
+            cellLabel.setIcon(IconView.createCrossIcon(Color.RED, CELL_SIZE / 2));
             cellLabel.setBackground(Color.RED);
         }
     }
