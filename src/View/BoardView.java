@@ -25,8 +25,7 @@ public class BoardView extends JPanel {
         setLayout(new BorderLayout());
 
         this.mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(createNumericLabelsPanel(), BorderLayout.NORTH);
-        mainPanel.add(createAlphabeticLabelsPanel(), BorderLayout.WEST);
+
 
         this.gridPanel = createGridPanel();
         mainPanel.add(gridPanel, BorderLayout.CENTER);
@@ -36,6 +35,11 @@ public class BoardView extends JPanel {
         setVisible(true);
     }
 
+    public void createLabelForBoard(){
+        mainPanel.add(createNumericLabelsPanel(), BorderLayout.NORTH);
+        mainPanel.add(createAlphabeticLabelsPanel(), BorderLayout.WEST);
+    }
+    
     public void createPanelForShipPlacement() {
         this.gridPanel.removeAll();
         this.gridPanel.setLayout(new BorderLayout());
@@ -45,11 +49,12 @@ public class BoardView extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                drawGridLines(g);
+                drawGridLines(g); // Raster nur in diesem speziellen Panel zeichnen
             }
         };
 
-        customGridPanel.setOpaque(true);
+        // Stelle sicher, dass das Panel durchsichtig ist, um das Raster im Hintergrund anzuzeigen
+        customGridPanel.setOpaque(false);
 
         shipPreviewLabel = new JLabel();
         shipPreviewLabel.setOpaque(true);
@@ -86,8 +91,6 @@ public class BoardView extends JPanel {
             g.drawLine(0, y, BOARD_SIZE * CELL_SIZE, y);
         }
     }
-
-
 
     public void removePanelForShipPlacement(){
         gridPanel.removeAll();
