@@ -170,11 +170,11 @@ public class GameView extends JFrame {
         this.mainPanel.add(this.createPlayerNamePanel(playerOne, playerTwo), gbc);
 
         // Board Panel
-        gbc.weighty = 0.60;
+        gbc.weighty = 0.65;
         this.mainPanel.add(this.createPlayerBoardPanel(), gbc);
 
         // Info Panel
-        gbc.weighty = 0.20;
+        gbc.weighty = 0.10;
         this.mainPanel.add(this.createStatusPanel(), gbc);
 
         // Game Control Panel
