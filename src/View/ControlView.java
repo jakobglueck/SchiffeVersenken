@@ -2,7 +2,6 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class ControlView extends JPanel {
     private JButton mainMenuButton;
@@ -15,20 +14,6 @@ public class ControlView extends JPanel {
         mainMenuButton = new JButton("Zurück zum Hauptmenü");
         pauseGameButton = new JButton("Spiel pausieren");
         endGameButton = new JButton("Spiel verlassen");
-
-        endGameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-
-        pauseGameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Spiel ist pausiert!");
-            }
-        });
 
         add(mainMenuButton);
         add(pauseGameButton);
