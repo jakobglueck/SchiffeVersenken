@@ -96,6 +96,8 @@ public class GameController {
     private void removePanelForShipPlacement() {
         this.gameView.getPlayerBoardOne().removePanelForShipPlacement();
         this.gameView.getPlayerBoardTwo().removePanelForShipPlacement();
+        this.gameView.getPlayerBoardOne().createLabelForBoard();
+        this.gameView.getPlayerBoardTwo().createLabelForBoard();
         SwingUtilities.invokeLater(this::runGameLoop);
     }
 

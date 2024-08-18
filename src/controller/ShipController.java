@@ -35,13 +35,15 @@ public class ShipController {
 
         placeShipsForCurrentPlayer(currentBoard, () -> {
             if (currentTurn < totalTurns - 1) {
+                currentBoard.updateBoard();
+                currentBoard.removeGraphics();
                 gameModel.switchPlayer();
                 this.gameModel.currentShipIndex = 0;
                 currentShipIndex = 0;
                 placeShipsForPlayer(currentTurn + 1, totalTurns, onComplete);
             } else {
+                currentBoard.removeGraphics();
                 JOptionPane.showMessageDialog(gameView, "Alle Schiffe platziert. Das Spiel beginnt jetzt!");
-                updateStatusLabel("Spiel beginnt!");
                 currentBoard.toggleGridVisibility(false);
                 onComplete.run();
             }
@@ -62,11 +64,9 @@ public class ShipController {
                     int y = e.getX() / board.getCellSize();
 
                     if (gameModel.placeNextShip(x, y, !isHorizontal)) {
-
+                        board.addGraphicsToCells(x, y, gameModel.getShipSizes()[currentShipIndex], isHorizontal);
                         System.out.println(x +" und " +y);
                         System.out.println(isHorizontal);
-
-                        board.updateBoard();
                         currentShipIndex++;
                         if (currentShipIndex >= gameModel.getShipSizes().length) {
                             board.removeMouseListener(this);
@@ -113,9 +113,5 @@ public class ShipController {
         int y = (mouseY / board.getCellSize()) * board.getCellSize();
 
         board.updateShipPreview(x, y, width, height);
-    }
-
-    private void updateStatusLabel(String message) {
-        SwingUtilities.invokeLater(() -> gameView.getStatusView().updatePlayerName(message));
     }
 }
