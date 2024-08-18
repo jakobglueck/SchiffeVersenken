@@ -86,11 +86,12 @@ public class BoardController {
         gameView.getPlayerBoardOne().updateBoard(gameModel.getPlayerOne().getBoard());
         gameView.getPlayerBoardTwo().updateBoard(gameModel.getPlayerTwo().getBoard());
         gameView.updateBoardVisibility(gameModel, gameModel.getGameState());
-        gameView.getStatusView().updatePlayerName("Aktueller Spieler: " + gameModel.getCurrentPlayer().getPlayerName());
         gameView.getPlayerBoardOne().revalidate();
         gameView.getPlayerBoardOne().repaint();
         gameView.getPlayerBoardTwo().revalidate();
         gameView.getPlayerBoardTwo().repaint();
+
+        gameView.getStatusView().updatePlayerName("Aktueller Spieler: " + gameModel.getCurrentPlayer().getPlayerName());
         gameView.getStatusView().revalidate();
         gameView.getStatusView().repaint();
 
@@ -103,7 +104,6 @@ public class BoardController {
     private void updateInfoPanel() {
         gameView.getInfoPanelViewOne().updateStats(gameModel.getPlayerOne());
         gameView.getInfoPanelViewTwo().updateStats(gameModel.getPlayerTwo());
-
         gameView.getInfoPanelViewOne().revalidate();
         gameView.getInfoPanelViewOne().repaint();
         gameView.getInfoPanelViewTwo().revalidate();
@@ -123,6 +123,10 @@ public class BoardController {
         this.processBoardClick(row, col, clickedBoardView, label);
     }
 
+    private BoardModel getBoardModelForView(BoardView boardView) {
+        return (boardView == gameView.getPlayerBoardOne()) ? gameModel.getPlayerOne().getBoard() :gameModel.getPlayerTwo().getBoard();
+    }
+
     /**
      * @brief Verarbeitet den Spielfeld-Klick, führt die nötigen Aktionen aus und aktualisiert die Ansicht.
      * @param row Die angeklickte Zeile.
@@ -132,25 +136,27 @@ public class BoardController {
      */
     private void processBoardClick(int row, int col, BoardView clickedBoardView, JLabel label) {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-        BoardView opponentBoardView = (currentPlayer == gameModel.getPlayerOne()) ? gameView.getPlayerBoardTwo() : gameView.getPlayerBoardOne();
+        BoardModel currentBoardModel = currentPlayer.getBoard();
+        BoardModel clickedBord  = this.getBoardModelForView(clickedBoardView);
 
-        if (gameModel.getGameState() == GameState.NORMAL && clickedBoardView != opponentBoardView) {
+        if (gameModel.getGameState() == GameState.NORMAL && clickedBord == currentBoardModel) {
             gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat sein eigenes Board angegriffen. Bitte greife das Board des Gegners an!");
             return;
         }
 
-        boolean hitShip = this.checkStatusOfClick(row, col, clickedBoardView, label);
-        this.changeClickRow(clickedBoardView, hitShip);
+        boolean hitShip = this.checkStatusOfClick(row, col, clickedBoardView, clickedBord, label);
+        this.changeClickRow(hitShip);
         updateGameView();
     }
 
     /**
      * @brief Verarbeitet den Status des angeklickten Feldes und wechselt gegebenenfalls den Spieler.
-     * @param clickedBoardView Die Ansicht des angeklickten Spielfelds.
      * @param hitShip Gibt an, ob ein Schiff getroffen wurde.
      */
-    private void changeClickRow(BoardView clickedBoardView, boolean hitShip) {
-        if (clickedBoardView.getPlayerBoard().allShipsAreHit()) {
+
+    private void changeClickRow(boolean hitShip) {
+        BoardModel opponentBoard = (gameModel.getCurrentPlayer() == gameModel.getPlayerOne()) ? gameModel.getPlayerTwo().getBoard() : gameModel.getPlayerOne().getBoard();
+        if (opponentBoard.allShipsAreHit()) {
             gameController.showGameOverScreen();
         } else {
             if (gameModel.getGameState() == GameState.NORMAL || gameModel.getGameState() == GameState.COMPUTER) {
@@ -175,10 +181,9 @@ public class BoardController {
      * @param label Das JLabel des angeklickten Feldes.
      * @return true, wenn ein Schiff getroffen wurde; false sonst.
      */
-    private boolean checkStatusOfClick(int row, int col, BoardView clickedBoardView, JLabel label) {
+    private boolean checkStatusOfClick(int row, int col, BoardView clickedBoardView, BoardModel opponentBoardModel, JLabel label) {
         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-
-        CellModel cell = clickedBoardView.getPlayerBoard().getCell(row, col);
+        CellModel cell = opponentBoardModel.getCell(row, col);
         currentPlayer.getPlayerStatus().updateTotalClicks();
         boolean hitShip = false;
 
@@ -188,15 +193,15 @@ public class BoardController {
                 gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat nicht getroffen");
                 break;
             case SET:
-                ShipModel ship = clickedBoardView.getPlayerBoard().registerHit(row, col);
-                currentPlayer.getPlayerStatus().calculateHits(clickedBoardView.getPlayerBoard());
-                currentPlayer.getPlayerStatus().calculateShunkShips(clickedBoardView.getPlayerBoard());
+                ShipModel ship = opponentBoardModel.registerHit(row, col);
+                currentPlayer.getPlayerStatus().calculateHits(opponentBoardModel);
+                currentPlayer.getPlayerStatus().calculateShunkShips(opponentBoardModel);
                 hitShip = true;
                 gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat getroffen");
                 if (ship != null && ship.isSunk()) {
                     clickedBoardView.updateRevealedShip(ship);
                     gameView.getStatusView().updateAdditionalInfo(currentPlayer.getPlayerName() + " hat ein Schiff versenkt");
-                    markSurroundingCellsAsMiss(ship, clickedBoardView);
+                    markSurroundingCellsAsMiss(ship, clickedBoardView, opponentBoardModel);
                 }
                 break;
             default:
@@ -211,7 +216,7 @@ public class BoardController {
      * @param ship Das versenkte Schiff.
      * @param opponent Die Ansicht des gegnerischen Spielfeldes.
      */
-    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponent) {
+    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponent, BoardModel opponentBoardModel ) {
         for (CellModel cell : ship.getShipCells()) {
             int startX = Math.max(0, cell.getX() - 1);
             int endX = Math.min(9, cell.getX() + 1);
@@ -220,7 +225,7 @@ public class BoardController {
 
             for (int x = startX; x <= endX; x++) {
                 for (int y = startY; y <= endY; y++) {
-                    CellModel surroundingCell = opponent.getPlayerBoard().getCell(x, y);
+                    CellModel surroundingCell = opponentBoardModel.getCell(x, y);
                     if (surroundingCell.getCellState() == CellState.FREE) {
                         JLabel surroundingLabel = opponent.getLabelForCell(x, y);
                         opponent.markAsMiss(surroundingLabel);
