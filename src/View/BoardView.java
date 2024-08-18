@@ -36,27 +36,58 @@ public class BoardView extends JPanel {
         setVisible(true);
     }
 
-    public void createPanelForShipPlacement(){
+    public void createPanelForShipPlacement() {
         this.gridPanel.removeAll();
-        this.gridPanel.setLayout(null);
+        this.gridPanel.setLayout(new BorderLayout());
+
+        // Erstelle ein benutzerdefiniertes JPanel mit einem überschriebenen paintComponent
+        JPanel customGridPanel = new JPanel(null) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                drawGridLines(g);
+            }
+        };
+
+        customGridPanel.setOpaque(true);
 
         shipPreviewLabel = new JLabel();
         shipPreviewLabel.setOpaque(true);
         shipPreviewLabel.setBackground(new Color(0, 0, 255, 128));
         shipPreviewLabel.setVisible(false);
-        gridPanel.add(shipPreviewLabel);
+        customGridPanel.add(shipPreviewLabel);
 
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 JLabel label = createStyledLabel(i, j);
                 labels[i][j] = label;
-                gridPanel.add(label);
+                customGridPanel.add(label);
             }
         }
 
+        this.gridPanel.add(customGridPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
     }
+
+    private void drawGridLines(Graphics g) {
+        // Setze die Farbe für die Linien des Rasters
+        g.setColor(new Color(200, 200, 200)); // Helles Grau
+
+        // Zeichne vertikale Linien
+        for (int i = 0; i <= BOARD_SIZE; i++) {
+            int x = i * CELL_SIZE;
+            g.drawLine(x, 0, x, BOARD_SIZE * CELL_SIZE);
+        }
+
+        // Zeichne horizontale Linien
+        for (int i = 0; i <= BOARD_SIZE; i++) {
+            int y = i * CELL_SIZE;
+            g.drawLine(0, y, BOARD_SIZE * CELL_SIZE, y);
+        }
+    }
+
+
 
     public void removePanelForShipPlacement(){
         gridPanel.removeAll();
