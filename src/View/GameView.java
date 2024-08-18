@@ -41,8 +41,8 @@ public class GameView extends JFrame {
             throw new IllegalStateException("Spieler müssen vor dem Aufruf dieser Methode initialisiert werden.");
         }
 
-        this.playerBoardOne = new BoardView(playerOne.getBoard());
-        this.playerBoardTwo = new BoardView(playerTwo.getBoard());
+        this.playerBoardOne = new BoardView();
+        this.playerBoardTwo = new BoardView();
 
         playerBoardOne.updateBoard(playerOne.getBoard());
         playerBoardTwo.updateBoard(playerTwo.getBoard());

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardView extends JPanel {
-    private BoardModel playerBoard;
     private JLabel[][] labels;
     private JLabel shipPreviewLabel;
     private BoardClickListener boardClickListener;
@@ -21,8 +20,8 @@ public class BoardView extends JPanel {
     private JPanel gridPanel;
     private JPanel mainPanel;
 
-    public BoardView(BoardModel playerBoard) {
-        this.playerBoard = playerBoard;
+    public BoardView() {
+
         this.labels = new JLabel[BOARD_SIZE][BOARD_SIZE];
         this.graphicsLabels = new ArrayList<>();  // Initialisiere die Liste
 
@@ -280,10 +279,6 @@ public class BoardView extends JPanel {
 
     public interface BoardClickListener {
         void onCellClicked(int row, int col, JLabel label);
-    }
-
-    public BoardModel getPlayerBoard() {
-        return playerBoard;
     }
 
     private void clearLabelGraphics(JLabel label) {
