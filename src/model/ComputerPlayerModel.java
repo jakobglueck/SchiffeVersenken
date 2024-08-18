@@ -1,6 +1,5 @@
 /**
  * @file ComputerPlayerModel.java
- * @brief Diese Klasse repräsentiert einen Computergegner im Spiel und enthält die Logik für dessen Züge und Entscheidungen.
  */
 
 package model;
@@ -38,19 +37,6 @@ public class ComputerPlayerModel extends PlayerModel {
                 computerMove.add(new int[]{i, j});
             }
         }
-    }
-
-    /**
-     * @brief Führt einen Zug des Computers aus und speichert die Koordinaten des letzten Zuges.
-     * @param opponent Der gegnerische Spieler.
-     * @param x Die X-Koordinate des Zuges.
-     * @param y Die Y-Koordinate des Zuges.
-     */
-    @Override
-    public void takeTurn(PlayerModel opponent, int x, int y) {
-        lastMoveX = x;
-        lastMoveY = y;
-        super.takeTurn(opponent, x, y);
     }
 
     /**

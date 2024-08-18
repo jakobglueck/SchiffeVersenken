@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * @class ShipModel
  * @brief Verantwortlich für die Verwaltung der Zellen, die ein Schiff auf dem Spielfeld bilden.
- * Weiterhin wird der den Zustand des Schiffes geprüft.
+ *        Weiterhin wird der den Zustand des Schiffes geprüft.
  */
 public class ShipModel {
     private final List<CellModel> shipCells;
