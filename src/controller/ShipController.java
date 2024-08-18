@@ -64,7 +64,7 @@ public class ShipController {
                     int y = e.getX() / board.getCellSize();
 
                     if (gameModel.placeNextShip(x, y, !isHorizontal)) {
-                        board.addGraphicsToCells(x, y, gameModel.getShipSizes()[currentShipIndex], isHorizontal);
+                        board.addGraphicsToCells(x , y, gameModel.getShipSizes()[currentShipIndex], isHorizontal);
                         System.out.println(x +" und " +y);
                         System.out.println(isHorizontal);
                         currentShipIndex++;
