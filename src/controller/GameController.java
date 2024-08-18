@@ -68,7 +68,7 @@ public class GameController {
         String playerOneName = JOptionPane.showInputDialog("Bitte Namen für Spieler 1 eingeben:");
         String playerTwoName = (gameState == GameState.NORMAL || gameState == GameState.DEBUG)
                 ? JOptionPane.showInputDialog("Bitte Namen für Spieler 2 eingeben:")
-                : "Computer";
+                : "Default Player";
 
         gameModel.createPlayerWithNames(playerOneName, playerTwoName);
         gameView.setVisible(true);
