@@ -1,16 +1,18 @@
 /**
  * @file GameState.java
- * @brief Dieses Enum definiert die verschiedenen Zustände, in denen sich das Spiel befinden kann.
  */
 
 package utils;
 
 /**
  * @enum GameState
- * @brief Repräsentiert die verschiedenen Spielmodi und Zustände, in denen sich das Spiel befinden kann.
+ * @brief Zeigt die verschiedenen Spielmodi an.
  */
 public enum GameState {
-    NORMAL,  ///< Der normale Spielmodus, in dem zwei Spieler gegeneinander antreten.
-    DEBUG,   ///< Ein Debug-Modus, der für Testzwecke verwendet wird und zusätzliche Informationen oder Funktionen bietet.
-    COMPUTER ///< Ein Spielmodus, in dem ein Spieler gegen den Computer antritt.
+    // Der normale Spielmodus, wo zwei Spieler gegeneinander antreten.
+    NORMAL,
+    // Der Debug Spielmodus, der nur für Testzwecke verwendet wird.
+    DEBUG,
+    // Der Computer Spielmodus, wo ein Spieler gegen den Computer antritt.
+    COMPUTER
 }
