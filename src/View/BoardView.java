@@ -5,12 +5,15 @@ import model.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BoardView extends JPanel {
     private BoardModel playerBoard;
     private JLabel[][] labels;
     private JLabel shipPreviewLabel;
     private BoardClickListener boardClickListener;
+    private List<JLabel> graphicsLabels;  // Liste der Labels für die Grafiken
 
     private static final int CELL_SIZE = 40;
     public static final int BOARD_SIZE = 10;
@@ -21,12 +24,11 @@ public class BoardView extends JPanel {
     public BoardView(BoardModel playerBoard) {
         this.playerBoard = playerBoard;
         this.labels = new JLabel[BOARD_SIZE][BOARD_SIZE];
+        this.graphicsLabels = new ArrayList<>();  // Initialisiere die Liste
 
         setLayout(new BorderLayout());
 
         this.mainPanel = new JPanel(new BorderLayout());
-
-
         this.gridPanel = createGridPanel();
         mainPanel.add(gridPanel, BorderLayout.CENTER);
 
@@ -39,12 +41,12 @@ public class BoardView extends JPanel {
         mainPanel.add(createNumericLabelsPanel(), BorderLayout.NORTH);
         mainPanel.add(createAlphabeticLabelsPanel(), BorderLayout.WEST);
     }
-    
+
     public void createPanelForShipPlacement() {
         this.gridPanel.removeAll();
         this.gridPanel.setLayout(new BorderLayout());
         this.gridPanel.setPreferredSize((new Dimension(50, 150)));
-        // Erstelle ein benutzerdefiniertes JPanel mit einem überschriebenen paintComponent
+
         JPanel customGridPanel = new JPanel(null) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -74,30 +76,52 @@ public class BoardView extends JPanel {
     }
 
     private void drawGridLines(Graphics g) {
-        // Setze die Farbe für die Linien des Rasters
         g.setColor(new Color(200, 200, 200)); // Helles Grau
 
-        // Zeichne vertikale Linien
         for (int i = 0; i <= BOARD_SIZE; i++) {
             int x = i * CELL_SIZE;
             g.drawLine(x, 0, x, BOARD_SIZE * CELL_SIZE);
         }
 
-        // Zeichne horizontale Linien
         for (int i = 0; i <= BOARD_SIZE; i++) {
             int y = i * CELL_SIZE;
             g.drawLine(0, y, BOARD_SIZE * CELL_SIZE, y);
         }
     }
 
+    public void addGraphicsToCells(int startX, int startY, int length, boolean horizontal) {
+        for (int i = 0; i < length; i++) {
+            int x = horizontal ? startX : startX + i;
+            int y = horizontal ? startY + i : startY;
+
+            if (x < BOARD_SIZE && y < BOARD_SIZE) {
+                JLabel graphicLabel = new JLabel();
+                graphicLabel.setOpaque(true);
+                graphicLabel.setBackground(new Color(0, 0, 255, 128));  // Setzen Sie die gewünschte Farbe und Transparenz
+                graphicLabel.setBounds(y * CELL_SIZE, x * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                graphicsLabels.add(graphicLabel);
+                gridPanel.add(graphicLabel);
+            }
+        }
+        gridPanel.repaint();
+    }
+
+    public void removeGraphics() {
+        for (JLabel graphicLabel : graphicsLabels) {
+            gridPanel.remove(graphicLabel);
+        }
+        graphicsLabels.clear();
+        gridPanel.repaint();
+    }
+
     public void removePanelForShipPlacement(){
+        removeGraphics();  // Entferne die Grafiken, wenn das Panel entfernt wird
         gridPanel.removeAll();
         this.mainPanel.remove(gridPanel);
         this.mainPanel.add(createGridPanel());
         this.updateBoard();
         revalidate();
         repaint();
-
     }
 
     private JPanel createNumericLabelsPanel() {
@@ -110,26 +134,22 @@ public class BoardView extends JPanel {
             label.setPreferredSize(new Dimension(20, 20));
             labelsPanel.add(label);
         }
-
         return labelsPanel;
     }
 
     private JPanel createAlphabeticLabelsPanel() {
         JPanel labelsPanel = new JPanel(new GridLayout(10, 1));
-
         char[] labels = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
         for (char labelChar : labels) {
             JLabel label = new JLabel(String.valueOf(labelChar), SwingConstants.CENTER);
             label.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
             labelsPanel.add(label);
         }
-
         return labelsPanel;
     }
 
     private JPanel createGridPanel() {
         JPanel gridPanel = new JPanel(new GridLayout(BOARD_SIZE, BOARD_SIZE));
-
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 JLabel label = createStyledLabel(i, j);
@@ -137,7 +157,6 @@ public class BoardView extends JPanel {
                 gridPanel.add(label);
             }
         }
-
         return gridPanel;
     }
 
@@ -204,7 +223,6 @@ public class BoardView extends JPanel {
                 updateCell(row, col);
             }
         }
-
         gridPanel.revalidate();
         gridPanel.repaint();
     }
