@@ -29,7 +29,7 @@ public class BoardView extends JPanel {
         setLayout(new BorderLayout());
 
         this.mainPanel = new JPanel(new BorderLayout());
-        this.mainPanel.setPreferredSize(new Dimension(50, 190));
+        this.mainPanel.setPreferredSize(new Dimension(50, 189));
         this.gridPanel = createGridPanel();
         mainPanel.add(gridPanel, BorderLayout.CENTER);
         this.mainPanel.add(createNumericLabelsPanel(), BorderLayout.NORTH);
@@ -75,7 +75,7 @@ public class BoardView extends JPanel {
 
     private JPanel createNumericLabelsPanel() {
         JPanel labelsPanel = new JPanel(new GridLayout(1, 10));
-        JLabel tempLabel = new JLabel(String.valueOf(""), SwingConstants.CENTER);
+        JLabel tempLabel = new JLabel("", SwingConstants.CENTER);
         tempLabel.setPreferredSize(new Dimension(10, 10));
         labelsPanel.add(tempLabel);
         for (int i = 1; i <= 10; i++) {
