@@ -62,17 +62,18 @@ public class GameController {
      * @param gameState Der Modus, in dem das Spiel gestartet werden soll.
      */
     public void startGame(GameState gameState) {
+        // Sicherstellen, dass alles zurückgesetzt ist
         homeScreenView.setVisible(false);
         gameModel.setGameState(gameState);
         String playerOneName = JOptionPane.showInputDialog("Bitte Namen für Spieler 1 eingeben:");
         String playerTwoName = (gameState == GameState.NORMAL || gameState == GameState.DEBUG)
                 ? JOptionPane.showInputDialog("Bitte Namen für Spieler 2 eingeben:")
-                : "Default Player";
+                : "Computer";
 
         gameModel.createPlayerWithNames(playerOneName, playerTwoName);
         gameView.setVisible(true);
         gameView.createPlayerBase(gameModel.getPlayerOne(), gameModel.getPlayerTwo());
-        this.gameView.updateGameModePanel(this.detectGameMode());
+        gameView.updateGameModePanel(detectGameMode());
         gameModel.startGame();
         boardController.startGameListeners();
 
@@ -94,10 +95,11 @@ public class GameController {
      * @brief Entfernt die Panels zur Schiffsplatzierung und startet den Spielablauf.
      */
     private void removePanelForShipPlacement() {
-        this.gameView.getPlayerBoardOne().removePanelForShipPlacement(gameModel.getPlayerOne().getBoard());
-        this.gameView.getPlayerBoardTwo().removePanelForShipPlacement(gameModel.getPlayerTwo().getBoard());
-        this.gameView.getPlayerBoardOne().createLabelForBoard();
-        this.gameView.getPlayerBoardTwo().createLabelForBoard();
+        gameView.getPlayerBoardOne().removePanelForShipPlacement(gameModel.getPlayerOne().getBoard());
+        gameView.getPlayerBoardTwo().removePanelForShipPlacement(gameModel.getPlayerTwo().getBoard());
+        gameView.getPlayerBoardOne().createLabelForBoard();
+        gameView.getPlayerBoardTwo().createLabelForBoard();
+        gameView.getStatusView().updateAdditionalInfo("");
         SwingUtilities.invokeLater(this::runGameLoop);
     }
 
@@ -141,23 +143,28 @@ public class GameController {
      */
     public void showGameOverScreen() {
         String winner = gameModel.getCurrentPlayer().getPlayerName();
-        int result = this.gameView.showGameOverDialog(winner);
+        int result = gameView.showGameOverDialog(winner);
 
         if (result == 0) {
-            resetGame();
+            // Neues Spiel im gleichen Modus
+            startGame(gameModel.getGameState());
         } else {
+            // Zurück zum Hauptmenü
+            resetGame();
             showHomeScreen();
         }
     }
 
     /**
-     * @brief Setzt das Spiel zurück und startet ein neues Spiel.
+     * @brief Setzt das Spiel zurück.
      */
     public void resetGame() {
-        gameModel.resetGame();
         gameView.resetView();
-        gameModel.startGame();
-        runGameLoop();
+        gameModel.resetGame();
+        boardController.reset();
+        this.gameView.setVisible(false);
+        showHomeScreen();
+        startHomeScreenListeners();
     }
 
     /**
@@ -181,8 +188,8 @@ public class GameController {
                     playerBoardView.updateBoard(gameModel.getPlayerOne().getBoard());
                 }
 
-                this.gameView.getPlayerBoardOne().updateBoard(gameModel.getPlayerOne().getBoard());
-                this.gameView.getPlayerBoardTwo().updateBoard(gameModel.getPlayerTwo().getBoard());
+                gameView.getPlayerBoardOne().updateBoard(gameModel.getPlayerOne().getBoard());
+                gameView.getPlayerBoardTwo().updateBoard(gameModel.getPlayerTwo().getBoard());
 
                 if (gameModel.isGameOver()) {
                     showGameOverScreen();
