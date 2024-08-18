@@ -8,8 +8,6 @@ import java.awt.*;
 
 public class GameView extends JFrame {
 
-    private PlayerModel playerOne;
-    private PlayerModel playerTwo;
     private BoardView playerBoardOne;
     private BoardView playerBoardTwo;
     private InfoPanelView infoPanelViewOne;
@@ -19,7 +17,6 @@ public class GameView extends JFrame {
     private JLabel gameModeLabel;
     private JLabel shipPreviewLabel;
     private JLayeredPane layeredPane;
-
 
     public GameView() {
 
