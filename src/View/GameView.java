@@ -13,10 +13,10 @@ public class GameView extends JFrame {
     private GameModel game;
     private BoardView playerBoardOne;
     private BoardView playerBoardTwo;
-    private InfoPanelView infoPanelViewOne;
-    private InfoPanelView infoPanelViewTwo;
-    private StatusView statusView;
-    private ControlView controlView;
+    private StatsView statsViewOne;
+    private StatsView statsViewTwo;
+    private GameInfoView gameInfoView;
+    private GameControlView gameControlView;
     private JLabel gameModeLabel;
     private JLabel shipPreviewLabel;
     private JLayeredPane layeredPane;
@@ -77,8 +77,8 @@ public class GameView extends JFrame {
         mainPanel.add(createInfoStatusPanel(), gbc);
 
         gbc.weighty = 0.1;
-        controlView = new ControlView();
-        mainPanel.add(controlView, gbc);
+        gameControlView = new GameControlView();
+        mainPanel.add(gameControlView, gbc);
 
         layeredPane.setLayer(mainPanel, JLayeredPane.DEFAULT_LAYER);
         layeredPane.setLayer(playerBoardOne, JLayeredPane.DEFAULT_LAYER);
@@ -89,11 +89,11 @@ public class GameView extends JFrame {
 
     private JPanel createPlayerPanel() {
         JPanel playerPanel = new JPanel(new GridLayout(1, 2));
-        PlayerView playerViewOne = new PlayerView(this.playerOne.getPlayerName());
-        PlayerView playerViewTwo = new PlayerView(this.playerTwo.getPlayerName());
+        PlayerNameView playerNameViewOne = new PlayerNameView(this.playerOne.getPlayerName());
+        PlayerNameView playerNameViewTwo = new PlayerNameView(this.playerTwo.getPlayerName());
 
-        playerPanel.add(playerViewOne);
-        playerPanel.add(playerViewTwo);
+        playerPanel.add(playerNameViewOne);
+        playerPanel.add(playerNameViewTwo);
 
         return playerPanel;
     }
@@ -120,13 +120,13 @@ public class GameView extends JFrame {
 
     private JPanel createInfoStatusPanel() {
         JPanel infoStatusPanel = new JPanel(new BorderLayout());
-        infoPanelViewOne = new InfoPanelView();
-        statusView = new StatusView();
-        infoPanelViewTwo = new InfoPanelView();
+        statsViewOne = new StatsView();
+        gameInfoView = new GameInfoView();
+        statsViewTwo = new StatsView();
 
-        infoStatusPanel.add(infoPanelViewOne, BorderLayout.WEST);
-        infoStatusPanel.add(statusView, BorderLayout.CENTER);
-        infoStatusPanel.add(infoPanelViewTwo, BorderLayout.EAST);
+        infoStatusPanel.add(statsViewOne, BorderLayout.WEST);
+        infoStatusPanel.add(gameInfoView, BorderLayout.CENTER);
+        infoStatusPanel.add(statsViewTwo, BorderLayout.EAST);
 
         return infoStatusPanel;
     }
@@ -163,28 +163,28 @@ public class GameView extends JFrame {
         }
     }
 
-    public InfoPanelView getInfoPanelViewOne() {
-        return this.infoPanelViewOne;
+    public StatsView getInfoPanelViewOne() {
+        return this.statsViewOne;
     }
 
-    public InfoPanelView getInfoPanelViewTwo() {
-        return this.infoPanelViewTwo;
+    public StatsView getInfoPanelViewTwo() {
+        return this.statsViewTwo;
     }
 
-    public ControlView getControlView() {
-        return this.controlView;
+    public GameControlView getControlView() {
+        return this.gameControlView;
     }
 
-    public StatusView getStatusView() {
-        return this.statusView;
+    public GameInfoView getStatusView() {
+        return this.gameInfoView;
     }
 
     public void resetView() {
         playerBoardOne.resetBoard();
         playerBoardTwo.resetBoard();
-        statusView.reset();
-        infoPanelViewOne.reset();
-        infoPanelViewTwo.reset();
+        gameInfoView.reset();
+        statsViewOne.reset();
+        statsViewTwo.reset();
     }
 
     public int showGameOverDialog(String winner) {
