@@ -10,7 +10,6 @@ import utils.CellState;
  * @class CellModel
  * @brief Diese Klasse stellt eine einzelne Zelle auf einem Spielfeld dar. Sie enthält Informationen über den Zustand der Zelle,
  *        sowie deren Position auf dem Spielfeld, welche durch X- und Y-Koordinaten angegeben werden.
- *
  *        Diese Klasse ermöglicht es, die einzelnen Zellkomponenten zu erhalten, zu aktualisieren und zu überprüfen, ob die Zelle getroffen wurde.
  */
 public class CellModel {
