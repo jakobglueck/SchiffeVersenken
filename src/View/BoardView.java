@@ -8,17 +8,41 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @class BoardView
+ * @brief Diese Klasse stellt das Spielbrett grafisch dar und ermöglicht die Interaktion mit den Zellen.
+ *
+ * - Stellt das Spielbrett grafisch mit numerischen und alphabetischen Beschriftungen dar.
+ * - Ermöglicht die Platzierung von Schiffen.
+ * - Markiert an den Zellen die Treffer und Fehlschüsse.
+ * - Erfasst Klicks auf den Zellen des Spielbretts.
+ * - Aktualisiert den angezeigten Spielzustand.
+ * - Bietet Funktionen zum Zurücksetzen des Spielbretts oder von graphischen Elementen.
+ */
 public class BoardView extends JPanel {
-    // Instanzvariablen
+
+    /** @brief 2D-Array von JLabels zur Darstellung der Zellen des Spielbretts. */
     private JLabel[][] labels;
+
+    /** @brief JLabel zur Vorschau der Schiffplatzierung. */
     private JLabel shipPreviewLabel;
+
+    /** @brief Listener für Klicks auf das Spielbrett. */
     private BoardClickListener boardClickListener;
+
+    /** @brief Liste von JLabels, die zur Darstellung von Grafiken auf dem Spielbrett verwendet werden. */
     private List<JLabel> graphicsLabels;
 
+    /** @brief Größe jeder Zelle im Spielbrett in Pixeln. */
     private static final int CELL_SIZE = 40;
+
+    /** @brief Größe des Spielbretts (Anzahl der Reihen und Spalten). */
     public static final int BOARD_SIZE = 10;
 
+    /** @brief Panel, das das Gitter des Spielbretts enthält. */
     private JPanel gridPanel;
+
+    /** @brief Hauptpanel, das alle anderen Komponenten enthält. */
     private JPanel mainPanel;
 
     // Konstruktor
@@ -263,16 +287,12 @@ public class BoardView extends JPanel {
     }
 
 
-
-    // Reset- und Cleanup-Methoden
     public void removePanelForShipPlacement(BoardModel boardModel) {
         removeGraphics();
         gridPanel.removeAll();
         this.mainPanel.remove(gridPanel);
         this.mainPanel.add(createGridPanel());
         this.updateBoard(boardModel);
-        revalidate();
-        repaint();
     }
 
     private void clearLabelGraphics(JLabel label) {
