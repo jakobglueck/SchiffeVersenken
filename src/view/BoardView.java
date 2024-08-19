@@ -274,10 +274,41 @@ public class BoardView extends JPanel {
         mainPanel.add(createAlphabeticLabelsPanel(), BorderLayout.WEST);
     }
 
+    /**
+     * @brief Erstellt das Panel zur Schiffsplatzierung.
+     *
+     * Diese Methode initialisiert das Grid-Panel für die Schiffsplatzierung, zeichnet die Rasterlinien,
+     * fügt eine Vorschau für die Schiffsplatzierung hinzu und füllt das Grid mit den Zellen des Spielfelds.
+     */
     public void createPanelForShipPlacement() {
+        resetGridPanel();
+        JPanel customGridPanel = createCustomGridPanel();
+        initializeShipPreviewLabel(customGridPanel);
+        populateGridWithLabels(customGridPanel);
+        addCustomGridPanelToGridPanel(customGridPanel);
+    }
+
+    /**
+     * @brief Setzt das Grid-Panel zurück und konfiguriert es für die Schiffsplatzierung.
+     *
+     * Diese Methode entfernt alle vorhandenen Komponenten aus dem Grid-Panel,
+     * setzt das Layout auf BorderLayout und stellt sicher, dass das Panel eine definierte Größe hat.
+     */
+    private void resetGridPanel() {
         this.gridPanel.removeAll();
         this.gridPanel.setLayout(new BorderLayout());
         this.gridPanel.setPreferredSize(new Dimension(60, 170));
+    }
+
+    /**
+     * @brief Erstellt ein benutzerdefiniertes Grid-Panel für die Schiffsplatzierung.
+     *
+     * Diese Methode erstellt ein JPanel, das die Rasterlinien für das Spielfeld zeichnet.
+     * Das Panel ist transparent und ermöglicht das Platzieren von JLabels für die Zellen des Spielfelds.
+     *
+     * @return Ein JPanel mit benutzerdefinierter Zeichnung der Rasterlinien.
+     */
+    private JPanel createCustomGridPanel() {
         JPanel customGridPanel = new JPanel(null) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -285,24 +316,56 @@ public class BoardView extends JPanel {
                 drawGridLines(g);
             }
         };
-
         customGridPanel.setOpaque(false);
+        return customGridPanel;
+    }
+
+    /**
+     * @brief Initialisiert das Label zur Vorschau der Schiffsplatzierung.
+     *
+     * Diese Methode erstellt ein JLabel, das als Vorschau für die Platzierung eines Schiffs dient.
+     * Das Label wird transparent gemacht und zum angegebenen Panel hinzugefügt.
+     *
+     * @param panel Das JPanel, dem das Vorschau-Label hinzugefügt wird.
+     */
+    private void initializeShipPreviewLabel(JPanel panel) {
         shipPreviewLabel = new JLabel();
         shipPreviewLabel.setOpaque(true);
         shipPreviewLabel.setBackground(new Color(110, 110, 255, 255));
         shipPreviewLabel.setVisible(false);
-        customGridPanel.add(shipPreviewLabel);
+        panel.add(shipPreviewLabel);
+    }
 
+    /**
+     * @brief Füllt das Grid-Panel mit Zellen für das Spielfeld.
+     *
+     * Diese Methode erzeugt für jede Zelle des Spielfelds ein JLabel, setzt das Styling und fügt es
+     * dem angegebenen Panel hinzu. Die Labels werden im 2D-Array `labels` gespeichert.
+     *
+     * @param panel Das JPanel, dem die Labels hinzugefügt werden.
+     */
+    private void populateGridWithLabels(JPanel panel) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 JLabel label = createStyledLabel(i, j);
                 labels[i][j] = label;
-                customGridPanel.add(label);
+                panel.add(label);
             }
         }
+    }
 
+    /**
+     * @brief Fügt das benutzerdefinierte Grid-Panel zum Haupt-Grid-Panel hinzu.
+     *
+     * Diese Methode fügt das erstellte benutzerdefinierte Grid-Panel, das die Zellen und Rasterlinien enthält,
+     * dem Grid-Panels hinzu.
+     *
+     * @param customGridPanel Das benutzerdefinierte Grid-Panel, das hinzugefügt wird.
+     */
+    private void addCustomGridPanelToGridPanel(JPanel customGridPanel) {
         this.gridPanel.add(customGridPanel, BorderLayout.CENTER);
     }
+
 
     /**
      * @brief Aktualisiert das gesamte Spielbrett basierend auf dem aktuellen Zustand des `BoardModel`.
@@ -524,13 +587,6 @@ public class BoardView extends JPanel {
         }
     }
 
-/*    @Override
-    public void addNotify() {
-        super.addNotify();
-        setFocusable(true);
-        requestFocus();
-    }
-*
     /**
      * @interface BoardClickListener
      * @brief Listener für Klicks auf Spielbrett-Zellen.
