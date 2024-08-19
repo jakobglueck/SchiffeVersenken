@@ -284,20 +284,8 @@ public class BoardView extends JPanel {
         resetGridPanel();
         JPanel customGridPanel = createCustomGridPanel();
         initializeShipPreviewLabel(customGridPanel);
-        populateGridWithLabels(customGridPanel);
+        addLabelsToGridPanel(customGridPanel);
         addCustomGridPanelToGridPanel(customGridPanel);
-    }
-
-    /**
-     * @brief Setzt das Grid-Panel zurück und konfiguriert es für die Schiffsplatzierung.
-     *
-     * Diese Methode entfernt alle vorhandenen Komponenten aus dem Grid-Panel,
-     * setzt das Layout auf BorderLayout und stellt sicher, dass das Panel eine definierte Größe hat.
-     */
-    private void resetGridPanel() {
-        this.gridPanel.removeAll();
-        this.gridPanel.setLayout(new BorderLayout());
-        this.gridPanel.setPreferredSize(new Dimension(60, 170));
     }
 
     /**
@@ -344,7 +332,7 @@ public class BoardView extends JPanel {
      *
      * @param panel Das JPanel, dem die Labels hinzugefügt werden.
      */
-    private void populateGridWithLabels(JPanel panel) {
+    private void addLabelsToGridPanel(JPanel panel) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 JLabel label = createStyledLabel(i, j);
@@ -585,6 +573,18 @@ public class BoardView extends JPanel {
         for (JLabel graphicLabel : graphicsLabels) {
             gridPanel.remove(graphicLabel);
         }
+    }
+
+    /**
+     * @brief Setzt das Grid-Panel zurück und konfiguriert es für die Schiffsplatzierung.
+     *
+     * Diese Methode entfernt alle vorhandenen Komponenten aus dem Grid-Panel,
+     * setzt das Layout auf BorderLayout und stellt sicher, dass das Panel eine definierte Größe hat.
+     */
+    private void resetGridPanel() {
+        this.gridPanel.removeAll();
+        this.gridPanel.setLayout(new BorderLayout());
+        this.gridPanel.setPreferredSize(new Dimension(60, 170));
     }
 
     /**
