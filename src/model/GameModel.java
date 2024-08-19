@@ -153,16 +153,16 @@ public class GameModel {
      * @brief Platziert das Schiff auf dem Board des aktuellen Spielers.
      * @param startX Die X-Koorinate, an der das Schiff platziert werden soll.
      * @param startY Die Y-Koorinate, an der das Schiff platziert werden soll.
+     * @param shipSize Gibt die Länge des Schiffes an.
      * @param horizontal Gibt die Ausrichtung des Schiffes an.
      * @return true, wenn das Schiff erfolgreich platziert wurde.
      */
-    public boolean placeNextShip(int startX, int startY, boolean horizontal) {
-        if (currentShipIndex >= SHIP_SIZES.length) {
+    public boolean placeNextShip(int startX, int startY,int shipSize, boolean horizontal) {
+        if (this.currentShipIndex >= SHIP_SIZES.length) {
             return false;
         }
 
-        int shipLength = SHIP_SIZES[currentShipIndex];
-        boolean placed = getCurrentPlayer().getBoard().placeShip(startX, startY, horizontal, shipLength);
+        boolean placed = getCurrentPlayer().getBoard().placeShip(startX, startY, horizontal, shipSize);
 
         if (placed) {
             currentShipIndex++;
