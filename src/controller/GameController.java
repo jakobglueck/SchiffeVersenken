@@ -169,7 +169,7 @@ public class GameController {
      * @brief Führt die Hauptspielschleife aus. Dabei wird das gegnerische Board abgedeckt und die View update sich.
      *        Wenn sich das Game im Debug-Modus befindet, dann werden beide Boards aufgedeckt.
      *        Wenn der Computer-Modus aktiv ist, dann wird überprüft, welcher Spieler an Zug ist und führt
-     *        einen Computerzug wenn dieser dran ist.
+     *        einen Computerzug, wenn dieser dran ist.
 
      */
     public void runGameLoop() {
@@ -230,7 +230,7 @@ public class GameController {
     }
 
     /**
-     * @brief Aktualisiert das Board nach einem Zug eines Computers.
+     * @brief Aktualisiert das Board eines Spielers nach einem Zug eines Computers.
      * @param lastX X-Koordinate des letzten Zuges.
      * @param lastY Y-Koordinate des letzten Zuges.
      */
@@ -239,14 +239,16 @@ public class GameController {
         CellModel targetCell = this.gameModel.getPlayerOne().getBoard().getCell(lastX, lastY);
 
         if (targetCell.getCellState() == CellState.FREE) {
+            // Wenn das Schiff verfehlt wurde, wird dies auf dem Board angezeigt
             playerBoardView.markAsMiss(playerBoardView.getLabelForCell(lastX, lastY));
         } else if (targetCell.getCellState() == CellState.SET) {
+            // Treffer wird auf dem Board angezeigt
             playerBoardView.updateBoard(this.gameModel.getPlayerOne().getBoard());
         }
     }
 
     /**
-     * @brief Aktualisiert das Spiel nach einem Zug.
+     * @brief Aktualisiert das Die Statistiken im gameMOdel für die Spieler und updatet nach einem Zug.
      */
     private void updateGameAfterMove() {
         this.gameModel.getPlayerTwo().getPlayerStatus().calculateShunkShips(this.gameModel.getPlayerOne().getBoard());
