@@ -295,14 +295,6 @@ public class BoardView extends JPanel {
         this.updateBoard(boardModel);
     }
 
-    private void clearLabelGraphics(JLabel label) {
-        label.setIcon(null);
-        label.setBackground(Color.WHITE);
-        label.setBorder(BorderFactory.createLineBorder(new Color(0xc5c5ff), 1));
-        label.revalidate();
-        label.repaint();
-    }
-
     public void removeGraphics() {
         for (JLabel graphicLabel : graphicsLabels) {
             gridPanel.remove(graphicLabel);
