@@ -46,8 +46,8 @@ public class BoardController {
      * die initiale Spielansicht.
      */
     public void startGameListeners() {
-        this.gameView.getControlView().getPauseGameButton().addActionListener(e -> JOptionPane.showMessageDialog(gameView, "Spiel ist pausiert!"));
-        this.gameView.getControlView().getEndGameButton().addActionListener(e -> System.exit(0));
+        this.gameView.getGameControlView().getPauseGameButton().addActionListener(e -> JOptionPane.showMessageDialog(gameView, "Spiel ist pausiert!"));
+        this.gameView.getGameControlView().getEndGameButton().addActionListener(e -> System.exit(0));
         this.gameView.getPlayerBoardOne().setBoardClickListener(this::handleBoardClick);
         this.gameView.getPlayerBoardTwo().setBoardClickListener(this::handleBoardClick);
         this.updateGameView();
@@ -92,9 +92,9 @@ public class BoardController {
      * @brief Aktualisiert die Statusanzeige mit dem Namen des aktuellen Spielers.
      */
     private void updateStatusView() {
-        this.gameView.getStatusView().updatePlayerName("Aktueller Spieler: " + this.gameModel.getCurrentPlayer().getPlayerName());
-        this.gameView.getStatusView().revalidate();
-        this.gameView.getStatusView().repaint();
+        this.gameView.getGameInfoView().updatePlayerName("Aktueller Spieler: " + this.gameModel.getCurrentPlayer().getPlayerName());
+        this.gameView.getGameInfoView().revalidate();
+        this.gameView.getGameInfoView().repaint();
     }
 
     /**
@@ -103,12 +103,12 @@ public class BoardController {
      * Aktualisiert die Statistiken beider Spieler in den entsprechenden Info-Panels.
      */
     private void updateInfoPanel() {
-        this.gameView.getInfoPanelViewOne().updateStats(this.gameModel.getPlayerOne());
-        this.gameView.getInfoPanelViewTwo().updateStats(this.gameModel.getPlayerTwo());
-        this.gameView.getInfoPanelViewOne().revalidate();
-        this.gameView.getInfoPanelViewOne().repaint();
-        this.gameView.getInfoPanelViewTwo().revalidate();
-        this.gameView.getInfoPanelViewTwo().repaint();
+        this.gameView.getStatsViewOne().updateStats(this.gameModel.getPlayerOne());
+        this.gameView.getStatsViewTwo().updateStats(this.gameModel.getPlayerTwo());
+        this.gameView.getStatsViewOne().revalidate();
+        this.gameView.getStatsViewOne().repaint();
+        this.gameView.getStatsViewTwo().revalidate();
+        this.gameView.getStatsViewTwo().repaint();
     }
 
     /**
@@ -173,7 +173,7 @@ public class BoardController {
                         handleBoardClick(row, col, label);
                     } catch (Exception exception) {
                         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
-                        gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " bitte klicke auf das Board und nicht auf die Beschriftung des Boards!");
+                        gameView.getGameInfoView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " bitte klicke auf das Board und nicht auf die Beschriftung des Boards!");
                     }
                 }
             });
@@ -226,7 +226,7 @@ public class BoardController {
         BoardModel clickedBoard = this.getBoardModelForView(clickedBoardView);
 
         if (this.gameModel.getGameState() == GameState.NORMAL && clickedBoard == currentBoardModel) {
-            this.gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " greife das Board des Gegners an!");
+            this.gameView.getGameInfoView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " greife das Board des Gegners an!");
             return;
         }
 
@@ -282,22 +282,22 @@ public class BoardController {
         switch (cell.getCellState()) {
             case FREE:
                 clickedBoardView.markAsMiss(label);
-                this.gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat nicht getroffen");
+                this.gameView.getGameInfoView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat nicht getroffen");
                 break;
             case SET:
                 ShipModel ship = opponentBoardModel.registerHit(row, col);
                 currentPlayer.getPlayerStatus().calculateHits(opponentBoardModel);
                 currentPlayer.getPlayerStatus().calculateShunkShips(opponentBoardModel);
                 hitShip = true;
-                this.gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat getroffen");
+                this.gameView.getGameInfoView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat getroffen");
                 if (ship != null && ship.isSunk()) {
                     clickedBoardView.updateRevealedShip(ship);
-                    this.gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat ein Schiff versenkt");
+                    this.gameView.getGameInfoView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " hat ein Schiff versenkt");
                     this.markSurroundingCellsAsMiss(ship, clickedBoardView, opponentBoardModel);
                 }
                 break;
             default:
-                this.gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " kann ein bereits getroffenes Schiff nicht nochmal angreifen");
+                this.gameView.getGameInfoView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " kann ein bereits getroffenes Schiff nicht nochmal angreifen");
                 return false;
         }
         return hitShip;

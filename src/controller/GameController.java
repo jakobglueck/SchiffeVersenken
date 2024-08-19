@@ -253,7 +253,7 @@ public class GameController {
     private void updateGameAfterMove() {
         this.gameModel.getPlayerTwo().getPlayerStatus().calculateShunkShips(this.gameModel.getPlayerOne().getBoard());
         this.gameModel.getPlayerTwo().getPlayerStatus().calculateHits(this.gameModel.getPlayerOne().getBoard());
-        this.gameView.getInfoPanelViewOne().updateStats(this.gameModel.getPlayerTwo());
+        this.gameView.getStatsViewOne().updateStats(this.gameModel.getPlayerTwo());
         this.gameView.getPlayerBoardOne().updateBoard(this.gameModel.getPlayerOne().getBoard());
         this.gameView.getPlayerBoardTwo().updateBoard(this.gameModel.getPlayerTwo().getBoard());
 

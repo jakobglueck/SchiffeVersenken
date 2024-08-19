@@ -94,7 +94,7 @@ public class GameView extends JFrame {
      * @brief Gibt die Statistikanzeige des ersten Spielers zurück.
      * @return Die Statistikanzeige des ersten Spielers
      */
-    public StatsView getInfoPanelViewOne() {
+    public StatsView getStatsViewOne() {
         return this.statsViewOne;
     }
 
@@ -102,7 +102,7 @@ public class GameView extends JFrame {
      * @brief Gibt die Statistikanzeige des zweiten Spielers zurück.
      * @return Die Statistikanzeige des zweiten Spielers
      */
-    public StatsView getInfoPanelViewTwo() {
+    public StatsView getStatsViewTwo() {
         return this.statsViewTwo;
     }
 
@@ -110,7 +110,7 @@ public class GameView extends JFrame {
      * @brief Gibt das Steuerelement-Panel des Spiels zurück.
      * @return Das Steuerelement-Panel des Spiels
      */
-    public GameControlView getControlView() {
+    public GameControlView getGameControlView() {
         return this.gameControlView;
     }
 
@@ -118,7 +118,7 @@ public class GameView extends JFrame {
      * @brief Gibt das Informations- und Statuspanel des Spiels zurück.
      * @return Das Informations- und Statuspanel des Spiels
      */
-    public GameInfoView getStatusView() {
+    public GameInfoView getGameInfoView() {
         return this.gameInfoView;
     }
 

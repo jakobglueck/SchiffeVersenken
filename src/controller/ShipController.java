@@ -113,7 +113,7 @@ public class ShipController {
         this.currentShipIndex = 0;
         board.setVisible(true);
         board.toggleGridVisibility(true);
-        this.gameView.getStatusView().updateStatusMessageLabel(this.gameModel.getCurrentPlayer().getPlayerName() + " muss seine Schiffe platzieren");
+        this.gameView.getGameInfoView().updateStatusMessageLabel(this.gameModel.getCurrentPlayer().getPlayerName() + " muss seine Schiffe platzieren");
     }
 
     /**
