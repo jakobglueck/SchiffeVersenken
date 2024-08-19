@@ -573,6 +573,7 @@ public class BoardView extends JPanel {
         for (JLabel graphicLabel : graphicsLabels) {
             gridPanel.remove(graphicLabel);
         }
+        gridPanel.repaint();
     }
 
     /**
