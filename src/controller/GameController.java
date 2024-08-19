@@ -31,11 +31,6 @@ public class GameController {
         homeScreenView.getExitButton().addActionListener(e -> System.exit(0));
     }
 
-    public void showHomeScreen() {
-        homeScreenView.setVisible(true);
-        gameView.setVisible(false);
-    }
-
     public void startGame(GameState gameState) {
         prepareGameStart(gameState);
         startPlayerShipPlacement(gameState);
