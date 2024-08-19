@@ -6,6 +6,12 @@ import utils.*;
 
 import javax.swing.*;
 
+/**
+ * @brief Hauptkontrollklasse für das Spiel.
+ *
+ * Diese Klasse koordiniert die Interaktionen zwischen dem Spielmodell und den Ansichten.
+ * Sie steuert den Spielablauf, die Initialisierung und die Übergänge zwischen verschiedenen Spielzuständen.
+ */
 public class GameController {
 
     private GameModel gameModel;
@@ -14,6 +20,12 @@ public class GameController {
     private BoardController boardController;
     private ShipController shipController;
 
+    /**
+     * @brief Konstruktor für den GameController, der alle Variablen setzt.
+     * @param gameModel Das GameModel-Objekt mit den Daten.
+     * @param gameView Das GameView-Objekt mit der Ansicht der Daten.
+     * @param homeScreenView Die Ansicht des Startbildschirms.
+     */
     public GameController(GameModel gameModel, GameView gameView, HomeScreenView homeScreenView) {
         this.gameModel = gameModel;
         this.gameView = gameView;
@@ -24,6 +36,9 @@ public class GameController {
         this.startHomeScreenListeners();
     }
 
+    /**
+     * @brief Initialisiert die ActionListener für den Startbildschirm und ordnet ihnen Aktionen zu.
+     */
     public void startHomeScreenListeners() {
         this.homeScreenView.getLocalGameButton().addActionListener(e -> startGame(GameState.NORMAL));
         this.homeScreenView.getComputerGameButton().addActionListener(e -> startGame(GameState.COMPUTER));
@@ -31,11 +46,19 @@ public class GameController {
         this.homeScreenView.getExitButton().addActionListener(e -> System.exit(0));
     }
 
+    /**
+     * @brief Startet das Spiel mit dem angegebenen Spielzustand.
+     * @param gameState Der Spielzustand, in dem das Spiel gestartet werden soll.
+     */
     public void startGame(GameState gameState) {
         this.prepareGameStart(gameState);
         this.startPlayerShipPlacement(gameState);
     }
 
+    /**
+     * @brief Bereitet den Spielstart vor. Dabei wird der HomeScreen deaktiviert, Der GameStatus gesetzt
+     * @param gameState Der Spielzustand für die Vorbereitung.
+     */
     private void prepareGameStart(GameState gameState) {
         this.homeScreenView.setVisible(false);
         this.gameModel.setGameState(gameState);
@@ -47,6 +70,10 @@ public class GameController {
         this.boardController.startGameListeners();
     }
 
+    /**
+     * @brief Initialisiert die Spieler basierend auf dem Spielzustand.
+     * @param gameState Der aktuelle Spielzustand.
+     */
     private void initializePlayers(GameState gameState) {
         String playerOneName = promptForPlayerName("Bitte Namen für Spieler 1 eingeben:");
         String playerTwoName = (gameState == GameState.NORMAL || gameState == GameState.DEBUG)
@@ -55,18 +82,38 @@ public class GameController {
         this.gameModel.createPlayerWithNames(playerOneName, playerTwoName);
     }
 
+    /**
+     * @brief Fordert den Spielernamen über ein Dialogfenster an.
+     * @param message Die anzuzeigende Nachricht im Dialog.
+     * @return Der eingegebene Spielername.
+     */
     private String promptForPlayerName(String message) {
         return JOptionPane.showInputDialog(message);
     }
 
+    // Spielablauf und Logik
+
+    /**
+     * @brief Startet die Schiffsplatzierung für die Spieler.
+     * @param gameState Der aktuelle Spielzustand.
+     */
     private void startPlayerShipPlacement(GameState gameState) {
         if (gameState == GameState.NORMAL || gameState == GameState.COMPUTER) {
+            JOptionPane.showMessageDialog(this.gameView,"Der Spieler " +
+                    this.gameModel.getCurrentPlayer().getPlayerName() + " startet mit dem Platzieren der Schiffe.\n " +
+                    "Bei einem Rechtsklick wird das Schiff gedreht.\n " +
+                    "Bei dem Scrollen mit der Maus wird die Größe der Schiffe verändert.\n " +
+                    "Bei Linksklick wird das Schiff platziert. \n" +
+                    "Viel Spaß!"  );
             this.initiateShipPlacement();
         } else {
             this.runGameLoop();
         }
     }
 
+    /**
+     * @brief Initiiert den Prozess der Schiffsplatzierung.
+     */
     private void initiateShipPlacement() {
         SwingUtilities.invokeLater(() -> {
             this.gameView.getPlayerBoardOne().createPanelForShipPlacement();
@@ -75,10 +122,16 @@ public class GameController {
         });
     }
 
+    /**
+     * @brief Schließt die Schiffsplatzierung ab.
+     */
     private void finalizeShipPlacement() {
         this.removePanelForShipPlacement();
     }
 
+    /**
+     * @brief Entfernt die Panels für die Schiffsplatzierung und bereitet das Spiel vor.
+     */
     private void removePanelForShipPlacement() {
         this.gameView.getPlayerBoardOne().removePanelForShipPlacement(this.gameModel.getPlayerOne().getBoard());
         this.gameView.getPlayerBoardTwo().removePanelForShipPlacement(this.gameModel.getPlayerTwo().getBoard());
@@ -87,6 +140,10 @@ public class GameController {
         SwingUtilities.invokeLater(this::runGameLoop);
     }
 
+    /**
+     * @brief Erkennt den aktuellen Spielmodus.
+     * @return Eine Zeichenkette, die den aktuellen Spielmodus beschreibt.
+     */
     private String detectGameMode() {
         switch (this.gameModel.getGameState()) {
             case NORMAL:
@@ -100,6 +157,9 @@ public class GameController {
         }
     }
 
+    /**
+     * @brief Führt die Hauptspielschleife aus.
+     */
     public void runGameLoop() {
         this.boardController.updateBoardVisibility();
         this.boardController.updateGameView();
@@ -115,12 +175,18 @@ public class GameController {
         }
     }
 
+    /**
+     * @brief Zeigt den Game Over Bildschirm an.
+     */
     public void showGameOverScreen() {
         String winner = this.gameModel.getCurrentPlayer().getPlayerName();
         this.gameView.showGameOverDialog(winner);
         System.exit(0);
     }
 
+    /**
+     * @brief Führt den Zug des Computerspielers aus.
+     */
     public void performComputerMove() {
         boolean hit;
         do {
@@ -131,6 +197,10 @@ public class GameController {
         this.runGameLoop();
     }
 
+    /**
+     * @brief Führt einen einzelnen Computerzug aus.
+     * @return true, wenn der Zug ein Treffer war, sonst false.
+     */
     private boolean executeComputerMove() {
         if (!(this.gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
             return false;
@@ -144,6 +214,11 @@ public class GameController {
         return hit;
     }
 
+    /**
+     * @brief Aktualisiert das Spielerbrett nach einem Zug.
+     * @param lastX X-Koordinate des letzten Zuges.
+     * @param lastY Y-Koordinate des letzten Zuges.
+     */
     private void updatePlayerBoardAfterMove(int lastX, int lastY) {
         BoardView playerBoardView = this.gameView.getPlayerBoardOne();
         CellModel targetCell = this.gameModel.getPlayerOne().getBoard().getCell(lastX, lastY);
@@ -155,6 +230,9 @@ public class GameController {
         }
     }
 
+    /**
+     * @brief Aktualisiert das Spiel nach einem Zug.
+     */
     private void updateGameAfterMove() {
         this.gameView.getPlayerBoardOne().updateBoard(this.gameModel.getPlayerOne().getBoard());
         this.gameView.getPlayerBoardTwo().updateBoard(this.gameModel.getPlayerTwo().getBoard());

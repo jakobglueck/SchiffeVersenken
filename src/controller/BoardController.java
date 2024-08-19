@@ -47,10 +47,47 @@ public class BoardController {
     }
 
     /**
+     * @brief Aktualisiert die Spielansicht, einschließlich der Spielfelder und Statusinformationen.
+     */
+    public void updateGameView() {
+        this.updateBoards();
+        this.updateBoardVisibility();
+        this.updateStatusView();
+        this.updateInfoPanel();
+    }
+
+    private void updateBoards() {
+        this.gameView.getPlayerBoardOne().updateBoard(this.gameModel.getPlayerOne().getBoard());
+        this.gameView.getPlayerBoardTwo().updateBoard(this.gameModel.getPlayerTwo().getBoard());
+        this.gameView.getPlayerBoardOne().revalidate();
+        this.gameView.getPlayerBoardOne().repaint();
+        this.gameView.getPlayerBoardTwo().revalidate();
+        this.gameView.getPlayerBoardTwo().repaint();
+    }
+
+    /**
      * @brief Aktualisiert die Sichtbarkeit der Spielfelder basierend auf dem aktuellen Spieler.
      */
     public void updateBoardVisibility() {
         this.gameView.updateBoardVisibility(this.gameModel, this.gameModel.getGameState());
+    }
+
+    private void updateStatusView() {
+        this.gameView.getStatusView().updatePlayerName("Aktueller Spieler: " + this.gameModel.getCurrentPlayer().getPlayerName());
+        this.gameView.getStatusView().revalidate();
+        this.gameView.getStatusView().repaint();
+    }
+
+    /**
+     * @brief Aktualisiert die Informationspanels mit den Statistiken der Spieler.
+     */
+    private void updateInfoPanel() {
+        this.gameView.getInfoPanelViewOne().updateStats(this.gameModel.getPlayerOne());
+        this.gameView.getInfoPanelViewTwo().updateStats(this.gameModel.getPlayerTwo());
+        this.gameView.getInfoPanelViewOne().revalidate();
+        this.gameView.getInfoPanelViewOne().repaint();
+        this.gameView.getInfoPanelViewTwo().revalidate();
+        this.gameView.getInfoPanelViewTwo().repaint();
     }
 
     /**
@@ -75,34 +112,51 @@ public class BoardController {
     }
 
     /**
-     * @brief Aktualisiert die Spielansicht, einschließlich der Spielfelder und Statusinformationen.
+     * @brief Aktiviert das angegebene Spielfeld für Interaktionen.
+     * @param board Das Spielfeld, das aktiviert werden soll.
      */
-    public void updateGameView() {
-        this.gameView.getPlayerBoardOne().updateBoard(this.gameModel.getPlayerOne().getBoard());
-        this.gameView.getPlayerBoardTwo().updateBoard(this.gameModel.getPlayerTwo().getBoard());
-        this.gameView.updateBoardVisibility(this.gameModel, this.gameModel.getGameState());
-        this.gameView.getPlayerBoardOne().revalidate();
-        this.gameView.getPlayerBoardOne().repaint();
-        this.gameView.getPlayerBoardTwo().revalidate();
-        this.gameView.getPlayerBoardTwo().repaint();
-
-        this.gameView.getStatusView().updatePlayerName("Aktueller Spieler: " + this.gameModel.getCurrentPlayer().getPlayerName());
-        this.gameView.getStatusView().revalidate();
-        this.gameView.getStatusView().repaint();
-
-        updateInfoPanel();
+    private void enableBoard(BoardView board) {
+        this.setBoardEnabled(board, true);
     }
 
     /**
-     * @brief Aktualisiert die Informationspanels mit den Statistiken der Spieler.
+     * @brief Deaktiviert das angegebene Spielfeld für Interaktionen.
+     * @param board Das Spielfeld, das deaktiviert werden soll.
      */
-    private void updateInfoPanel() {
-        this.gameView.getInfoPanelViewOne().updateStats(this.gameModel.getPlayerOne());
-        this.gameView.getInfoPanelViewTwo().updateStats(this.gameModel.getPlayerTwo());
-        this.gameView.getInfoPanelViewOne().revalidate();
-        this.gameView.getInfoPanelViewOne().repaint();
-        this.gameView.getInfoPanelViewTwo().revalidate();
-        this.gameView.getInfoPanelViewTwo().repaint();
+    private void disableBoard(BoardView board) {
+        this.setBoardEnabled(board, false);
+    }
+
+    /**
+     * @brief Aktiviert oder deaktiviert das angegebene Spielfeld basierend auf dem übergebenen Status.
+     * @param board Das Spielfeld, das aktiviert oder deaktiviert werden soll.
+     * @param enabled Gibt an, ob das Spielfeld aktiviert (true) oder deaktiviert (false) werden soll.
+     */
+    private void setBoardEnabled(BoardView board, boolean enabled) {
+        if (enabled) {
+            for (MouseListener listener : board.getMouseListeners()) {
+                board.removeMouseListener(listener);
+            }
+            board.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    try {
+                        JLabel label = (JLabel) e.getSource();
+                        int row = label.getY() / board.getCellSize();
+                        int col = label.getX() / board.getCellSize();
+                        handleBoardClick(row, col, label);
+                    }catch (Exception exception) {
+
+                        PlayerModel currentPlayer = gameModel.getCurrentPlayer();
+                        gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " bitte klicke auf das Board und nicht auf die Beschriftung des Boards!");
+                    }
+                }
+            });
+        } else {
+            for (MouseListener listener : board.getMouseListeners()) {
+                board.removeMouseListener(listener);
+            }
+        }
     }
 
     /**
@@ -112,14 +166,16 @@ public class BoardController {
      * @param label Das JLabel des angeklickten Feldes.
      */
     private void handleBoardClick(int row, int col, JLabel label) {
-        Component parent = label.getParent().getParent().getParent();
-        BoardView clickedBoardView = (BoardView) parent;
-
-        this.processBoardClick(row, col, clickedBoardView, label);
+            Component parent = label.getParent().getParent().getParent();
+            if (!(parent instanceof BoardView)) {
+                throw new IllegalArgumentException("Klick außerhalb des Spielfelds");
+            }
+            BoardView clickedBoardView = (BoardView) parent;
+            this.processBoardClick(row, col, clickedBoardView, label);
     }
 
     private BoardModel getBoardModelForView(BoardView boardView) {
-        return (boardView == this.gameView.getPlayerBoardOne()) ? this.gameModel.getPlayerOne().getBoard() :this.gameModel.getPlayerTwo().getBoard();
+        return (boardView == this.gameView.getPlayerBoardOne()) ? this.gameModel.getPlayerOne().getBoard() : this.gameModel.getPlayerTwo().getBoard();
     }
 
     /**
@@ -228,48 +284,6 @@ public class BoardController {
                         opponent.markAsMiss(surroundingLabel);
                     }
                 }
-            }
-        }
-    }
-
-    /**
-     * @brief Aktiviert das angegebene Spielfeld für Interaktionen.
-     * @param board Das Spielfeld, das aktiviert werden soll.
-     */
-    private void enableBoard(BoardView board) {
-        this.setBoardEnabled(board, true);
-    }
-
-    /**
-     * @brief Deaktiviert das angegebene Spielfeld für Interaktionen.
-     * @param board Das Spielfeld, das deaktiviert werden soll.
-     */
-    private void disableBoard(BoardView board) {
-        this.setBoardEnabled(board, false);
-    }
-
-    /**
-     * @brief Aktiviert oder deaktiviert das angegebene Spielfeld basierend auf dem übergebenen Status.
-     * @param board Das Spielfeld, das aktiviert oder deaktiviert werden soll.
-     * @param enabled Gibt an, ob das Spielfeld aktiviert (true) oder deaktiviert (false) werden soll.
-     */
-    private void setBoardEnabled(BoardView board, boolean enabled) {
-        if (enabled) {
-            for (MouseListener listener : board.getMouseListeners()) {
-                board.removeMouseListener(listener);
-            }
-            board.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    JLabel label = (JLabel) e.getSource();
-                    int row = label.getY() / board.getCellSize();
-                    int col = label.getX() / board.getCellSize();
-                    handleBoardClick(row, col, label);
-                }
-            });
-        } else {
-            for (MouseListener listener : board.getMouseListeners()) {
-                board.removeMouseListener(listener);
             }
         }
     }
