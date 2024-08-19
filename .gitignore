@@ -27,3 +27,4 @@ replay_pid*
 *.iml
 .classpath
 .project
+/bin/
