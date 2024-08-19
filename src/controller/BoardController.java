@@ -19,7 +19,7 @@ import java.awt.event.*;
  * verändert und in der GameView angezeigt. Damit aktualisiert den Spielzustand.
  */
 public class BoardController {
-    // Instanz die die Daten hält
+    // Instanz die Daten hält
     private GameModel gameModel;
     // Instanz der Spielansicht
     private GameView gameView;
