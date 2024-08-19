@@ -16,6 +16,10 @@ import java.awt.event.*;
 /**
  * @class BoardController
  * @brief Verantwortlich für die Steuerung und Aktualisierung der Spielfelder im Spiel.
+ *
+ * Diese Klasse koordiniert die Interaktionen zwischen dem Spielmodell (GameModel) und
+ * der Spielansicht (GameView) in Bezug auf die Spielfelder. Sie verarbeitet Benutzerinteraktionen
+ * mit den Spielfeldern und aktualisiert den Spielzustand entsprechend.
  */
 public class BoardController {
 
@@ -37,6 +41,9 @@ public class BoardController {
 
     /**
      * @brief Aktiviert die notwendigen Listener für die Spielfeldinteraktionen und Steuerungselemente.
+     *
+     * Setzt Event-Listener für Steuerungsbuttons und Spielfeldklicks. Initialisiert auch
+     * die initiale Spielansicht.
      */
     public void startGameListeners() {
         this.gameView.getControlView().getPauseGameButton().addActionListener(e -> JOptionPane.showMessageDialog(gameView, "Spiel ist pausiert!"));
@@ -48,6 +55,8 @@ public class BoardController {
 
     /**
      * @brief Aktualisiert die Spielansicht, einschließlich der Spielfelder und Statusinformationen.
+     *
+     * Ruft verschiedene Update-Methoden auf, um alle Aspekte der Spielansicht zu aktualisieren.
      */
     public void updateGameView() {
         this.updateBoards();
@@ -56,6 +65,11 @@ public class BoardController {
         this.updateInfoPanel();
     }
 
+    /**
+     * @brief Aktualisiert die Darstellung beider Spielfelder.
+     *
+     * Aktualisiert die visuelle Darstellung der Spielfelder basierend auf dem aktuellen Spielzustand.
+     */
     private void updateBoards() {
         this.gameView.getPlayerBoardOne().updateBoard(this.gameModel.getPlayerOne().getBoard());
         this.gameView.getPlayerBoardTwo().updateBoard(this.gameModel.getPlayerTwo().getBoard());
@@ -67,11 +81,16 @@ public class BoardController {
 
     /**
      * @brief Aktualisiert die Sichtbarkeit der Spielfelder basierend auf dem aktuellen Spieler.
+     *
+     * Passt die Sichtbarkeit der Spielfelder an den aktuellen Spielzustand und Spieler an.
      */
     public void updateBoardVisibility() {
         this.gameView.updateBoardVisibility(this.gameModel, this.gameModel.getGameState());
     }
 
+    /**
+     * @brief Aktualisiert die Statusanzeige mit dem Namen des aktuellen Spielers.
+     */
     private void updateStatusView() {
         this.gameView.getStatusView().updatePlayerName("Aktueller Spieler: " + this.gameModel.getCurrentPlayer().getPlayerName());
         this.gameView.getStatusView().revalidate();
@@ -80,6 +99,8 @@ public class BoardController {
 
     /**
      * @brief Aktualisiert die Informationspanels mit den Statistiken der Spieler.
+     *
+     * Aktualisiert die Statistiken beider Spieler in den entsprechenden Info-Panels.
      */
     private void updateInfoPanel() {
         this.gameView.getInfoPanelViewOne().updateStats(this.gameModel.getPlayerOne());
@@ -92,6 +113,8 @@ public class BoardController {
 
     /**
      * @brief Schaltet die Spielfelder für den aktuellen Spieler um.
+     *
+     * Aktiviert das Spielfeld des Gegners und deaktiviert das eigene Spielfeld für den aktuellen Spieler.
      */
     public void toggleBoardsForCurrentPlayer() {
         if (this.gameModel.getCurrentPlayer() == this.gameModel.getPlayerOne()) {
@@ -131,6 +154,9 @@ public class BoardController {
      * @brief Aktiviert oder deaktiviert das angegebene Spielfeld basierend auf dem übergebenen Status.
      * @param board Das Spielfeld, das aktiviert oder deaktiviert werden soll.
      * @param enabled Gibt an, ob das Spielfeld aktiviert (true) oder deaktiviert (false) werden soll.
+     *
+     * Fügt einen MouseListener hinzu oder entfernt ihn, je nach dem gewünschten Zustand.
+     * Behandelt auch Ausnahmen für Klicks außerhalb des gültigen Spielfeldbereichs.
      */
     private void setBoardEnabled(BoardView board, boolean enabled) {
         if (enabled) {
@@ -145,8 +171,7 @@ public class BoardController {
                         int row = label.getY() / board.getCellSize();
                         int col = label.getX() / board.getCellSize();
                         handleBoardClick(row, col, label);
-                    }catch (Exception exception) {
-
+                    } catch (Exception exception) {
                         PlayerModel currentPlayer = gameModel.getCurrentPlayer();
                         gameView.getStatusView().updateStatusMessageLabel(currentPlayer.getPlayerName() + " bitte klicke auf das Board und nicht auf die Beschriftung des Boards!");
                     }
@@ -164,16 +189,23 @@ public class BoardController {
      * @param row Die angeklickte Zeile.
      * @param col Die angeklickte Spalte.
      * @param label Das JLabel des angeklickten Feldes.
+     *
+     * Überprüft die Gültigkeit des Klicks und leitet die Verarbeitung an processBoardClick weiter.
      */
     private void handleBoardClick(int row, int col, JLabel label) {
-            Component parent = label.getParent().getParent().getParent();
-            if (!(parent instanceof BoardView)) {
-                throw new IllegalArgumentException("Klick außerhalb des Spielfelds");
-            }
-            BoardView clickedBoardView = (BoardView) parent;
-            this.processBoardClick(row, col, clickedBoardView, label);
+        Component parent = label.getParent().getParent().getParent();
+        if (!(parent instanceof BoardView)) {
+            throw new IllegalArgumentException("Klick außerhalb des Spielfelds");
+        }
+        BoardView clickedBoardView = (BoardView) parent;
+        this.processBoardClick(row, col, clickedBoardView, label);
     }
 
+    /**
+     * @brief Ermittelt das BoardModel für eine gegebene BoardView.
+     * @param boardView Die BoardView, für die das BoardModel ermittelt werden soll.
+     * @return Das zugehörige BoardModel.
+     */
     private BoardModel getBoardModelForView(BoardView boardView) {
         return (boardView == this.gameView.getPlayerBoardOne()) ? this.gameModel.getPlayerOne().getBoard() : this.gameModel.getPlayerTwo().getBoard();
     }
@@ -184,6 +216,9 @@ public class BoardController {
      * @param col Die angeklickte Spalte.
      * @param clickedBoardView Die Ansicht des angeklickten Spielfelds.
      * @param label Das JLabel des angeklickten Feldes.
+     *
+     * Führt die Hauptlogik für einen Spielzug aus, einschließlich der Überprüfung auf Treffer
+     * und der Aktualisierung des Spielzustands.
      */
     private void processBoardClick(int row, int col, BoardView clickedBoardView, JLabel label) {
         PlayerModel currentPlayer = this.gameModel.getCurrentPlayer();
@@ -203,6 +238,9 @@ public class BoardController {
     /**
      * @brief Verarbeitet den Status des angeklickten Feldes und wechselt gegebenenfalls den Spieler.
      * @param hitShip Gibt an, ob ein Schiff getroffen wurde.
+     *
+     * Überprüft, ob das Spiel beendet ist, wechselt den Spieler wenn nötig und
+     * initiiert den nächsten Zug oder Computerzug.
      */
     private void changeClickRow(boolean hitShip) {
         BoardModel opponentBoard = (this.gameModel.getCurrentPlayer() == this.gameModel.getPlayerOne()) ?
@@ -217,7 +255,7 @@ public class BoardController {
                 if (!(this.gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
                     SwingUtilities.invokeLater(this.gameController::runGameLoop);
                 } else {
-                    this.gameController.performComputerMove();
+                    this.gameController.makeComputerMove();
                     this.updateGameView();
                 }
             }
@@ -232,6 +270,8 @@ public class BoardController {
      * @param opponentBoardModel Das BoardModel des Gegners.
      * @param label Das JLabel des angeklickten Feldes.
      * @return true, wenn ein Schiff getroffen wurde; false sonst.
+     *
+     * Verarbeitet den Klick auf ein Feld, aktualisiert den Spielstatus und die Ansicht entsprechend.
      */
     private boolean checkStatusOfClick(int row, int col, BoardView clickedBoardView, BoardModel opponentBoardModel, JLabel label) {
         PlayerModel currentPlayer = this.gameModel.getCurrentPlayer();
@@ -268,6 +308,9 @@ public class BoardController {
      * @param ship Das versenkte Schiff.
      * @param opponent Die Ansicht des gegnerischen Spielfeldes.
      * @param opponentBoardModel Das BoardModel des Gegners.
+     *
+     * Markiert alle Felder um ein versenktes Schiff herum als Fehlschüsse,
+     * um anzuzeigen, dass dort keine weiteren Schiffe sein können.
      */
     private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponent, BoardModel opponentBoardModel) {
         for (CellModel cell : ship.getShipCells()) {

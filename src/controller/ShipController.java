@@ -14,20 +14,21 @@ import java.util.List;
  *
  * Diese Klasse verwaltet die Platzierung von Schiffen auf dem Spielfeld,
  * einschließlich der manuellen Platzierung durch Spieler und der Vorbereitung
- * für den Spielbeginn.
+ * für den Spielbeginn. Sie koordiniert die Interaktionen zwischen dem GameModel
+ * und der GameView während der Schiffsplatzierungsphase.
  */
 public class ShipController {
 
-    private GameModel gameModel;
-    private GameView gameView;
-    private int currentShipIndex;
-    private boolean isHorizontal;
-    private List<Integer> playerOneShips;
-    private List<Integer> playerTwoShips;
+    private GameModel gameModel; // Das Modell mit den Spieldaten
+    private GameView gameView; // Die Ansicht des Spiels
+    private int currentShipIndex; // Index des aktuell zu platzierenden Schiffs
+    private boolean isHorizontal; // Ausrichtung des aktuellen Schiffs
+    private List<Integer> playerOneShips; // Liste der Schiffsgrößen für Spieler 1
+    private List<Integer> playerTwoShips; // Liste der Schiffsgrößen für Spieler 2
 
     /**
      * @brief Konstruktor für den ShipController.
-     * @param gameModel Das Spielmodell.
+     * @param gameModel Das Spielmodell mit den Daten.
      * @param gameView Die Spielansicht.
      */
     public ShipController(GameModel gameModel, GameView gameView) {
@@ -41,6 +42,9 @@ public class ShipController {
 
     /**
      * @brief Initialisiert die Listen der Schiffe für beide Spieler.
+     *
+     * Erstellt zwei separate Listen mit den Schiffsgrößen für jeden Spieler,
+     * basierend auf den im GameModel definierten Schiffsgrößen.
      */
     private void initializeShipLists() {
         this.playerOneShips = new ArrayList<>();
@@ -55,6 +59,8 @@ public class ShipController {
     /**
      * @brief Startet die manuelle Schiffsplatzierung.
      * @param onComplete Runnable, das nach Abschluss der Platzierung ausgeführt wird.
+     *
+     * Bestimmt die Anzahl der Platzierungsrunden und initiiert den Platzierungsprozess.
      */
     public void handleManualShipPlacement(Runnable onComplete) {
         int shipTurns = this.determineShipTurns();
@@ -74,6 +80,9 @@ public class ShipController {
      * @param currentTurn Aktueller Zug.
      * @param totalTurns Gesamtzahl der Züge.
      * @param onComplete Runnable, das nach Abschluss ausgeführt wird.
+     *
+     * Koordiniert den Platzierungsprozess für jeden Spieler, wechselt zwischen den Spielern
+     * und beendet den Prozess, wenn alle Schiffe platziert sind.
      */
     private void placeShipsForPlayer(int currentTurn, int totalTurns, Runnable onComplete) {
         PlayerModel currentPlayer = this.gameModel.getCurrentPlayer();
@@ -84,6 +93,7 @@ public class ShipController {
 
         this.placeShipsForCurrentPlayer(currentBoard, remainingShips, () -> {
             if (currentTurn < totalTurns - 1) {
+                this.gameView.updateBoardVisibility(this.gameModel, this.gameModel.getGameState());
                 this.proceedToNextTurn(currentBoard, currentPlayer);
                 this.placeShipsForPlayer(currentTurn + 1, totalTurns, onComplete);
             } else {
@@ -95,6 +105,9 @@ public class ShipController {
     /**
      * @brief Bereitet das Spielbrett für die Schiffsplatzierung vor.
      * @param board Das vorzubereitende Spielbrett.
+     *
+     * Setzt den aktuellen Schiffsindex zurück, macht das Brett sichtbar und
+     * aktualisiert die Statusanzeige mit dem Namen des aktuellen Spielers.
      */
     private void prepareBoardForPlacement(BoardView board) {
         this.currentShipIndex = 0;
@@ -108,6 +121,9 @@ public class ShipController {
      * @param board Das aktuelle Spielbrett.
      * @param remainingShips Liste der verbleibenden Schiffe.
      * @param onComplete Runnable, das nach Abschluss ausgeführt wird.
+     *
+     * Initialisiert die Maussteuerung für die Schiffsplatzierung und fügt die entsprechenden
+     * Listener zum Spielbrett hinzu.
      */
     private void placeShipsForCurrentPlayer(BoardView board, List<Integer> remainingShips, Runnable onComplete) {
         this.currentShipIndex = 0;
@@ -142,6 +158,8 @@ public class ShipController {
      * @brief Wechselt zum nächsten Spieler nach der Schiffsplatzierung.
      * @param currentBoard Das aktuelle Spielbrett.
      * @param currentPlayer Der aktuelle Spieler.
+     *
+     * Aktualisiert das Board, entfernt die Grafiken und wechselt zum nächsten Spieler.
      */
     private void proceedToNextTurn(BoardView currentBoard, PlayerModel currentPlayer) {
         currentBoard.updateBoard(currentPlayer.getBoard());
@@ -154,6 +172,8 @@ public class ShipController {
      * @brief Schließt die Schiffsplatzierung ab.
      * @param currentBoard Das aktuelle Spielbrett.
      * @param onComplete Runnable, das nach Abschluss ausgeführt wird.
+     *
+     * Entfernt die Grafiken, zeigt eine Meldung an und führt die Abschlussaktion aus.
      */
     private void finalizeShipPlacement(BoardView currentBoard, Runnable onComplete) {
         currentBoard.removeGraphics();
@@ -168,6 +188,8 @@ public class ShipController {
      * @param remainingShips Liste der verbleibenden Schiffe.
      * @param onComplete Runnable, das nach Abschluss ausgeführt wird.
      * @return Ein MouseAdapter für die Schiffsplatzierung.
+     *
+     * Definiert das Verhalten für Mausklicks und Mausbewegungen während der Schiffsplatzierung.
      */
     private MouseAdapter createMouseAdapterForPlacement(BoardView board, List<Integer> remainingShips, Runnable onComplete) {
         return new MouseAdapter() {
@@ -189,6 +211,8 @@ public class ShipController {
      * @param board Das aktuelle Spielbrett.
      * @param remainingShips Liste der verbleibenden Schiffe.
      * @param onComplete Runnable, das nach Abschluss ausgeführt wird.
+     *
+     * Verarbeitet Rechts- und Linksklicks für die Rotation und Platzierung von Schiffen.
      */
     private void handleMouseClick(MouseEvent e, BoardView board, List<Integer> remainingShips, Runnable onComplete) {
         if (SwingUtilities.isRightMouseButton(e)) {
@@ -204,6 +228,9 @@ public class ShipController {
      * @param board Das aktuelle Spielbrett.
      * @param remainingShips Liste der verbleibenden Schiffe.
      * @param onComplete Runnable, das nach Abschluss ausgeführt wird.
+     *
+     * Überprüft die Gültigkeit der Platzierung, platziert das Schiff wenn möglich,
+     * und aktualisiert den Spielzustand entsprechend.
      */
     private void attemptShipPlacement(MouseEvent e, BoardView board, List<Integer> remainingShips, Runnable onComplete) {
         int x = e.getY() / board.getCellSize();
@@ -211,6 +238,7 @@ public class ShipController {
 
         int shipSize = remainingShips.get(currentShipIndex);
 
+        // Überprüfe, ob die Platzierung gültig ist und platziere das Schiff
         if (this.currentShipIndex < remainingShips.size() && this.gameModel.placeNextShip(x, y, shipSize, !this.isHorizontal)) {
             board.addGraphicsToCells(x, y, shipSize, this.isHorizontal);
             remainingShips.remove(this.currentShipIndex);
@@ -219,6 +247,7 @@ public class ShipController {
                 completePlacement(board, onComplete);
             } else {
                 adjustShipIndex(remainingShips);
+                // Überprüfe, ob die verbleibenden Schiffe noch platziert werden können
                 if (!canPlaceRemainingShips(remainingShips)) {
                     showGameOverDialog();
                 }
@@ -232,6 +261,9 @@ public class ShipController {
      * @brief Überprüft, ob alle verbleibenden Schiffe platziert werden können.
      * @param remainingShips Liste der verbleibenden Schiffe.
      * @return true, wenn alle Schiffe platziert werden können, sonst false.
+     *
+     * Durchläuft alle möglichen Positionen und Ausrichtungen für jedes verbleibende Schiff,
+     * um zu prüfen, ob eine gültige Platzierung möglich ist.
      */
     private boolean canPlaceRemainingShips(List<Integer> remainingShips) {
         BoardModel currentBoard = this.gameModel.getCurrentPlayer().getBoard();
@@ -254,6 +286,8 @@ public class ShipController {
 
     /**
      * @brief Zeigt einen Dialog an, der das Spiel beendet.
+     *
+     * Wird aufgerufen, wenn keine gültige Platzierung für die verbleibenden Schiffe möglich ist.
      */
     private void showGameOverDialog() {
         JOptionPane.showMessageDialog(this.gameView,
@@ -278,6 +312,8 @@ public class ShipController {
     /**
      * @brief Passt den Index des aktuellen Schiffs an.
      * @param remainingShips Liste der verbleibenden Schiffe.
+     *
+     * Stellt sicher, dass der currentShipIndex nicht größer ist als die Anzahl der verbleibenden Schiffe.
      */
     private void adjustShipIndex(List<Integer> remainingShips) {
         this.currentShipIndex = Math.min(this.currentShipIndex, remainingShips.size() - 1);
@@ -288,6 +324,8 @@ public class ShipController {
      * @param e Das MouseWheelEvent.
      * @param board Das aktuelle Spielbrett.
      * @param remainingShips Liste der verbleibenden Schiffe.
+     *
+     * Ermöglicht dem Spieler, durch die verfügbaren Schiffe zu scrollen und aktualisiert die Vorschau entsprechend.
      */
     private void handleMouseWheelRotation(MouseWheelEvent e, BoardView board, List<Integer> remainingShips) {
         if (e.getWheelRotation() < 0) {
@@ -307,6 +345,9 @@ public class ShipController {
      * @param mouseY Y-Koordinate der Maus.
      * @param board Das aktuelle Spielbrett.
      * @param remainingShips Liste der verbleibenden Schiffe.
+     *
+     * Berechnet die Position und Größe des Vorschau-Rechtecks basierend auf der aktuellen Mausposition
+     * und der Ausrichtung des Schiffs. Aktualisiert dann die Vorschau auf dem Spielbrett.
      */
     private void updateShipPreview(int mouseX, int mouseY, BoardView board, List<Integer> remainingShips) {
         if (remainingShips.isEmpty()){
