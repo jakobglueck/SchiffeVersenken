@@ -21,30 +21,30 @@ public class GameController {
         this.boardController = new BoardController(gameModel, gameView, this);
         this.shipController = new ShipController(gameModel, gameView);
 
-        startHomeScreenListeners();
+        this.startHomeScreenListeners();
     }
 
     public void startHomeScreenListeners() {
-        homeScreenView.getLocalGameButton().addActionListener(e -> startGame(GameState.NORMAL));
-        homeScreenView.getComputerGameButton().addActionListener(e -> startGame(GameState.COMPUTER));
-        homeScreenView.getDebugModeButton().addActionListener(e -> startGame(GameState.DEBUG));
-        homeScreenView.getExitButton().addActionListener(e -> System.exit(0));
+        this.homeScreenView.getLocalGameButton().addActionListener(e -> startGame(GameState.NORMAL));
+        this.homeScreenView.getComputerGameButton().addActionListener(e -> startGame(GameState.COMPUTER));
+        this.homeScreenView.getDebugModeButton().addActionListener(e -> startGame(GameState.DEBUG));
+        this.homeScreenView.getExitButton().addActionListener(e -> System.exit(0));
     }
 
     public void startGame(GameState gameState) {
-        prepareGameStart(gameState);
-        startPlayerShipPlacement(gameState);
+        this.prepareGameStart(gameState);
+        this.startPlayerShipPlacement(gameState);
     }
 
     private void prepareGameStart(GameState gameState) {
-        homeScreenView.setVisible(false);
-        gameModel.setGameState(gameState);
-        initializePlayers(gameState);
-        gameView.setVisible(true);
-        gameView.setupGameInterface(gameModel.getPlayerOne(), gameModel.getPlayerTwo());
-        gameView.updateGameModePanel(detectGameMode());
-        gameModel.startGame();
-        boardController.startGameListeners();
+        this.homeScreenView.setVisible(false);
+        this.gameModel.setGameState(gameState);
+        this.initializePlayers(gameState);
+        this.gameView.setVisible(true);
+        this.gameView.setupGameInterface(this.gameModel.getPlayerOne(), this.gameModel.getPlayerTwo());
+        this.gameView.updateGameModePanel(detectGameMode());
+        this.gameModel.startGame();
+        this.boardController.startGameListeners();
     }
 
     private void initializePlayers(GameState gameState) {
@@ -52,7 +52,7 @@ public class GameController {
         String playerTwoName = (gameState == GameState.NORMAL || gameState == GameState.DEBUG)
                 ? promptForPlayerName("Bitte Namen für Spieler 2 eingeben:")
                 : "Default Player";
-        gameModel.createPlayerWithNames(playerOneName, playerTwoName);
+        this.gameModel.createPlayerWithNames(playerOneName, playerTwoName);
     }
 
     private String promptForPlayerName(String message) {
@@ -61,34 +61,34 @@ public class GameController {
 
     private void startPlayerShipPlacement(GameState gameState) {
         if (gameState == GameState.NORMAL || gameState == GameState.COMPUTER) {
-            initiateShipPlacement();
+            this.initiateShipPlacement();
         } else {
-            runGameLoop();
+            this.runGameLoop();
         }
     }
 
     private void initiateShipPlacement() {
         SwingUtilities.invokeLater(() -> {
-            gameView.getPlayerBoardOne().createPanelForShipPlacement();
-            gameView.getPlayerBoardTwo().createPanelForShipPlacement();
-            shipController.handleManualShipPlacement(this::finalizeShipPlacement);
+            this.gameView.getPlayerBoardOne().createPanelForShipPlacement();
+            this.gameView.getPlayerBoardTwo().createPanelForShipPlacement();
+            this.shipController.handleManualShipPlacement(this::finalizeShipPlacement);
         });
     }
 
     private void finalizeShipPlacement() {
-        removePanelForShipPlacement();
+        this.removePanelForShipPlacement();
     }
 
     private void removePanelForShipPlacement() {
-        gameView.getPlayerBoardOne().removePanelForShipPlacement(gameModel.getPlayerOne().getBoard());
-        gameView.getPlayerBoardTwo().removePanelForShipPlacement(gameModel.getPlayerTwo().getBoard());
-        gameView.getPlayerBoardOne().createLabelForBoard();
-        gameView.getPlayerBoardTwo().createLabelForBoard();
+        this.gameView.getPlayerBoardOne().removePanelForShipPlacement(this.gameModel.getPlayerOne().getBoard());
+        this.gameView.getPlayerBoardTwo().removePanelForShipPlacement(this.gameModel.getPlayerTwo().getBoard());
+        this.gameView.getPlayerBoardOne().createLabelForBoard();
+        this.gameView.getPlayerBoardTwo().createLabelForBoard();
         SwingUtilities.invokeLater(this::runGameLoop);
     }
 
     private String detectGameMode() {
-        switch (gameModel.getGameState()) {
+        switch (this.gameModel.getGameState()) {
             case NORMAL:
                 return "Spielmodus: Normal";
             case COMPUTER:
@@ -101,22 +101,22 @@ public class GameController {
     }
 
     public void runGameLoop() {
-        boardController.updateBoardVisibility();
-        boardController.updateGameView();
+        this.boardController.updateBoardVisibility();
+        this.boardController.updateGameView();
 
-        if (gameModel.getGameState() == GameState.DEBUG) {
-            boardController.enableBothBoards();
+        if (this.gameModel.getGameState() == GameState.DEBUG) {
+            this.boardController.enableBothBoards();
         } else {
-            boardController.toggleBoardsForCurrentPlayer();
-            if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
+            this.boardController.toggleBoardsForCurrentPlayer();
+            if (!(this.gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
                 return;
             }
-            performComputerMove();
+            this.performComputerMove();
         }
     }
 
     public void showGameOverScreen() {
-        String winner = gameModel.getCurrentPlayer().getPlayerName();
+        String winner = this.gameModel.getCurrentPlayer().getPlayerName();
         this.gameView.showGameOverDialog(winner);
         System.exit(0);
     }
@@ -124,43 +124,43 @@ public class GameController {
     public void performComputerMove() {
         boolean hit;
         do {
-            hit = executeComputerMove();
-            updateGameAfterMove();
-        } while (hit && !gameModel.isGameOver());
-        gameModel.switchPlayer();
-        runGameLoop();
+            hit = this.executeComputerMove();
+            this.updateGameAfterMove();
+        } while (hit && !this.gameModel.isGameOver());
+        this.gameModel.switchPlayer();
+        this.runGameLoop();
     }
 
     private boolean executeComputerMove() {
-        if (!(gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
+        if (!(this.gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
             return false;
         }
 
-        boolean hit = ((ComputerPlayerModel) gameModel.getCurrentPlayer()).makeMove(gameModel.getPlayerOne());
-        int lastX = ((ComputerPlayerModel) gameModel.getCurrentPlayer()).getLastMoveX();
-        int lastY = ((ComputerPlayerModel) gameModel.getCurrentPlayer()).getLastMoveY();
+        boolean hit = ((ComputerPlayerModel) this.gameModel.getCurrentPlayer()).makeMove(this.gameModel.getPlayerOne());
+        int lastX = ((ComputerPlayerModel) this.gameModel.getCurrentPlayer()).getLastMoveX();
+        int lastY = ((ComputerPlayerModel) this.gameModel.getCurrentPlayer()).getLastMoveY();
 
-        updatePlayerBoardAfterMove(lastX, lastY);
+        this.updatePlayerBoardAfterMove(lastX, lastY);
         return hit;
     }
 
     private void updatePlayerBoardAfterMove(int lastX, int lastY) {
-        BoardView playerBoardView = gameView.getPlayerBoardOne();
-        CellModel targetCell = gameModel.getPlayerOne().getBoard().getCell(lastX, lastY);
+        BoardView playerBoardView = this.gameView.getPlayerBoardOne();
+        CellModel targetCell = this.gameModel.getPlayerOne().getBoard().getCell(lastX, lastY);
 
         if (targetCell.getCellState() == CellState.FREE) {
             playerBoardView.markAsMiss(playerBoardView.getLabelForCell(lastX, lastY));
         } else if (targetCell.getCellState() == CellState.SET) {
-            playerBoardView.updateBoard(gameModel.getPlayerOne().getBoard());
+            playerBoardView.updateBoard(this.gameModel.getPlayerOne().getBoard());
         }
     }
 
     private void updateGameAfterMove() {
-        gameView.getPlayerBoardOne().updateBoard(gameModel.getPlayerOne().getBoard());
-        gameView.getPlayerBoardTwo().updateBoard(gameModel.getPlayerTwo().getBoard());
+        this.gameView.getPlayerBoardOne().updateBoard(this.gameModel.getPlayerOne().getBoard());
+        this.gameView.getPlayerBoardTwo().updateBoard(this.gameModel.getPlayerTwo().getBoard());
 
-        if (gameModel.isGameOver()) {
-            showGameOverScreen();
+        if (this.gameModel.isGameOver()) {
+            this.showGameOverScreen();
         }
     }
 }

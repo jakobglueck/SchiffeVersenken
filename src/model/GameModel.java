@@ -98,11 +98,11 @@ public class GameModel {
      * @param playerTwoName Der Name des zweiten Spielers oder "Computer" für den Computergegner.
      */
     public void createPlayerWithNames(String playerOneName, String playerTwoName) {
-        this.playerOne = createPlayer(!Objects.equals(playerOneName, "") ? playerOneName : DEFAULT_PLAYER_NAME);
+        this.playerOne = this.createPlayer(!Objects.equals(playerOneName, "") ? playerOneName : DEFAULT_PLAYER_NAME);
         if (this.gameState.equals(GameState.COMPUTER)) {
             this.playerTwo = new ComputerPlayerModel("Computer");
         } else {
-            this.playerTwo = createPlayer(!Objects.equals(playerTwoName, "") ? playerTwoName : DEFAULT_PLAYER_NAME);
+            this.playerTwo = this.createPlayer(!Objects.equals(playerTwoName, "") ? playerTwoName : DEFAULT_PLAYER_NAME);
         }
     }
 
@@ -111,8 +111,8 @@ public class GameModel {
      * @return Der zufällig ausgewählte Spieler.
      */
     private PlayerModel randomPlayer() {
-        Random ra = new Random();
-        return (ra.nextInt(10) < 5) ? this.playerOne : this.playerTwo;
+        Random random = new Random();
+        return (random.nextInt(10) < 5) ? this.playerOne : this.playerTwo;
     }
 
 
@@ -146,7 +146,7 @@ public class GameModel {
                 break;
         }
 
-        resetShipPlacement();
+        this.resetShipPlacement();
     }
 
     /**
@@ -162,10 +162,10 @@ public class GameModel {
             return false;
         }
 
-        boolean placed = getCurrentPlayer().getBoard().placeShip(startX, startY, horizontal, shipSize);
+        boolean placed = this.getCurrentPlayer().getBoard().placeShip(startX, startY, horizontal, shipSize);
 
         if (placed) {
-            currentShipIndex++;
+            this.currentShipIndex++;
         }
 
         return placed;
@@ -175,7 +175,7 @@ public class GameModel {
      * @brief Setzt den Index für die Schiffsplatzierung zurück.
      */
     public void resetShipPlacement() {
-        currentShipIndex = 0;
+        this.currentShipIndex = 0;
     }
 
     /**
