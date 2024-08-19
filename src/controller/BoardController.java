@@ -217,7 +217,7 @@ public class BoardController {
                 if (!(this.gameModel.getCurrentPlayer() instanceof ComputerPlayerModel)) {
                     SwingUtilities.invokeLater(this.gameController::runGameLoop);
                 } else {
-                    this.gameController.performComputerMove();
+                    this.gameController.makeComputerMove();
                     this.updateGameView();
                 }
             }
