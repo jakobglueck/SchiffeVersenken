@@ -170,7 +170,7 @@ public class BoardModel {
      * @param length Die Länge des Schiffs.
      * @return true, wenn die Platzierung gültig ist; false sonst.
      */
-    private boolean isValidShipPlacement(int startX, int startY, boolean horizontal, int length) {
+    public boolean isValidShipPlacement(int startX, int startY, boolean horizontal, int length) {
         if (!this.isValidCoordinate(startX, startY)) {
             return false;
         }

@@ -39,8 +39,6 @@ public class ShipController {
         this.initializeShipLists();
     }
 
-    // Initialisierung und Setup
-
     /**
      * @brief Initialisiert die Listen der Schiffe für beide Spieler.
      */
@@ -70,8 +68,6 @@ public class ShipController {
     private int determineShipTurns() {
         return (this.gameModel.getPlayerTwo() instanceof ComputerPlayerModel) ? 1 : 2;
     }
-
-    // Hauptlogik für Schiffsplatzierung
 
     /**
      * @brief Führt die Schiffsplatzierung für den aktuellen Spieler durch.
@@ -124,8 +120,6 @@ public class ShipController {
         board.addMouseMotionListener(mouseAdapter);
     }
 
-    // Hilfsmethoden für die Schiffsplatzierung
-
     /**
      * @brief Ermittelt das aktuelle Spielbrett für den gegebenen Spieler.
      * @param player Der aktuelle Spieler.
@@ -167,8 +161,6 @@ public class ShipController {
         currentBoard.toggleGridVisibility(false);
         onComplete.run();
     }
-
-    // Event-Handler und UI-Interaktionen
 
     /**
      * @brief Erstellt einen MouseAdapter für die Schiffsplatzierung.
@@ -222,14 +214,53 @@ public class ShipController {
         if (this.currentShipIndex < remainingShips.size() && this.gameModel.placeNextShip(x, y, shipSize, !this.isHorizontal)) {
             board.addGraphicsToCells(x, y, shipSize, this.isHorizontal);
             remainingShips.remove(this.currentShipIndex);
+
             if (remainingShips.isEmpty()) {
                 completePlacement(board, onComplete);
             } else {
                 adjustShipIndex(remainingShips);
+                if (!canPlaceRemainingShips(remainingShips)) {
+                    showGameOverDialog();
+                }
             }
         } else {
             JOptionPane.showMessageDialog(this.gameView, "Ungültige Schiffsplatzierung. Versuche es erneut.");
         }
+    }
+
+    /**
+     * @brief Überprüft, ob alle verbleibenden Schiffe platziert werden können.
+     * @param remainingShips Liste der verbleibenden Schiffe.
+     * @return true, wenn alle Schiffe platziert werden können, sonst false.
+     */
+    private boolean canPlaceRemainingShips(List<Integer> remainingShips) {
+        BoardModel currentBoard = this.gameModel.getCurrentPlayer().getBoard();
+        for (Integer shipSize : remainingShips) {
+            boolean canPlace = false;
+            for (int x = 0; x < 10; x++) {
+                for (int y = 0; y < 10; y++) {
+                    if (currentBoard.isValidShipPlacement(x, y, true, shipSize) ||
+                            currentBoard.isValidShipPlacement(x, y, false, shipSize)) {
+                        canPlace = true;
+                        break;
+                    }
+                }
+                if (canPlace) break;
+            }
+            if (!canPlace) return false;
+        }
+        return true;
+    }
+
+    /**
+     * @brief Zeigt einen Dialog an, der das Spiel beendet.
+     */
+    private void showGameOverDialog() {
+        JOptionPane.showMessageDialog(this.gameView,
+                "Es können nicht alle Schiffe platziert werden. Das Spiel muss neu gestartet werden.",
+                "Spiel beendet",
+                JOptionPane.ERROR_MESSAGE);
+        System.exit(0);
     }
 
     /**
