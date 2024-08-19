@@ -206,6 +206,11 @@ public class GameController {
         do {
             this.gameModel.getPlayerTwo().getPlayerStatus().updateTotalClicks();
             hit = this.showComputerMoveHit();
+            if(hit){
+                for( ShipModel ship : this.gameModel.getPlayerOne().getBoard().getPlayerShips()){
+                    ship.checkShipStatus();
+                }
+            }
             this.updateGameAfterMove();
         } while (hit && !this.gameModel.isGameOver());
         this.gameModel.switchPlayer();
@@ -224,7 +229,12 @@ public class GameController {
         boolean hit = ((ComputerPlayerModel) this.gameModel.getCurrentPlayer()).makeMove(this.gameModel.getPlayerOne());
         int lastX = ((ComputerPlayerModel) this.gameModel.getCurrentPlayer()).getLastMoveX();
         int lastY = ((ComputerPlayerModel) this.gameModel.getCurrentPlayer()).getLastMoveY();
-
+        for (ShipModel ship : this.gameModel.getPlayerOne().getBoard().getPlayerShips()){
+            if(ship.isSunk()){
+                this.gameView.getPlayerBoardOne().updateRevealedShip(ship);
+                this.boardController.markSurroundingCellsAsMiss(ship, this.gameView.getPlayerBoardOne(),this.gameModel.getPlayerOne().getBoard());
+            }
+        }
         this.updatePlayerBoardAfterComputerMove(lastX, lastY);
         return hit;
     }
@@ -254,6 +264,7 @@ public class GameController {
         this.gameModel.getPlayerTwo().getPlayerStatus().calculateShunkShips(this.gameModel.getPlayerOne().getBoard());
         this.gameModel.getPlayerTwo().getPlayerStatus().calculateHits(this.gameModel.getPlayerOne().getBoard());
         this.gameView.getStatsViewOne().updateStats(this.gameModel.getPlayerTwo());
+        this.gameView.getStatsViewTwo().updateStats(this.gameModel.getPlayerOne());
         this.gameView.getPlayerBoardOne().updateBoard(this.gameModel.getPlayerOne().getBoard());
         this.gameView.getPlayerBoardTwo().updateBoard(this.gameModel.getPlayerTwo().getBoard());
 

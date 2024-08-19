@@ -312,7 +312,7 @@ public class BoardController {
      * Markiert alle Felder um ein versenktes Schiff herum als Fehlschüsse,
      * um anzuzeigen, dass dort keine weiteren Schiffe sein können.
      */
-    private void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponent, BoardModel opponentBoardModel) {
+    public void markSurroundingCellsAsMiss(ShipModel ship, BoardView opponent, BoardModel opponentBoardModel) {
         for (CellModel cell : ship.getShipCells()) {
             int startX = Math.max(0, cell.getX() - 1);
             int endX = Math.min(9, cell.getX() + 1);
