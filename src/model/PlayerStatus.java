@@ -85,13 +85,4 @@ public class PlayerStatus {
         }
         this.shunkShips = temp;
     }
-
-    /**
-     * @brief Setzt den Spielerstatus zurück, indem alle Werte auf Null gesetzt werden.
-     */
-    public void reset() {
-        this.totalClicks = 0;
-        this.hits = 0;
-        this.shunkShips = 0;
-    }
 }

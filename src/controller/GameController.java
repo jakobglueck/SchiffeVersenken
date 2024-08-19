@@ -122,23 +122,8 @@ public class GameController {
 
     public void showGameOverScreen() {
         String winner = gameModel.getCurrentPlayer().getPlayerName();
-        int result = gameView.showGameOverDialog(winner);
-
-        if (result == 0) {
-            startGame(gameModel.getGameState());
-        } else {
-            resetGame();
-            showHomeScreen();
-        }
-    }
-
-    public void resetGame() {
-        gameView.resetView();
-        gameModel.resetGame();
-        boardController.reset();
-        gameView.setVisible(false);
-        showHomeScreen();
-        startHomeScreenListeners();
+        this.gameView.showGameOverDialog(winner);
+        System.exit(0);
     }
 
     public void performComputerMove() {

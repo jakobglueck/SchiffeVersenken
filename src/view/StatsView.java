@@ -55,13 +55,4 @@ public class StatsView extends JPanel {
         this.hitsLabel.setText("Davon Getroffen (Hits): " + playerModel.getPlayerStatus().getHits());
         this.sunkShipsLabel.setText("Gegnerische Schiffe versunken: " + playerModel.getPlayerStatus().getSunkShips());
     }
-
-    /**
-     * @brief setzt alle Statistiken auf die Anfangswerte zurück.
-     */
-    public void reset() {
-        this.totalClicksLabel.setText("Anzahl gesamter Klicks: 0");
-        this.hitsLabel.setText("Davon Getroffen (Hits): 0");
-        this.sunkShipsLabel.setText("Gegnerische Schiffe versunken: 0");
-    }
 }

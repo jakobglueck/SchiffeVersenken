@@ -293,17 +293,8 @@ public class GameView extends JFrame {
      * @return Ein Integer-Wert, der die vom Benutzer gewählte Option darstellt:
      *         0 für "Neues Spiel" und 1 für "Hauptmenü".
      */
-    public int showGameOverDialog(String winner) {
-        return JOptionPane.showOptionDialog(
-                this,
-                "Spiel vorbei! " + winner + " gewinnt!\nMöchtest du ein neues Spiel starten oder zum Hauptmenü zurückkehren?",
-                "Spiel beendet",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                new String[]{"Neues Spiel", "Hauptmenü"},
-                "Neues Spiel"
-        );
+    public void showGameOverDialog(String winner) {
+        JOptionPane.showMessageDialog(this.mainPanel,"Spiel vorbei! " + winner + " gewinnt!");
     }
     /**
      * @brief Aktualisiert das Label zur Anzeige des aktuellen Spielmodus.
@@ -349,23 +340,5 @@ public class GameView extends JFrame {
                 this.playerBoardTwo.setGridLabelsOpaque(false);
                 break;
         }
-    }
-
-    /**
-     * @brief Setzt die Spielansicht zurück und leert alle relevanten Spielfelder und Anzeigen.
-     *
-     * Diese Methode stellt den Ausgangszustand der Spielansicht wieder her, indem sie:
-     * - Beide Spielfelder zurücksetzt.
-     * - Die Spielinformationen löscht.
-     * - Die Statistikansichten beider Spieler zurücksetzt.
-     *
-     * Dadurch wird die gesamte Benutzeroberfläche des Spiels auf ihren Anfangszustand zurückgesetzt.
-     */
-    public void resetView() {
-        this.playerBoardOne.resetBoard();
-        this.playerBoardTwo.resetBoard();
-        this.gameInfoView.reset();
-        this.statsViewOne.reset();
-        this.statsViewTwo.reset();
     }
 }

@@ -303,15 +303,6 @@ public class BoardView extends JPanel {
         label.repaint();
     }
 
-    public void resetBoard() {
-        for (int row = 0; row < BOARD_SIZE; row++) {
-            for (int col = 0; col < BOARD_SIZE; col++) {
-                clearLabelGraphics(labels[row][col]);
-            }
-        }
-        revalidate();
-        repaint();
-    }
     public void removeGraphics() {
         for (JLabel graphicLabel : graphicsLabels) {
             gridPanel.remove(graphicLabel);

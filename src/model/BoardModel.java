@@ -191,16 +191,4 @@ public class BoardModel {
         }
         return true;
     }
-
-    /**
-     * @brief Setzt das Board zurück und entfernt alle Schiffe.
-     */
-    public void reset() {
-        for (int row = 0; row < WIDTH; row++) {
-            for (int col = 0; col < HEIGHT; col++) {
-                this.board[row][col] = new CellModel(row, col, CellState.FREE);
-            }
-        }
-        this.playerShips.clear();
-    }
 }

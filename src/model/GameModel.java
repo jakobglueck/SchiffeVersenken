@@ -185,15 +185,4 @@ public class GameModel {
     public boolean isGameOver() {
         return this.playerOne.getBoard().allShipsAreHit() || this.playerTwo.getBoard().allShipsAreHit();
     }
-
-    /**
-     * @brief Setzt das Spiel zurück und initialisiert die Spieler und die Schiffsplatzierung neu.
-     */
-    public void resetGame() {
-        playerOne = null;
-        playerTwo = null;
-        currentPlayer = null;
-        gameState = null;
-        currentShipIndex = 0;
-    }
 }

@@ -59,14 +59,4 @@ public class GameInfoView extends JPanel {
         // Verwende HTML, um den Text automatisch umzubrechen
         this.statusMessageLabel.setText("<html><div style='text-align: center;'>" + info + "</div></html>");
     }
-
-    /**
-     * @brief Setzt die StatsView auf den Ausgangszustand zurück.
-     *
-     * Der Spielername wird auf "-" und die Statusnachricht auf "Warten auf Spielbeginn" gesetzt.
-     */
-    public void reset() {
-        this.updatePlayerName("-");
-        this.updateStatusMessageLabel("Warten auf Spielbeginn");
-    }
 }

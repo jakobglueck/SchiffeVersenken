@@ -39,7 +39,6 @@ public class BoardController {
      * @brief Aktiviert die notwendigen Listener für die Spielfeldinteraktionen und Steuerungselemente.
      */
     public void startGameListeners() {
-        gameView.getControlView().getMainMenuButton().addActionListener(e -> gameController.resetGame());
         gameView.getControlView().getPauseGameButton().addActionListener(e -> JOptionPane.showMessageDialog(gameView, "Spiel ist pausiert!"));
         gameView.getControlView().getEndGameButton().addActionListener(e -> System.exit(0));
         gameView.getPlayerBoardOne().setBoardClickListener(this::handleBoardClick);
@@ -271,30 +270,6 @@ public class BoardController {
             for (MouseListener listener : board.getMouseListeners()) {
                 board.removeMouseListener(listener);
             }
-        }
-    }
-
-    /**
-     * @brief Setzt den BoardController zurück.
-     */
-    public void reset() {
-        updateBoardVisibility();
-
-        removeAllBoardClickListeners(gameView.getPlayerBoardOne());
-        removeAllBoardClickListeners(gameView.getPlayerBoardTwo());
-
-        gameView.getPlayerBoardOne().setBoardClickListener(this::handleBoardClick);
-        gameView.getPlayerBoardTwo().setBoardClickListener(this::handleBoardClick);
-
-        gameView.getPlayerBoardOne().resetBoard();
-        gameView.getPlayerBoardTwo().resetBoard();
-
-        updateGameView();
-    }
-
-    private void removeAllBoardClickListeners(BoardView boardView) {
-        for (MouseListener listener : boardView.getMouseListeners()) {
-            boardView.removeMouseListener(listener);
         }
     }
 }
