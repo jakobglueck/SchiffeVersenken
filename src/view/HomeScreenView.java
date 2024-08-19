@@ -46,7 +46,7 @@ public class HomeScreenView extends JFrame {
     private void initializeHomeScreen() {
         this.setTitle("Schiffe versenken");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(400, 300);
+        this.setSize(600, 400);
         this.setLocationRelativeTo(null);
 
         JPanel mainPanel = new JPanel(new GridLayout(2, 1));
@@ -59,7 +59,7 @@ public class HomeScreenView extends JFrame {
         JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 10, 10));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        this.localGameButton = new JButton("Lokales Spiel starten");
+        this.localGameButton = new JButton("Normales Spiel starten");
         this.computerGameButton = new JButton("Computer Spiel starten");
         this.debugModeButton = new JButton("Debug Modus starten");
         this.exitButton = new JButton("Spiel beenden");
